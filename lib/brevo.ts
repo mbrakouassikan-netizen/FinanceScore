@@ -41,7 +41,7 @@ async function callBrevoAPI(body: object): Promise<boolean> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-key": "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",
+        "api-key": process.env.BREVO_API_KEY || "",
       },
       body: JSON.stringify(body),
     });
