@@ -5,10 +5,10 @@
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "env": {
-    "BREVO_API_KEY": "@brevo_api_key",
-    "PAYHIP_API_KEY": "@payhip_api_key",
-    "PAYHIP_WEBHOOK_SECRET": "@payhip_webhook_secret",
-    "NEXT_PUBLIC_PAYHIP_URL": "@next_public_payhip_url",
-    "NEXT_PUBLIC_SITE_URL": "@next_public_site_url"
+    "BREVO_API_KEY": "$BREVO_API_KEY",
+    "PAYHIP_API_KEY": "$PAYHIP_API_KEY",
+    "PAYHIP_WEBHOOK_SECRET": "$PAYHIP_WEBHOOK_SECRET",
+    "NEXT_PUBLIC_PAYHIP_URL": "$NEXT_PUBLIC_PAYHIP_URL",
+    "NEXT_PUBLIC_SITE_URL": "$NEXT_PUBLIC_SITE_URL"
   }
 }
