@@ -37,18 +37,37 @@ export function getNiveau(score: number) {
 
 async function callBrevoAPI(body: object): Promise<boolean> {
   try {
+    console.log('📤 Envoi email Brevo avec body:', JSON.stringify(body, null, 2));
+    
+    const apiKey = process.env.BREVO_API_KEY;
+    if (!apiKey) {
+      console.error('❌ BREVO_API_KEY non configurée');
+      return false;
+    }
+    
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-key": process.env.BREVO_API_KEY || "",
+        "api-key": apiKey,
       },
       body: JSON.stringify(body),
     });
-    if (!res.ok) { console.error("Erreur Brevo:", await res.json()); return false; }
+    
+    console.log('📡 Réponse Brevo status:', res.status);
+    
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("❌ Erreur Brevo:", JSON.stringify(errorData, null, 2));
+      return false;
+    }
+    
+    const responseData = await res.json();
+    console.log('✅ Email Brevo envoyé avec succès:', JSON.stringify(responseData, null, 2));
     return true;
   } catch (error) {
-    console.error("Erreur réseau Brevo:", error); return false;
+    console.error("❌ Erreur réseau Brevo:", error);
+    return false;
   }
 }
 

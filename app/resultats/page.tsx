@@ -28,26 +28,55 @@ function ResultsContent() {
     setUserName(name);
     
     // Simulate loading and calculation
-    const timer = setTimeout(() => {
-      // Create a mock result based on the score
+    const timer = setTimeout(async () => {
+      // Générer des réponses de test pour le score spécifié
+      // en respectant la structure réelle des questions et leurs maximaux
       const mockAnswers: QuizAnswer[] = [];
-      let totalPoints = 0;
+      const targetScore = Math.min(score, 100); // Limiter à 100
       
-      // Generate mock answers that would result in the given score
-      // Calcul plus précis pour éviter l'incohérence
-      const targetPoints = Math.round((score / 100) * 100); // Score sur 100 points
-      const pointsPerQuestion = Math.floor(targetPoints / 19);
-      const remainder = targetPoints % 19;
+      // Obtenir les maximaux par pilier pour distribuer correctement
+      const { questions } = await import('@/lib/questions');
+      const pillarMaxScores = {
+        "Revenus & Dépenses": 20,
+        "Épargne": 20,
+        "Dettes": 20,
+        "Diaspora & Famille": 15,
+        "Investissement": 15,
+        "Vision & Objectifs": 10,
+      };
       
-      for (let i = 1; i <= 19; i++) {
-        const points = pointsPerQuestion + (i <= remainder ? 1 : 0);
-        totalPoints += points;
+      // Calculer le ratio de score à atteindre
+      const totalMaxScore = Object.values(pillarMaxScores).reduce((sum, max) => sum + max, 0);
+      const scoreRatio = targetScore / totalMaxScore;
+      
+      // Distribuer les points par pilier en respectant leurs maximaux
+      const pillarTargetScores: Record<string, number> = {};
+      Object.entries(pillarMaxScores).forEach(([pillar, maxScore]) => {
+        pillarTargetScores[pillar] = Math.round(maxScore * scoreRatio);
+      });
+      
+      // Générer les réponses pour chaque question
+      questions.forEach((question) => {
+        const pillarMax = pillarMaxScores[question.pillar as keyof typeof pillarMaxScores];
+        const pillarTarget = pillarTargetScores[question.pillar];
+        
+        // Compter combien de questions dans ce pilier
+        const pillarQuestions = questions.filter(q => q.pillar === question.pillar);
+        const questionIndex = pillarQuestions.findIndex(q => q.id === question.id);
+        const totalPillarQuestions = pillarQuestions.length;
+        
+        // Distribuer les points de ce pilier sur ses questions
+        const pointsPerPillarQuestion = Math.floor(pillarTarget / totalPillarQuestions);
+        const remainder = pillarTarget % totalPillarQuestions;
+        
+        const points = pointsPerPillarQuestion + (questionIndex < remainder ? 1 : 0);
+        
         mockAnswers.push({
-          questionId: i,
+          questionId: question.id,
           selectedOption: 0,
-          points,
+          points: Math.min(points, pillarMax), // Ne jamais dépasser le max de cette question
         });
-      }
+      });
       
       const result = calculateScore(mockAnswers);
       setScoreResult(result);
@@ -58,15 +87,15 @@ function ResultsContent() {
       if (userEmail) {
         const userPrenom = name.includes('@') ? name.split('@')[0] : name;
         
-        // Utiliser le vrai score et calculer les scores de piliers proportionnellement
-        // pour éviter l'incohérence entre l'affichage et l'email
+        // Utiliser les vrais scores de piliers calculés par calculateScore
+        // pour garantir la cohérence entre l'affichage et l'email
         const pillarScores = {
-          p1: Math.round((score / 100) * 20),  // Revenus & Dépenses (max 20)
-          p2: Math.round((score / 100) * 20),  // Épargne (max 20)
-          p3: Math.round((score / 100) * 20),  // Dettes (max 20)
-          p4: Math.round((score / 100) * 15),  // Diaspora & Famille (max 15)
-          p5: Math.round((score / 100) * 15),  // Investissement (max 15)
-          p6: Math.round((score / 100) * 10),  // Vision & Objectifs (max 10)
+          p1: result.pillarScores.find(p => p.name === 'Revenus & Dépenses')?.score || 0,
+          p2: result.pillarScores.find(p => p.name === 'Épargne')?.score || 0,
+          p3: result.pillarScores.find(p => p.name === 'Dettes')?.score || 0,
+          p4: result.pillarScores.find(p => p.name === 'Diaspora & Famille')?.score || 0,
+          p5: result.pillarScores.find(p => p.name === 'Investissement')?.score || 0,
+          p6: result.pillarScores.find(p => p.name === 'Vision & Objectifs')?.score || 0,
         };
         
         fetch("/api/send-score", {
