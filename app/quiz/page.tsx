@@ -8,7 +8,6 @@ import { QuizProgress } from '@/components/quiz/QuizProgress';
 import { Button } from '@/components/ui/Button';
 import { questions } from '@/lib/questions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useAnalytics } from '@/hooks/useAnalytics';
 import { ArrowLeft, ArrowRight, Mail, User, CheckCircle } from 'lucide-react';
 import { QuizAnswer } from '@/lib/types';
 
@@ -23,7 +22,6 @@ export default function QuizPage() {
   const [name, setName] = useState('');
   const [rgpdAccepted, setRgpdAccepted] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; rgpd?: string }>({});
-  const { trackQuizCompleted, trackEmailSubmitted } = useAnalytics();
 
   const currentQuestionData = questions[currentQuestion];
   const isLastQuestion = currentQuestion === questions.length - 1;
@@ -53,7 +51,6 @@ export default function QuizPage() {
 
     if (isLastQuestion) {
       setShowEmailCapture(true);
-      trackQuizCompleted();
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -89,9 +86,6 @@ export default function QuizPage() {
     setIsLoading(true);
 
     try {
-      // Track email submission
-      trackEmailSubmitted();
-
       // Calculate score
       const scoreResponse = await fetch('/api/score', {
         method: 'POST',

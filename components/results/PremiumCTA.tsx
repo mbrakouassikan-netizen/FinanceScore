@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { Crown, Star, CheckCircle, ExternalLink, Loader } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { FadeUpSection } from '../ui/FadeUpSection';
-import { useAnalytics } from '@/hooks/useAnalytics';
 import { useSearchParams } from 'next/navigation';
 
 export const PremiumCTA: React.FC = () => {
-  const { trackPremiumCTAClicked } = useAnalytics();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [paymentUrl, setPaymentUrl] = useState<string>('');
@@ -48,7 +46,6 @@ export const PremiumCTA: React.FC = () => {
     }
 
     setIsLoading(true);
-    trackPremiumCTAClicked();
 
     try {
       // Appeler l'API route pour créer le lien Payhip

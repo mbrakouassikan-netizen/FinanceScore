@@ -9,12 +9,10 @@ export interface PayhipWebhookPayload {
   currency: string;
   buyer_email: string;
   buyer_name: string;
-  quantity: number;
-  total: number;
-  fee: number;
-  net: number;
-  custom_fields?: Record<string, any>;
-  created_at: string;
+  custom_fields?: {
+    score?: number;
+    [key: string]: any;
+  };
 }
 
 export class PayhipServerService {
@@ -40,7 +38,7 @@ export class PayhipServerService {
       .update(payload)
       .digest('hex');
 
-    return signature === expectedSignature;
+    return crypto.timingSafeEqual(signature, expectedSignature);
   }
 
   // Traiter le webhook Payhip
@@ -63,79 +61,20 @@ export class PayhipServerService {
 
         console.log('✅ Email premium envoyé pour:', payload.buyer_email);
         
-        // Optionnel: Sauvegarder dans Google Sheets
-        if (process.env.GOOGLE_SHEET_ID && typeof window === 'undefined') {
-          try {
-            const { googleSheetsService } = await import('./googleSheets');
-            await googleSheetsService.setupSheet();
-            
-            const userData = {
-              name: payload.buyer_name || '',
-              email: payload.buyer_email,
-              score: score,
-              percentage: Math.round(score),
-              niveau: this.getNiveau(score).label,
-              timestamp: new Date().toISOString(),
-              pillarScores: {
-                'Revenus & Dépenses': 0,
-                'Épargne': 0,
-                'Dettes': 0,
-                'Diaspora & Famille': 0,
-                'Investissement': 0,
-                'Vision & Objectifs': 0,
-              },
-            };
-
-            await googleSheetsService.addUser(userData);
-            console.log('✅ Données premium sauvegardées dans Google Sheets');
-          } catch (error) {
-            console.warn('⚠️ Google Sheets non disponible:', error);
-          }
-        }
-      } else if (payload.event === 'sale.created') {
-        console.log('📝 Vente créée pour:', payload.buyer_email);
-      } else if (payload.event === 'sale.refunded') {
-        console.log('💰 Remboursement pour:', payload.buyer_email);
+        // Optionnel: Sauvegarder dans un système externe (si nécessaire)
+        // Note: Google Sheets a été supprimé du projet
       }
     } catch (error) {
-      console.error('❌ Erreur traitement webhook Payhip:', error);
+      console.error('Erreur traitement webhook Payhip:', error);
       throw error;
     }
   }
 
-  // Obtenir le niveau à partir du score
-  private getNiveau(score: number) {
-    if (score <= 39) return {
-      key: "urgence", label: "🔴 Urgence Financière",
-      message: "Ta situation demande une action immédiate.",
-    };
-    if (score <= 59) return {
-      key: "fragile", label: "🟠 Finances Fragiles",
-      message: "Tu as les bases, mais ta situation reste vulnérable.",
-    };
-    if (score <= 79) return {
-      key: "progression", label: "🟡 En Bonne Progression",
-      message: "Tu gères bien l'essentiel.",
-    };
-    return {
-      key: "solide", label: "🟢 Finances Solides",
-      message: "Félicitations ! Tu maîtrises tes finances.",
-    };
-  }
-
-  // Créer un lien de paiement avec champs personnalisés
-  createPaymentLink(productUrl: string, customFields?: Record<string, any>): string {
-    if (customFields && Object.keys(customFields).length > 0) {
-      // Ajouter les champs personnalisés comme paramètres URL
-      const params = new URLSearchParams();
-      Object.entries(customFields).forEach(([key, value]) => {
-        params.append(`custom_${key}`, value.toString());
-      });
-      return `${productUrl}?${params.toString()}`;
-    }
-    return productUrl;
+  // Helper pour déterminer le niveau en fonction du score
+  private getNiveau(score: number): { label: string; description: string } {
+    if (score >= 90) return { label: 'Expert', description: 'Excellente santé financière' };
+    if (score >= 75) return { label: 'Avancé', description: 'Bonne santé financière' };
+    if (score >= 50) return { label: 'Intermédiaire', description: 'Santé financière moyenne' };
+    return { label: 'Débutant', description: 'Santé financière à améliorer' };
   }
 }
-
-// Export du service serveur
-export const payhipServerService = new PayhipServerService();

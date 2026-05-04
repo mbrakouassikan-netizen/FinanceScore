@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { payhipServerService } from '@/lib/payhip-server';
+import { PayhipServerService } from '@/lib/payhip-server';
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,15 +15,12 @@ export async function POST(req: NextRequest) {
 
     // Créer le lien Payhip avec champs personnalisés
     const payhipUrl = 'https://payhip.com/b/53DCE';
-    const paymentLink = payhipServerService.createPaymentLink(payhipUrl, {
-      email: email,
-      name: name,
-      score: score,
-    });
-
+    
+    // Pour l'instant, on retourne simplement le lien Payhip
+    // TODO: Implémenter la création de lien personnalisé si nécessaire
     return NextResponse.json({ 
       success: true, 
-      paymentLink 
+      paymentLink: payhipUrl 
     });
   } catch (error) {
     console.error('❌ Erreur création lien paiement:', error);

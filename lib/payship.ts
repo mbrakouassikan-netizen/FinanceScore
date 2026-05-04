@@ -149,31 +149,7 @@ export class PayshipService {
 
         console.log('✅ Email premium envoyé pour:', payload.customer_email);
         
-        // Optionnel: Sauvegarder dans Google Sheets
-        if (process.env.GOOGLE_SHEET_ID) {
-          const { googleSheetsService } = await import('./googleSheets');
-          await googleSheetsService.setupSheet();
-          
-          const userData = {
-            name: payload.customer_name || '',
-            email: payload.customer_email,
-            score: payload.metadata?.score || 0,
-            percentage: Math.round((payload.metadata?.score || 0) / 100 * 100),
-            niveau: this.getNiveau(payload.metadata?.score || 0).label,
-            timestamp: new Date().toISOString(),
-            pillarScores: {
-              'Revenus & Dépenses': 0,
-              'Épargne': 0,
-              'Dettes': 0,
-              'Diaspora & Famille': 0,
-              'Investissement': 0,
-              'Vision & Objectifs': 0,
-            },
-          };
-
-          await googleSheetsService.addUser(userData);
-          console.log('✅ Données premium sauvegardées dans Google Sheets');
-        }
+        // Optionnel: Sauvegarder dans un système externe (si nécessaire)
       } else if (payload.event === 'payment.failed') {
         console.log('❌ Paiement échoué pour:', payload.customer_email);
       }

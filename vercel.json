@@ -2,14 +2,13 @@
   "version": 2,
   "framework": "nextjs",
   "buildCommand": "npm run build",
-  "regions": ["cdg1"],
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "env": {
-    "GOOGLE_SERVICE_ACCOUNT_EMAIL": "@google_service_account_email",
-    "GOOGLE_PRIVATE_KEY": "@google_private_key",
-    "GOOGLE_SHEET_ID": "@google_sheet_id",
-    "NEXT_PUBLIC_PAYSHIP_URL": "@next_public_payship_url",
+    "BREVO_API_KEY": "@brevo_api_key",
+    "PAYHIP_API_KEY": "@payhip_api_key",
+    "PAYHIP_WEBHOOK_SECRET": "@payhip_webhook_secret",
+    "NEXT_PUBLIC_PAYHIP_URL": "@next_public_payhip_url",
     "NEXT_PUBLIC_SITE_URL": "@next_public_site_url"
   }
 }

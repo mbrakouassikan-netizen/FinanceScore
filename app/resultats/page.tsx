@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/Button';
 import { calculateScore } from '@/lib/scoring';
 import { ScoreResult, QuizAnswer } from '@/lib/types';
 import { Share2, Copy, RotateCcw, MessageCircle, CheckCircle } from 'lucide-react';
-import { useAnalytics } from '@/hooks/useAnalytics';
 
 function ResultsContent() {
   const searchParams = useSearchParams();
@@ -20,7 +19,6 @@ function ResultsContent() {
   const [scoreResult, setScoreResult] = useState<ScoreResult | null>(null);
   const [userName, setUserName] = useState<string>('');
   const [copied, setCopied] = useState(false);
-  const { trackResultsViewed, trackPremiumCTAClicked, trackScoreShared } = useAnalytics();
 
   const score = parseInt(searchParams.get('score') || '0');
   const name = searchParams.get('name') || '';
@@ -53,9 +51,6 @@ function ResultsContent() {
       
       const result = calculateScore(mockAnswers);
       setScoreResult(result);
-      
-      // Track results viewed
-      trackResultsViewed(score, result.level.name);
       
       // Envoyer l'email avec le score via Brevo
       // Priorité: email parameter > name parameter (si contient @)
@@ -108,9 +103,6 @@ function ResultsContent() {
     const message = `J'ai fait le test FinanceScore et j'ai obtenu ${score}/100 ! Niveau : ${level}. Découvre ton score → ${process.env.NEXT_PUBLIC_SITE_URL}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     
-    // Track WhatsApp share
-    trackScoreShared('whatsapp');
-    
     window.open(whatsappUrl, '_blank');
   };
 
@@ -118,9 +110,7 @@ function ResultsContent() {
     const level = scoreResult?.level?.name || 'Inconnu';
     const message = `J'ai fait le test FinanceScore et j'ai obtenu ${score}/100 ! Niveau : ${level}. Découvre ton score → ${process.env.NEXT_PUBLIC_SITE_URL}`;
     
-    // Track copy share
-    trackScoreShared('copy');
-    
+        
     navigator.clipboard.writeText(message);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

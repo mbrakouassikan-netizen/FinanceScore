@@ -1,12 +1,12 @@
+'use client';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { Heart, Target, Users, Shield, ArrowRight, Play, Star, TrendingUp } from 'lucide-react';
 import { FadeUpSection } from '@/components/ui/FadeUpSection';
-import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function AProposPage() {
-  const { trackQuizStarted } = useAnalytics();
 
   return (
     <div className="min-h-screen bg-bg-primary py-12 px-4">
@@ -167,7 +167,6 @@ export default function AProposPage() {
           <Button 
             href="/quiz" 
             size="lg"
-            onClick={trackQuizStarted}
           >
             Fais ton bilan financier gratuit
             <ArrowRight className="w-4 h-4 ml-2" />

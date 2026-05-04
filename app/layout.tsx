@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google';
 import { Fraunces } from 'next/font/google';
 import './globals.css';
-import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
+import { Metadata } from 'next';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces' });
@@ -30,7 +30,6 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${fraunces.variable}`}>
       <body className="bg-bg-primary text-text-primary min-h-screen">
-        <GoogleAnalytics />
         <main className="flex-1">{children}</main>
       </body>
     </html>

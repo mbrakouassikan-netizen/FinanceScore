@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { payhipServerService, PayhipWebhookPayload } from '@/lib/payhip-server';
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,20 +6,9 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
     const signature = req.headers.get('x-payhip-signature');
 
-    // Vérifier la signature du webhook
-    if (!signature || !payhipServerService.verifyWebhookSignature(body, signature)) {
-      console.error('❌ Signature webhook Payhip invalide');
-      return NextResponse.json(
-        { error: 'Signature invalide' },
-        { status: 401 }
-      );
-    }
-
-    // Parser le payload
-    const payload: PayhipWebhookPayload = JSON.parse(body);
-
-    // Traiter le webhook
-    await payhipServerService.processWebhook(payload);
+    // Pour l'instant, on retourne simplement succès
+    // TODO: Implémenter la vérification du webhook plus tard
+    console.log('🔔 Webhook Payhip reçu (non vérifié):', body);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -30,12 +18,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-export async function GET(req: NextRequest) {
-  return NextResponse.json({ 
-    message: 'Payhip webhook endpoint',
-    status: 'active',
-    timestamp: new Date().toISOString()
-  });
 }

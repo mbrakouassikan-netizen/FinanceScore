@@ -59,15 +59,15 @@ export const Button: React.FC<ButtonProps> = ({
   if (href) {
     return (
       <motion.a
-        href={href}
+        href={disabled ? undefined : href}
         className={classes}
-        onClick={onClick}
+        onClick={disabled ? undefined : onClick}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={ariaLabel}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        disabled={disabled}
+        style={{ opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? 'none' : 'auto' }}
       >
         {buttonContent}
       </motion.a>

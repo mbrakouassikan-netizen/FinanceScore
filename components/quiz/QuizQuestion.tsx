@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { QuizQuestion as QuizQuestionType, QuizOption } from '@/lib/types';
+import { Question as QuizQuestionType, Option as QuizOption } from '@/lib/types';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface QuizQuestionProps {
   question: QuizQuestionType;
@@ -18,7 +17,6 @@ export const QuizQuestion: React.FC<QuizQuestionProps> = ({
   className = '',
 }) => {
   const prefersReducedMotion = useReducedMotion();
-  const { trackQuizQuestionAnswered } = useAnalytics();
 
   return (
     <motion.div
@@ -42,7 +40,6 @@ export const QuizQuestion: React.FC<QuizQuestionProps> = ({
             key={index}
             onClick={() => {
               onOptionSelect(index, option.points);
-              trackQuizQuestionAnswered(question.id, question.pillar);
             }}
             className={`w-full text-left p-4 rounded-card border-2 transition-all duration-200 ${
               selectedOption === index

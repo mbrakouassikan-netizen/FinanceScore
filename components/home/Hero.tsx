@@ -3,11 +3,9 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, BarChart3, Calendar } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useAnalytics } from '@/hooks/useAnalytics';
 
 export const Hero: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
-  const { trackQuizStarted } = useAnalytics();
   const stats = [
     { icon: CheckCircle, label: '19 questions', value: '19' },
     { icon: BarChart3, label: '6 piliers analysés', value: '6' },
@@ -71,7 +69,6 @@ export const Hero: React.FC = () => {
               href="/quiz" 
               size="lg" 
               className="group"
-              onClick={trackQuizStarted}
             >
                 Démarrer mon bilan
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
