@@ -131,100 +131,95 @@ function ResultsContent() {
     router.push('/quiz');
   };
 
-  if (!scoreResult) {
-    return (
-      <div className="min-h-screen bg-bg-primary py-12 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-accent-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-xl text-text-secondary">Analyse de tes résultats...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-bg-primary py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <ScoreHeader scoreResult={scoreResult} userName={userName} />
-        <PillarGrid scoreResult={scoreResult} />
-        <StrengthsWeaknesses scoreResult={scoreResult} />
-        <ActionPlan scoreResult={scoreResult} />
-        
-        {/* Debug: Afficher le score reçu */}
+        {/* Afficher les ressources officielles immédiatement */}
         {(() => {
           console.log('Score passé à OfficialResources:', score, 'Type:', typeof score);
           return null;
         })()}
         <OfficialResources score={score} />
         
-        <PremiumCTA />
-
-        {/* Share Section */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="text-2xl font-serif font-bold text-text-primary mb-6">
-            Partage tes résultats
-          </h2>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              onClick={handleShareWhatsApp}
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-2"
-            >
-              <MessageCircle className="w-5 h-5" />
-              Partager sur WhatsApp
-            </Button>
-            
-            <Button
-              onClick={handleCopyLink}
-              variant="outline"
-              size="lg"
-              className={`flex items-center gap-2 transition-all duration-300 ${
-                copied ? 'bg-accent-primary text-black border-accent-primary' : ''
-              }`}
-            >
-              {copied ? (
-                <>
-                  <CheckCircle className="w-5 h-5" />
-                  Copié !
-                </>
-              ) : (
-                <>
-                  <Copy className="w-5 h-5" />
-                  Copier le message
-                </>
-              )}
-            </Button>
+        {!scoreResult ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 border-4 border-accent-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-xl text-text-secondary">Analyse de tes résultats...</p>
           </div>
-        </motion.div>
+        ) : (
+          <>
+            <ScoreHeader scoreResult={scoreResult} userName={userName} />
+            <PillarGrid scoreResult={scoreResult} />
+            <StrengthsWeaknesses scoreResult={scoreResult} />
+            <ActionPlan scoreResult={scoreResult} />
+            <PremiumCTA />
 
-        {/* Retake Test Button */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Button
-            onClick={handleRetakeTest}
-            variant="outline"
-            size="lg"
-            className="flex items-center gap-2 mx-auto"
-          >
-            <RotateCcw className="w-5 h-5" />
-            Refaire le test
-          </Button>
-        </motion.div>
+            {/* Share Section */}
+            <motion.div
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-2xl font-serif font-bold text-text-primary mb-6">
+                Partage tes résultats
+              </h2>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button
+                  onClick={handleShareWhatsApp}
+                  variant="outline"
+                  size="lg"
+                  className="flex items-center gap-2"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Partager sur WhatsApp
+                </Button>
+                
+                <Button
+                  onClick={handleCopyLink}
+                  variant="outline"
+                  size="lg"
+                  className={`flex items-center gap-2 transition-all duration-300 ${
+                    copied ? 'bg-accent-primary text-black border-accent-primary' : ''
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Copié !
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-5 h-5" />
+                      Copier le message
+                    </>
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+
+            {/* Retake Test Button */}
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Button
+                onClick={handleRetakeTest}
+                variant="outline"
+                size="lg"
+                className="flex items-center gap-2 mx-auto"
+              >
+                <RotateCcw className="w-5 h-5" />
+                Refaire le test
+              </Button>
+            </motion.div>
+          </>
+        )}
       </div>
     </div>
   );
