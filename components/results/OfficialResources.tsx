@@ -133,6 +133,11 @@ export default function OfficialResources({ score }: { score: number }) {
   const resources = resourcesByScore[scoreRange] || [];
   const colors = getLevelColors(score);
 
+  // Debug: Afficher les informations reçues
+  console.log('OfficialResources - Score reçu:', score, 'Type:', typeof score);
+  console.log('OfficialResources - ScoreRange calculé:', scoreRange);
+  console.log('OfficialResources - Resources trouvées:', resources.length, resources);
+
   if (resources.length === 0) return null;
 
   return (

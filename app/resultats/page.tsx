@@ -151,6 +151,12 @@ function ResultsContent() {
         <PillarGrid scoreResult={scoreResult} />
         <StrengthsWeaknesses scoreResult={scoreResult} />
         <ActionPlan scoreResult={scoreResult} />
+        
+        {/* Debug: Afficher le score reçu */}
+        {(() => {
+          console.log('Score passé à OfficialResources:', score, 'Type:', typeof score);
+          return null;
+        })()}
         <OfficialResources score={score} />
         
         <PremiumCTA />
