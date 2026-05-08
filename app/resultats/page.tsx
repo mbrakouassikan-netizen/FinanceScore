@@ -23,7 +23,8 @@ function ResultsContent() {
   const [copied, setCopied] = useState(false);
   const { trackResultsViewed, trackPremiumCTAClicked, trackScoreShared } = useAnalytics();
 
-  const score = parseInt(searchParams.get('score') || '0');
+  // Récupérer le score directement depuis l'URL
+  const scoreFromUrl = parseInt(searchParams.get('score') || '0');
   const name = searchParams.get('name') || '';
   const email = searchParams.get('email') || '';
 
@@ -38,7 +39,7 @@ function ResultsContent() {
       
       // Generate mock answers that would result in the given score
       // Calcul plus précis pour éviter l'incohérence
-      const targetPoints = Math.round((score / 100) * 100); // Score sur 100 points
+      const targetPoints = Math.round((scoreFromUrl / 100) * 100); // Score sur 100 points
       const pointsPerQuestion = Math.floor(targetPoints / 19);
       const remainder = targetPoints % 19;
       
@@ -56,7 +57,7 @@ function ResultsContent() {
       setScoreResult(result);
       
       // Track results viewed
-      trackResultsViewed(score, result.level.name);
+      trackResultsViewed(scoreFromUrl, result.level.name);
       
       // Envoyer l'email avec le score via Brevo
       // Priorité: email parameter > name parameter (si contient @)
@@ -67,12 +68,12 @@ function ResultsContent() {
         // Utiliser le vrai score et calculer les scores de piliers proportionnellement
         // pour éviter l'incohérence entre l'affichage et l'email
         const pillarScores = {
-          p1: Math.round((score / 100) * 20),  // Revenus & Dépenses (max 20)
-          p2: Math.round((score / 100) * 20),  // Épargne (max 20)
-          p3: Math.round((score / 100) * 20),  // Dettes (max 20)
-          p4: Math.round((score / 100) * 15),  // Diaspora & Famille (max 15)
-          p5: Math.round((score / 100) * 15),  // Investissement (max 15)
-          p6: Math.round((score / 100) * 10),  // Vision & Objectifs (max 10)
+          p1: Math.round((scoreFromUrl / 100) * 20),  // Revenus & Dépenses (max 20)
+          p2: Math.round((scoreFromUrl / 100) * 20),  // Épargne (max 20)
+          p3: Math.round((scoreFromUrl / 100) * 20),  // Dettes (max 20)
+          p4: Math.round((scoreFromUrl / 100) * 15),  // Diaspora & Famille (max 15)
+          p5: Math.round((scoreFromUrl / 100) * 15),  // Investissement (max 15)
+          p6: Math.round((scoreFromUrl / 100) * 10),  // Vision & Objectifs (max 10)
         };
         
         fetch("/api/send-score", {
@@ -81,7 +82,7 @@ function ResultsContent() {
           body: JSON.stringify({
             email: userEmail,
             prenom: userPrenom,
-            score: score,  // Utiliser le vrai score de l'URL
+            score: scoreFromUrl,  // Utiliser le vrai score de l'URL
             p1: pillarScores.p1,
             p2: pillarScores.p2,
             p3: pillarScores.p3,
@@ -91,7 +92,7 @@ function ResultsContent() {
           }),
         }).then(response => {
           if (response.ok) {
-            console.log('✅ Email de score envoyé à:', userEmail, 'avec score:', score);
+            console.log('✅ Email de score envoyé à:', userEmail, 'avec score:', scoreFromUrl);
           } else {
             console.error('❌ Erreur envoi email:', response.status);
           }
@@ -102,11 +103,11 @@ function ResultsContent() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [score, name, email]);
+  }, [scoreFromUrl, name, email]);
 
   const handleShareWhatsApp = () => {
     const level = scoreResult?.level?.name || 'Inconnu';
-    const message = `J'ai fait le test FinanceScore et j'ai obtenu ${score}/100 ! Niveau : ${level}. Découvre ton score → ${process.env.NEXT_PUBLIC_SITE_URL}`;
+    const message = `J'ai fait le test FinanceScore et j'ai obtenu ${scoreFromUrl}/100 ! Niveau : ${level}. Découvre ton score → ${process.env.NEXT_PUBLIC_SITE_URL}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     
     // Track WhatsApp share
@@ -117,7 +118,7 @@ function ResultsContent() {
 
   const handleCopyLink = () => {
     const level = scoreResult?.level?.name || 'Inconnu';
-    const message = `J'ai fait le test FinanceScore et j'ai obtenu ${score}/100 ! Niveau : ${level}. Découvre ton score → ${process.env.NEXT_PUBLIC_SITE_URL}`;
+    const message = `J'ai fait le test FinanceScore et j'ai obtenu ${scoreFromUrl}/100 ! Niveau : ${level}. Découvre ton score → ${process.env.NEXT_PUBLIC_SITE_URL}`;
     
     // Track copy share
     trackScoreShared('copy');
@@ -134,12 +135,12 @@ function ResultsContent() {
   return (
     <div className="min-h-screen bg-bg-primary py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Afficher les ressources officielles immédiatement */}
+        {/* Afficher les ressources officielles immédiatement avec le score de l'URL */}
         {(() => {
-          console.log('Score passé à OfficialResources:', score, 'Type:', typeof score);
+          console.log('Score passé à OfficialResources:', scoreFromUrl, 'Type:', typeof scoreFromUrl);
           return null;
         })()}
-        <OfficialResources score={score} />
+        <OfficialResources score={scoreFromUrl} />
         
         {!scoreResult ? (
           <div className="text-center py-12">
