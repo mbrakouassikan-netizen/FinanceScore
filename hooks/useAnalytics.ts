@@ -75,9 +75,11 @@ export const useAnalytics = () => {
     if (!isGAEnabled()) return;
 
     try {
-      window.gtag('config', GA_ID, {
-        page_path: pagePath,
-      });
+      if (GA_ID) {
+        window.gtag('config', GA_ID, {
+          page_path: pagePath,
+        });
+      }
     } catch (error) {
       console.error('GA page view error:', error);
     }

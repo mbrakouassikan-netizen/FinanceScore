@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import { Fraunces } from 'next/font/google';
+import type { Metadata } from 'next';
 import './globals.css';
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 

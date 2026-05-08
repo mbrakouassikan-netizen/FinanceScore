@@ -2,6 +2,15 @@
 
 import { useEffect } from 'react';
 
+// Déclaration des types pour Google Analytics
+declare global {
+  interface Window {
+    dataLayer?: any[];
+  }
+  
+  const gtag: (...args: any[]) => void;
+}
+
 export const GoogleAnalytics: React.FC = () => {
   const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -16,13 +25,17 @@ export const GoogleAnalytics: React.FC = () => {
     document.head.appendChild(script);
 
     // Initialize gtag
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = window.gtag || function(...args: any[]) {
-      window.dataLayer.push(arguments);
-    };
+    if (!window.dataLayer) {
+      window.dataLayer = [];
+    }
+    if (typeof window.gtag === 'undefined') {
+      (window as any).gtag = function(...args: any[]) {
+        window.dataLayer!.push(arguments);
+      };
+    }
 
-    window.gtag('js', new Date());
-    window.gtag('config', GA_ID, {
+    (window as any).gtag('js', new Date().toISOString());
+    (window as any).gtag('config', GA_ID, {
       page_title: document.title,
       page_location: window.location.href,
     });

@@ -60,14 +60,13 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <motion.a
         href={href}
-        className={classes}
-        onClick={onClick}
+        className={`${classes} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        onClick={disabled ? undefined : onClick}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={ariaLabel}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        disabled={disabled}
+        whileHover={disabled ? undefined : { scale: 1.02 }}
+        whileTap={disabled ? undefined : { scale: 0.98 }}
       >
         {buttonContent}
       </motion.a>

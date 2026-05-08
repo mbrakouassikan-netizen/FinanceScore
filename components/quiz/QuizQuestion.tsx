@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { QuizQuestion as QuizQuestionType, QuizOption } from '@/lib/types';
+import { Question as QuizQuestionType, Option as QuizOption } from '@/lib/types';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useAnalytics } from '@/hooks/useAnalytics';
 

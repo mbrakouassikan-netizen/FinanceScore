@@ -8,6 +8,7 @@ import { PillarGrid } from '@/components/results/PillarGrid';
 import { StrengthsWeaknesses } from '@/components/results/StrengthsWeaknesses';
 import { ActionPlan } from '@/components/results/ActionPlan';
 import { PremiumCTA } from '@/components/results/PremiumCTA';
+import OfficialResources from '@/components/results/OfficialResources';
 import { Button } from '@/components/ui/Button';
 import { calculateScore } from '@/lib/scoring';
 import { ScoreResult, QuizAnswer } from '@/lib/types';
@@ -150,6 +151,7 @@ function ResultsContent() {
         <PillarGrid scoreResult={scoreResult} />
         <StrengthsWeaknesses scoreResult={scoreResult} />
         <ActionPlan scoreResult={scoreResult} />
+        {scoreResult && <OfficialResources score={scoreResult.totalScore} />}
         <PremiumCTA />
 
         {/* Share Section */}
