@@ -175,6 +175,8 @@ function ResultsContent() {
             <ActionPlan scoreResult={scoreResult} />
             <PremiumCTA />
 
+            <p>TEST VISIBLE</p>
+
             {/* Share Section */}
             <motion.div
               className="text-center mb-12"
