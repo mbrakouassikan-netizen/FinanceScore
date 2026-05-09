@@ -11,7 +11,7 @@ import { PremiumCTA } from '@/components/results/PremiumCTA';
 import OfficialResources from '@/components/results/OfficialResources';
 import { Button } from '@/components/ui/Button';
 import { calculateScore } from '@/lib/scoring';
-import { ScoreResult, QuizAnswer } from '@/lib/types';
+import { ScoreResult, QuizAnswer, PillarScore, ScoreLevel } from '@/lib/types';
 import { Share2, Copy, RotateCcw, MessageCircle, CheckCircle, Info, ExternalLink } from 'lucide-react';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
@@ -21,89 +21,109 @@ function ResultsContent() {
   const [scoreResult, setScoreResult] = useState<ScoreResult | null>(null);
   const [userName, setUserName] = useState<string>('');
   const [copied, setCopied] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const { trackResultsViewed, trackPremiumCTAClicked, trackScoreShared } = useAnalytics();
 
-  // Récupérer le score directement depuis l'URL
-  const scoreFromUrl = parseInt(searchParams.get('score') || '0');
+  // Parsing sécurisé du score avec guards et validation
+  const getScoreFromUrl = (): number => {
+    const scoreParam = searchParams.get('score');
+    if (!scoreParam) return 0;
+    
+    const parsed = parseInt(scoreParam, 10);
+    if (isNaN(parsed)) return 0;
+    if (parsed < 0) return 0;
+    if (parsed > 100) return 100;
+    
+    return parsed;
+  };
+
+  const scoreFromUrl = getScoreFromUrl();
   const name = searchParams.get('name') || '';
   const email = searchParams.get('email') || '';
 
   useEffect(() => {
     setUserName(name);
     
-    // Simulate loading and calculation
+    // Générer un résultat basé sur le score réel sans mockAnswers
     const timer = setTimeout(() => {
-      // Create a mock result based on the score
-      const mockAnswers: QuizAnswer[] = [];
-      let totalPoints = 0;
-      
-      // Generate mock answers that would result in the given score
-      // Calcul plus précis pour éviter l'incohérence
-      const targetPoints = Math.round((scoreFromUrl / 100) * 100); // Score sur 100 points
-      const pointsPerQuestion = Math.floor(targetPoints / 19);
-      const remainder = targetPoints % 19;
-      
-      for (let i = 1; i <= 19; i++) {
-        const points = pointsPerQuestion + (i <= remainder ? 1 : 0);
-        totalPoints += points;
-        mockAnswers.push({
-          questionId: i,
-          selectedOption: 0,
-          points,
-        });
-      }
-      
-      const result = calculateScore(mockAnswers);
+      // Créer un résultat de score direct et cohérent
+      const generateScoreResult = (score: number): ScoreResult => {
+        // Calculer les scores de piliers proportionnellement au score total
+        const pillarScores: PillarScore[] = [
+          { name: 'Revenus & Dépenses', score: Math.min(Math.round((score / 100) * 20), 20), maxScore: 20, percentage: (Math.min(Math.round((score / 100) * 20), 20) / 20) * 100 },
+          { name: 'Épargne', score: Math.min(Math.round((score / 100) * 20), 20), maxScore: 20, percentage: (Math.min(Math.round((score / 100) * 20), 20) / 20) * 100 },
+          { name: 'Dettes', score: Math.min(Math.round((score / 100) * 20), 20), maxScore: 20, percentage: (Math.min(Math.round((score / 100) * 20), 20) / 20) * 100 },
+          { name: 'Diaspora & Famille', score: Math.min(Math.round((score / 100) * 15), 15), maxScore: 15, percentage: (Math.min(Math.round((score / 100) * 15), 15) / 15) * 100 },
+          { name: 'Investissement', score: Math.min(Math.round((score / 100) * 15), 15), maxScore: 15, percentage: (Math.min(Math.round((score / 100) * 15), 15) / 15) * 100 },
+          { name: 'Vision & Objectifs', score: Math.min(Math.round((score / 100) * 10), 10), maxScore: 10, percentage: (Math.min(Math.round((score / 100) * 10), 10) / 10) * 100 }
+        ];
+
+        // Déterminer le niveau selon le score
+        let level: ScoreLevel = { name: 'Débutant', description: 'Commence ton voyage financier', color: 'red', emoji: '🌱' };
+        if (score >= 80) {
+          level = { name: 'Expert', description: 'Maîtrise totale de tes finances', color: 'green', emoji: '🏆' };
+        } else if (score >= 60) {
+          level = { name: 'Avancé', description: 'Bonnes bases financières', color: 'blue', emoji: '📈' };
+        } else if (score >= 40) {
+          level = { name: 'Intermédiaire', description: 'En progression', color: 'orange', emoji: '🚀' };
+        }
+
+        return {
+          totalScore: score,
+          percentage: score,
+          level,
+          pillarScores
+        };
+      };
+
+      const result = generateScoreResult(scoreFromUrl);
       setScoreResult(result);
       
-      // Track results viewed
-      trackResultsViewed(scoreFromUrl, result.level.name);
-      
-      // Envoyer l'email avec le score via Brevo
-      // Priorité: email parameter > name parameter (si contient @)
-      const userEmail = email || (name.includes('@') ? name : '');
-      if (userEmail) {
-        const userPrenom = name.includes('@') ? name.split('@')[0] : name;
-        
-        // Utiliser le vrai score et calculer les scores de piliers proportionnellement
-        // pour éviter l'incohérence entre l'affichage et l'email
-        const pillarScores = {
-          p1: Math.round((scoreFromUrl / 100) * 20),  // Revenus & Dépenses (max 20)
-          p2: Math.round((scoreFromUrl / 100) * 20),  // Épargne (max 20)
-          p3: Math.round((scoreFromUrl / 100) * 20),  // Dettes (max 20)
-          p4: Math.round((scoreFromUrl / 100) * 15),  // Diaspora & Famille (max 15)
-          p5: Math.round((scoreFromUrl / 100) * 15),  // Investissement (max 15)
-          p6: Math.round((scoreFromUrl / 100) * 10),  // Vision & Objectifs (max 10)
-        };
-        
-        fetch("/api/send-score", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: userEmail,
-            prenom: userPrenom,
-            score: scoreFromUrl,  // Utiliser le vrai score de l'URL
-            p1: pillarScores.p1,
-            p2: pillarScores.p2,
-            p3: pillarScores.p3,
-            p4: pillarScores.p4,
-            p5: pillarScores.p5,
-            p6: pillarScores.p6,
-          }),
-        }).then(response => {
-          if (response.ok) {
-            console.log('✅ Email de score envoyé à:', userEmail, 'avec score:', scoreFromUrl);
-          } else {
-            console.error('❌ Erreur envoi email:', response.status);
-          }
-        }).catch(error => console.error("Erreur envoi email:", error));
-      } else {
-        console.warn('⚠️ Aucun email trouvé pour envoyer le score');
+      // Track results viewed (uniquement si le score est valide)
+      if (scoreFromUrl > 0) {
+        trackResultsViewed(scoreFromUrl, result.level.name);
       }
-    }, 1000);
+      
+      // Envoyer l'email avec le score via Brevo (une seule fois)
+      if (!emailSent && scoreFromUrl > 0) {
+        // Priorité: email parameter > name parameter (si contient @)
+        const userEmail = email || (name.includes('@') ? name : '');
+        if (userEmail) {
+          const userPrenom = name.includes('@') ? name.split('@')[0] : name;
+          
+          // Utiliser les scores de piliers calculés
+          const pillarScores = result.pillarScores;
+          
+          fetch("/api/send-score", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: userEmail,
+              prenom: userPrenom,
+              score: scoreFromUrl,
+              p1: pillarScores[0]?.score || 0,
+              p2: pillarScores[1]?.score || 0,
+              p3: pillarScores[2]?.score || 0,
+              p4: pillarScores[3]?.score || 0,
+              p5: pillarScores[4]?.score || 0,
+              p6: pillarScores[5]?.score || 0,
+            }),
+          }).then(response => {
+            if (response.ok) {
+              console.log('✅ Email de score envoyé à:', userEmail, 'avec score:', scoreFromUrl);
+              setEmailSent(true);
+            } else {
+              console.error('❌ Erreur envoi email:', response.status);
+            }
+          }).catch(error => console.error("Erreur envoi email:", error));
+        } else {
+          console.warn('⚠️ Aucun email trouvé pour envoyer le score');
+        }
+      }
+    }, 500); // Réduit à 500ms pour meilleure UX
 
     return () => clearTimeout(timer);
-  }, [scoreFromUrl, name, email]);
+  }, [scoreFromUrl, name, email, emailSent]);
 
   const handleShareWhatsApp = () => {
     const level = scoreResult?.level?.name || 'Inconnu';

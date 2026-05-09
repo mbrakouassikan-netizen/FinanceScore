@@ -129,16 +129,32 @@ const getLevelColors = (score: number) => {
 
 export default function OfficialResources({ score }: { score: number }) {
   const [activeTab, setActiveTab] = useState(0);
+  
+  // Guards et validation
+  if (typeof score !== 'number' || isNaN(score) || score < 0 || score > 100) {
+    console.warn('OfficialResources - Score invalide:', score);
+    return null;
+  }
+  
   const scoreRange = getScoreRange(score);
   const resources = resourcesByScore[scoreRange] || [];
   const colors = getLevelColors(score);
+
+  // Guard pour les ressources vides
+  if (!resources || resources.length === 0) {
+    console.warn('OfficialResources - Aucune ressource trouvée pour le score:', score, 'range:', scoreRange);
+    return null;
+  }
+
+  // Guard pour l'activeTab
+  if (activeTab < 0 || activeTab >= resources.length) {
+    setActiveTab(0);
+  }
 
   // Debug: Afficher les informations reçues
   console.log('OfficialResources - Score reçu:', score, 'Type:', typeof score);
   console.log('OfficialResources - ScoreRange calculé:', scoreRange);
   console.log('OfficialResources - Resources trouvées:', resources.length, resources);
-
-  if (resources.length === 0) return null;
 
   return (
     <motion.div
@@ -159,19 +175,24 @@ export default function OfficialResources({ score }: { score: number }) {
 
       {/* Tabs */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">
-        {resources.map((resource, index) => (
-          <button
-            key={index}
-            onClick={() => setActiveTab(index)}
-            className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-              activeTab === index 
-                ? colors.tabActive 
-                : colors.tabInactive
-            }`}
-          >
-            {resource.title}
-          </button>
-        ))}
+        {resources.map((resource, index) => {
+          // Guard pour chaque ressource
+          if (!resource || !resource.title) return null;
+          
+          return (
+            <button
+              key={index}
+              onClick={() => setActiveTab(index)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                activeTab === index 
+                  ? colors.tabActive 
+                  : colors.tabInactive
+              }`}
+            >
+              {resource.title}
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab Content */}
@@ -182,26 +203,35 @@ export default function OfficialResources({ score }: { score: number }) {
         transition={{ duration: 0.3 }}
         className="bg-white rounded-lg p-6 shadow-sm"
       >
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-text-primary mb-3">
-            {resources[activeTab].title}
-          </h3>
-          <p className="text-text-secondary leading-relaxed">
-            {resources[activeTab].summary}
-          </p>
-        </div>
-        
-        <div className="flex justify-center">
-          <a
-            href={resources[activeTab].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${colors.button} hover:shadow-lg transform hover:scale-105`}
-          >
-            <ExternalLink className="w-4 h-4" />
-            Site web
-          </a>
-        </div>
+        {/* Guard pour la ressource active */}
+        {resources[activeTab] ? (
+          <>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-3">
+                {resources[activeTab].title || 'Ressource'}
+              </h3>
+              <p className="text-text-secondary leading-relaxed">
+                {resources[activeTab].summary || 'Description non disponible'}
+              </p>
+            </div>
+            
+            <div className="flex justify-center">
+              <a
+                href={resources[activeTab].url || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${colors.button} hover:shadow-lg transform hover:scale-105`}
+              >
+                <ExternalLink className="w-4 h-4" />
+                Site web
+              </a>
+            </div>
+          </>
+        ) : (
+          <div className="text-center text-text-secondary">
+            Ressource non disponible
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );
