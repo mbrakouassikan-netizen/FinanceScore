@@ -143,9 +143,8 @@ export default function OfficialResources({ score }: { score: number }) {
   return (
     <motion.div
       className={`max-w-4xl mx-auto mb-12 p-6 rounded-xl ${colors.bg} ${colors.border} border`}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      initial={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <div className="text-center mb-6">
