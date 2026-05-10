@@ -38,7 +38,7 @@ export const StrengthsWeaknesses: React.FC<StrengthsWeaknessesProps> = ({ scoreR
                     <div>
                       <div className="font-medium text-text-primary">{pillar.name}</div>
                       <div className="text-sm text-text-secondary">
-                        {pillar.percentage}% - Excellent niveau !
+                        {Math.round(pillar.percentage)}% - Excellent niveau !
                       </div>
                     </div>
                   </div>
@@ -70,7 +70,7 @@ export const StrengthsWeaknesses: React.FC<StrengthsWeaknessesProps> = ({ scoreR
                     <div>
                       <div className="font-medium text-text-primary">{pillar.name}</div>
                       <div className="text-sm text-text-secondary">
-                        {pillar.percentage}% - Peut être optimisé
+                        {Math.round(pillar.percentage)}% - Peut être optimisé
                       </div>
                     </div>
                   </div>

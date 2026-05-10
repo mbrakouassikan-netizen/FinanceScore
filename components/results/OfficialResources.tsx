@@ -110,7 +110,7 @@ const getLevelColors = (score: number) => {
     button: "bg-orange-500 hover:bg-orange-600 text-white"
   };
   if (score <= 79) return {
-    bg: "bg-blue-50",
+    bg: "bg-white",
     border: "border-blue-200",
     text: "text-blue-700",
     tabActive: "bg-blue-500 text-white",
@@ -207,7 +207,7 @@ export default function OfficialResources({ score }: { score: number }) {
         {resources[activeTab] ? (
           <>
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-text-primary mb-3">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 {resources[activeTab].title || 'Ressource'}
               </h3>
               <p className="text-text-secondary leading-relaxed">
