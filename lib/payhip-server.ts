@@ -53,7 +53,7 @@ export class PayhipServerService {
         const { sendPremiumEmail } = await import('./brevo');
         
         // Extraire le score depuis les champs personnalisés si disponible
-        const score = payload.custom_fields?.score || 0;
+        const score = parseInt(payload.custom_fields?.custom_score || payload.custom_fields?.score || '0', 10);
         
         await sendPremiumEmail({
           email: payload.buyer_email,

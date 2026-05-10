@@ -5,16 +5,20 @@ import { FadeUpSection } from '../ui/FadeUpSection';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useSearchParams } from 'next/navigation';
 
-export const PremiumCTA: React.FC = () => {
+interface PremiumCTAProps {
+  score?: number;
+}
+
+export const PremiumCTA: React.FC<PremiumCTAProps> = ({ score: propScore }) => {
   const { trackPremiumCTAClicked } = useAnalytics();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [paymentUrl, setPaymentUrl] = useState<string>('');
   
-  // Récupérer les infos utilisateur depuis les params
+  // Récupérer les infos utilisateur depuis les params ou utiliser la prop
   const userEmail = searchParams.get('email') || '';
   const userName = searchParams.get('name') || '';
-  const score = parseInt(searchParams.get('score') || '0');
+  const score = propScore !== undefined ? propScore : parseInt(searchParams.get('score') || '0');
   
   // Vérifier si c'est un retour de paiement réussi
   React.useEffect(() => {

@@ -172,7 +172,7 @@ function ResultsContent() {
             <StrengthsWeaknesses scoreResult={scoreResult} />
             <ActionPlan scoreResult={scoreResult} />
             <OfficialResources score={scoreFromUrl} />
-            <PremiumCTA />
+            <PremiumCTA score={scoreFromUrl} />
 
             {/* Share Section */}
             <motion.div

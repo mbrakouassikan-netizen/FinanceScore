@@ -14,11 +14,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Créer le lien Payhip avec champs personnalisés
-    const payhipUrl = 'https://payhip.com/b/53DCE';
+    const payhipUrl = process.env.NEXT_PUBLIC_PAYHIP_URL || 'https://payhip.com/b/53DCE';
     const paymentLink = payhipServerService.createPaymentLink(payhipUrl, {
-      email: email,
-      name: name,
-      score: score,
+      custom_score: score,
     });
 
     return NextResponse.json({ 
