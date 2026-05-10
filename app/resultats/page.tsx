@@ -160,8 +160,6 @@ function ResultsContent() {
           console.log('Score passé à OfficialResources:', scoreFromUrl, 'Type:', typeof scoreFromUrl);
           return null;
         })()}
-        <OfficialResources score={scoreFromUrl} />
-        
         {!scoreResult ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 border-4 border-accent-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -173,9 +171,8 @@ function ResultsContent() {
             <PillarGrid scoreResult={scoreResult} />
             <StrengthsWeaknesses scoreResult={scoreResult} />
             <ActionPlan scoreResult={scoreResult} />
+            <OfficialResources score={scoreFromUrl} />
             <PremiumCTA />
-
-            <p>TEST VISIBLE</p>
 
             {/* Share Section */}
             <motion.div

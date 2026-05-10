@@ -164,7 +164,7 @@ export default function OfficialResources({ score }: { score: number }) {
       transition={{ duration: 0.5 }}
     >
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-serif font-bold text-text-primary mb-2">
+        <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
           Ressources officielles gratuites
         </h2>
         <p className={`text-sm ${colors.text} flex items-center justify-center gap-2`}>

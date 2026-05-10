@@ -36,7 +36,7 @@ export const PillarBar: React.FC<PillarBarProps> = ({ pillar, delay = 0 }) => {
         </div>
         <div className="text-right">
           <span className="text-lg font-bold text-text-primary">
-            {pillar.percentage}%
+            {Math.round(pillar.percentage)}%
           </span>
         </div>
       </div>
