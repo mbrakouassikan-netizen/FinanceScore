@@ -1,10 +1,10 @@
 // lib/brevo.ts
 
 const PDF_LINKS: Record<string, string> = {
-  urgence:     "https://drive.google.com/file/d/1Jxw8QXbZeEZ8jnaqEizffX6cTKNu6G2X/view?usp=drive_link",
-  fragile:     "https://drive.google.com/file/d/1bUlx6N7__JVBWJ9GhbIRycJU8AxJvkWo/view?usp=drive_link",
-  progression: "https://drive.google.com/file/d/1Bcba2Z3GAbGP-W_DHpEQBbY4Fs6MHBRj/view?usp=drive_link",
-  solide:      "https://drive.google.com/file/d/1R6cvQk7rqn8NmiYqpA0BYw74avMQ2D1y/view?usp=drive_link",
+  urgence:     "https://finance-score.vercel.app/plans/FinanceScore_Plan_Urgence_v3.pdf",
+  fragile:     "https://finance-score.vercel.app/plans/FinanceScore_Plan_Fragile_v3.pdf",
+  progression: "https://finance-score.vercel.app/plans/FinanceScore_Plan_Progression_v3.pdf",
+  solide:      "https://finance-score.vercel.app/plans/FinanceScore_Plan_Solide_v3.pdf",
 };
 
 const TEMPLATE_IDS = {
