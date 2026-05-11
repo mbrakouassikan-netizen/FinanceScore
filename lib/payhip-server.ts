@@ -50,6 +50,10 @@ export class PayhipServerService {
         // Extraire le score depuis les champs personnalisés si disponible
         const score = parseInt(payload.data.custom_fields?.custom_score || payload.data.custom_fields?.score || '0', 10);
         
+        console.log('📧 Tentative envoi email premium à:', payload.data?.email);
+        console.log('🎯 Score extrait:', score);
+        console.log('📊 Niveau:', this.getNiveau(score));
+        
         await sendPremiumEmail({
           email: payload.data.email,
           prenom: payload.data.full_name?.split(' ')[0] || 'là',

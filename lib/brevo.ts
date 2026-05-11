@@ -75,15 +75,40 @@ export async function sendScoreEmail(params: {
 }
 
 export async function sendPremiumEmail(params: {
-  email: string; prenom: string; score: number;
-}): Promise<boolean> {
-  const niveau = getNiveau(params.score);
-  return callBrevoAPI({
-    to: [{ email: params.email, name: params.prenom }],
-    templateId: TEMPLATE_IDS.premium,
-    params: {
-      SCORE: params.score, NIVEAU: niveau.label,
-      PDF_LINK: niveau.pdfLink, MESSAGE_MOTIVANT: niveau.message,
-    },
-  });
+  email: string;
+  prenom: string;
+  score: number;
+}) {
+  try {
+    const niveau = getNiveau(params.score);
+    
+    console.log('📨 sendPremiumEmail appelé avec:', params);
+    console.log('📄 PDF Link:', niveau.pdfLink);
+    
+    const emailParams = {
+      to: [{ email: params.email, name: params.prenom }],
+      templateId: TEMPLATE_IDS.premium,
+      params: {
+        PRENOM: params.prenom,
+        SCORE: params.score,
+        NIVEAU: niveau.label,
+        MESSAGE: niveau.message,
+        PDF_LINK: niveau.pdfLink,
+      },
+      tags: ['premium', 'finance-score'],
+    };
+
+    const response = await callBrevoAPI(emailParams);
+    
+    if (response) {
+      console.log('✅ Email premium envoyé via Brevo');
+    } else {
+      console.warn('⚠️ Échec envoi email premium Brevo');
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('❌ Erreur envoi email premium Brevo:', error);
+    throw error;
+  }
 }
