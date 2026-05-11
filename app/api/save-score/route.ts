@@ -1,10 +1,11 @@
+import { Redis } from '@upstash/redis';
 import { NextRequest, NextResponse } from 'next/server';
-import { kv } from '@vercel/kv';
+
+const redis = Redis.fromEnv();
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { email, score } = body;
+    const { email, score } = await req.json();
 
     if (!email || score === undefined) {
       return NextResponse.json(
@@ -13,23 +14,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Sauvegarder le score dans Vercel KV avec expiration de 1h
+    // Sauvegarder le score dans Upstash Redis avec expiration de 1h
     const key = `score:${email}`;
-    await kv.set(key, score, { ex: 3600 });
+    await redis.set(key, score, { ex: 3600 });
     
-    console.log('💾 Score sauvegardé dans KV:', { email, score, key });
+    console.log('💾 Score sauvegardé dans Upstash Redis:', { email, score, key });
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Score sauvegardé avec succès dans KV',
+      message: 'Score sauvegardé avec succès dans Upstash Redis',
       email,
       score,
       expiresIn: 3600 // 1 heure
     });
   } catch (error) {
-    console.error('❌ Erreur sauvegarde score KV:', error);
+    console.error('❌ Erreur sauvegarde score Upstash Redis:', error);
     return NextResponse.json(
-      { error: 'Erreur serveur KV' },
+      { error: 'Erreur serveur Upstash Redis' },
       { status: 500 }
     );
   }
@@ -37,19 +38,19 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    // Vérifier la connexion KV
-    await kv.ping();
+    // Vérifier la connexion Upstash Redis
+    await redis.ping();
     
     return NextResponse.json({
-      message: 'Save score KV endpoint',
+      message: 'Save score Upstash Redis endpoint',
       status: 'active',
       timestamp: new Date().toISOString(),
-      kvConnected: true
+      redisConnected: true
     });
   } catch (error) {
-    console.error('❌ Erreur connexion KV:', error);
+    console.error('❌ Erreur connexion Upstash Redis:', error);
     return NextResponse.json(
-      { error: 'Erreur connexion KV' },
+      { error: 'Erreur connexion Upstash Redis' },
       { status: 500 }
     );
   }

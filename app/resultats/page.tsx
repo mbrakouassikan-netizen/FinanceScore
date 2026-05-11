@@ -44,6 +44,27 @@ function ResultsContent() {
   useEffect(() => {
     setUserName(name);
     
+    // Sauvegarder le score dans Upstash Redis dès le chargement
+    if (scoreFromUrl > 0 && email) {
+      const userEmail = email || (name.includes('@') ? name : '');
+      if (userEmail) {
+        fetch("/api/save-score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: userEmail,
+            score: scoreFromUrl,
+          }),
+        }).then(saveResponse => {
+          if (saveResponse.ok) {
+            console.log('✅ Score sauvegardé dans Upstash Redis au chargement');
+          } else {
+            console.error('❌ Erreur sauvegarde score Upstash Redis:', saveResponse.status);
+          }
+        }).catch(error => console.error("Erreur sauvegarde score Upstash Redis:", error));
+      }
+    }
+    
     // Générer un résultat basé sur le score réel sans mockAnswers
     const timer = setTimeout(() => {
       // Créer un résultat de score direct et cohérent
@@ -111,23 +132,6 @@ function ResultsContent() {
           }).then(response => {
             if (response.ok) {
               console.log('✅ Email de score envoyé à:', userEmail, 'avec score:', scoreFromUrl);
-              
-              // Sauvegarder le score dans Vercel KV pour le webhook Payhip
-              fetch("/api/save-score", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  email: userEmail,
-                  score: scoreFromUrl,
-                }),
-              }).then(saveResponse => {
-                if (saveResponse.ok) {
-                  console.log('✅ Score sauvegardé dans KV pour webhook Payhip');
-                } else {
-                  console.error('❌ Erreur sauvegarde score KV:', saveResponse.status);
-                }
-              }).catch(error => console.error("Erreur sauvegarde score KV:", error));
-              
               setEmailSent(true);
             } else {
               console.error('❌ Erreur envoi email:', response.status);

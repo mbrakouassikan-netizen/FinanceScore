@@ -55,14 +55,16 @@ export class PayhipServerService {
         const email = payload.email || payload.buyer_email || '';
         const name = payload.name || payload.buyer_name || '';
         
-        // Récupérer le score depuis Vercel KV
+        // Récupérer le score depuis Upstash Redis
         let score = 0;
         try {
-          const { kv } = await import('@vercel/kv');
-          score = await kv.get<number>(`score:${email}`) || 0;
-          console.log('📊 Score récupéré depuis KV:', { email, score });
+          const { Redis } = await import('@upstash/redis');
+          const redis = Redis.fromEnv();
+          const savedScore = await redis.get<number>(`score:${email}`);
+          score = savedScore || 0;
+          console.log('📊 Score récupéré depuis Upstash Redis:', { email, score });
         } catch (error) {
-          console.error('❌ Erreur récupération score KV:', error);
+          console.error('❌ Erreur récupération score Upstash Redis:', error);
           score = 0;
         }
         
