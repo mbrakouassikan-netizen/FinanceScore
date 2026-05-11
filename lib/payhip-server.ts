@@ -1,5 +1,8 @@
 // lib/payhip-server.ts - Version complète côté serveur uniquement
 
+// Store global pour sauvegarder les scores par email
+const scoreStore = new Map<string, number>();
+
 export interface PayhipWebhookPayload {
   event?: 'paid' | 'refunded';
   type?: 'paid' | 'refunded';
@@ -52,7 +55,9 @@ export class PayhipServerService {
         // Extraire email et nom avec fallbacks
         const email = payload.email || payload.buyer_email || '';
         const name = payload.name || payload.buyer_name || '';
-        const score = 0; // Score non disponible via Payhip
+        
+        // Récupérer le score sauvegardé pour cet email
+        const score = scoreStore.get(email) || 0;
         
         console.log('📧 Tentative envoi email premium à:', email);
         console.log('🎯 Score extrait:', score);
