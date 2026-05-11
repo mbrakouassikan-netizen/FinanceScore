@@ -1,19 +1,21 @@
 // lib/payhip-server.ts - Version complète côté serveur uniquement
 
 export interface PayhipWebhookPayload {
-  event: 'paid' | 'refunded';
-  data: {
-    sale_id: string;
-    product_id: string;
-    product_name: string;
-    currency: string;
-    amount: number;
-    fee: number;
-    total: number;
-    email: string;
-    full_name: string;
-    custom_fields?: Record<string, string>;
-  };
+  event?: 'paid' | 'refunded';
+  type?: 'paid' | 'refunded';
+  email?: string;
+  buyer_email?: string;
+  name?: string;
+  buyer_name?: string;
+  sale_id?: string;
+  product_id?: string;
+  product_name?: string;
+  currency?: string;
+  amount?: number;
+  fee?: number;
+  total?: number;
+  full_name?: string;
+  custom_fields?: Record<string, string>;
 }
 
 export class PayhipServerService {
@@ -43,24 +45,26 @@ export class PayhipServerService {
     try {
       console.log('🔔 Webhook Payhip reçu:', payload);
 
-      if (payload.event === 'paid') {
+      if (payload.type === 'paid' || payload.event === 'paid') {
         // Paiement réussi - envoyer l'email premium
         const { sendPremiumEmail } = await import('./brevo');
         
-        // Extraire le score depuis les champs personnalisés si disponible
-        const score = parseInt(payload.data.custom_fields?.custom_score || payload.data.custom_fields?.score || '0', 10);
+        // Extraire email et nom avec fallbacks
+        const email = payload.email || payload.buyer_email || '';
+        const name = payload.name || payload.buyer_name || '';
+        const score = 0; // Score non disponible via Payhip
         
-        console.log('📧 Tentative envoi email premium à:', payload.data?.email);
+        console.log('📧 Tentative envoi email premium à:', email);
         console.log('🎯 Score extrait:', score);
         console.log('📊 Niveau:', this.getNiveau(score));
         
         await sendPremiumEmail({
-          email: payload.data.email,
-          prenom: payload.data.full_name?.split(' ')[0] || 'là',
+          email: email,
+          prenom: name?.split(' ')[0] || 'là',
           score: score,
         });
 
-        console.log('✅ Email premium envoyé pour:', payload.data.email);
+        console.log('✅ Email premium envoyé pour:', email);
         
         // Optionnel: Sauvegarder dans Google Sheets
         if (process.env.GOOGLE_SHEET_ID && typeof window === 'undefined') {
@@ -69,8 +73,8 @@ export class PayhipServerService {
             await googleSheetsService.setupSheet();
             
             const userData = {
-              name: payload.data.full_name || '',
-              email: payload.data.email,
+              name: name || '',
+              email: email,
               score: score,
               percentage: Math.round(score),
               niveau: this.getNiveau(score).label,
@@ -91,8 +95,9 @@ export class PayhipServerService {
             console.warn('⚠️ Google Sheets non disponible:', error);
           }
         }
-      } else if (payload.event === 'refunded') {
-        console.log('💰 Remboursement pour:', payload.data.email);
+      } else if (payload.event === 'refunded' || payload.type === 'refunded') {
+        const refundEmail = payload.email || payload.buyer_email || '';
+        console.log('💰 Remboursement pour:', refundEmail);
       }
     } catch (error) {
       console.error('❌ Erreur traitement webhook Payhip:', error);
