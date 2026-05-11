@@ -10,87 +10,62 @@ interface Resource {
   url: string;
 }
 
-interface ScoreLevelResources {
-  [key: string]: Resource[];
+interface Category {
+  name: string;
+  emoji: string;
+  resources: Resource[];
 }
 
-const resourcesByScore: ScoreLevelResources = {
-  "0-39": [
-    {
-      title: "Surendettement",
-      summary: "Procédure gratuite mise en œuvre par la Banque de France. Permet de geler les poursuites et de rééchelonner tes dettes. Accessible à tous les particuliers en difficulté.",
-      url: "https://www.banque-france.fr/fr/a-votre-service/particuliers/dossier-surendettement"
-    },
-    {
-      title: "Aides sociales",
-      summary: "Simule gratuitement tes droits à plus de 58 aides (RSA, APL, allocations familiales…) en quelques minutes, sans création de compte.",
-      url: "https://www.mesdroitssociaux.gouv.fr"
-    },
-    {
-      title: "Service Public",
-      summary: "Guide officiel pour déposer un dossier de surendettement : conditions, pièces à fournir, délais.",
-      url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F134"
-    }
-  ],
-  "40-59": [
-    {
-      title: "Aides sociales",
-      summary: "Simule gratuitement tes droits à plus de 58 aides (RSA, APL, allocations familiales…) en quelques minutes, sans création de compte.",
-      url: "https://www.mesdroitssociaux.gouv.fr"
-    },
-    {
-      title: "Aides financières",
-      summary: "Retrouve toutes les aides disponibles selon ta situation : logement, emploi, famille, santé. Guide officiel Service Public.",
-      url: "https://www.service-public.gouv.fr/particuliers/vosdroits/R54933"
-    },
-    {
-      title: "Banque de France",
-      summary: "Guides pratiques officiels pour mieux gérer ton budget et comprendre les bases de l'épargne et de la gestion financière.",
-      url: "https://particuliers.banque-france.fr"
-    }
-  ],
-  "60-79": [
-    {
-      title: "Simulateur retraite",
-      summary: "Estime gratuitement ton âge de départ à la retraite et le montant de ta pension. Service public officiel, mis à jour en 2026.",
-      url: "https://www.info-retraite.fr"
-    },
-    {
-      title: "Plan épargne retraite",
-      summary: "Tout comprendre sur le Plan Épargne Retraite (PER) et les nouvelles règles fiscales 2026. Guide officiel Service Public.",
-      url: "https://www.service-public.gouv.fr/particuliers/actualites/A18841"
-    },
-    {
-      title: "Aides financières",
-      summary: "Retrouve toutes les aides disponibles selon ta situation : logement, emploi, famille, santé.",
-      url: "https://www.service-public.gouv.fr/particuliers/vosdroits/R54933"
-    }
-  ],
-  "80-100": [
-    {
-      title: "Simulateur retraite",
-      summary: "Estime gratuitement ton âge de départ à la retraite et le montant de ta pension. Service public officiel, mis à jour en 2026.",
-      url: "https://www.info-retraite.fr"
-    },
-    {
-      title: "Succession & héritage",
-      summary: "Guide officiel sur la transmission patrimoniale, les droits de succession et les démarches à effectuer. Source : economie.gouv.fr.",
-      url: "https://www.economie.gouv.fr/particuliers/preparer-ma-retraite-et-ma-succession"
-    },
-    {
-      title: "Plan épargne retraite",
-      summary: "Tout comprendre sur le PER et les nouvelles règles fiscales 2026. Guide officiel Service Public.",
-      url: "https://www.service-public.gouv.fr/particuliers/actualites/A18841"
-    }
-  ]
-};
-
-const getScoreRange = (score: number): string => {
-  if (score <= 39) return "0-39";
-  if (score <= 59) return "40-59";
-  if (score <= 79) return "60-79";
-  return "80-100";
-};
+const categories: Category[] = [
+  {
+    name: "S'informer",
+    emoji: "📚",
+    resources: [
+      {
+        title: "MesQuestionsDArgent",
+        summary: "Site officiel de la Banque de France dédié à l'éducation financière. Guides pratiques, simulateurs et conseils pour gérer ton budget au quotidien.",
+        url: "https://www.mesquestionsdargent.fr"
+      },
+      {
+        title: "AMF Épargne Info Service",
+        summary: "L'Autorité des Marchés Financiers informe gratuitement sur les produits financiers, les risques et les bonnes pratiques d'investissement.",
+        url: "https://www.amf-france.org"
+      }
+    ]
+  },
+  {
+    name: "Mes droits",
+    emoji: "🛡️",
+    resources: [
+      {
+        title: "Médiateur bancaire",
+        summary: "Service gratuit pour résoudre les litiges avec ta banque à l'amiable. Accessible à tout client bancaire en cas de désaccord non résolu.",
+        url: "https://www.lemediateur.fr"
+      },
+      {
+        title: "Médiateur assurance",
+        summary: "Service gratuit de médiation pour les assurés en conflit avec leur assureur. Règlement amiable des litiges en assurance.",
+        url: "https://www.mediation-assurance.org"
+      }
+    ]
+  },
+  {
+    name: "Éviter les arnaques",
+    emoji: "⚠️",
+    resources: [
+      {
+        title: "AMF — Liste noire",
+        summary: "Consulte la liste noire officielle de l'AMF recensant les sites et entités non autorisés à proposer des investissements en France.",
+        url: "https://www.amf-france.org/fr/espace-epargnants/proteger-son-epargne/listes-noires-et-mises-en-garde"
+      },
+      {
+        title: "Banque de France — Arnaques",
+        summary: "Guide officiel pour identifier et éviter les arnaques financières. Signalement et ressources de protection.",
+        url: "https://www.banque-france.fr/fr/particuliers/proteger-son-argent"
+      }
+    ]
+  }
+];
 
 const getLevelColors = (score: number) => {
   if (score <= 39) return {
@@ -136,25 +111,16 @@ export default function OfficialResources({ score }: { score: number }) {
     return null;
   }
   
-  const scoreRange = getScoreRange(score);
-  const resources = resourcesByScore[scoreRange] || [];
   const colors = getLevelColors(score);
 
-  // Guard pour les ressources vides
-  if (!resources || resources.length === 0) {
-    console.warn('OfficialResources - Aucune ressource trouvée pour le score:', score, 'range:', scoreRange);
-    return null;
-  }
-
   // Guard pour l'activeTab
-  if (activeTab < 0 || activeTab >= resources.length) {
+  if (activeTab < 0 || activeTab >= categories.length) {
     setActiveTab(0);
   }
 
   // Debug: Afficher les informations reçues
   console.log('OfficialResources - Score reçu:', score, 'Type:', typeof score);
-  console.log('OfficialResources - ScoreRange calculé:', scoreRange);
-  console.log('OfficialResources - Resources trouvées:', resources.length, resources);
+  console.log('OfficialResources - Catégories:', categories.length, categories);
 
   return (
     <motion.div
@@ -175,21 +141,19 @@ export default function OfficialResources({ score }: { score: number }) {
 
       {/* Tabs */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">
-        {resources.map((resource, index) => {
-          // Guard pour chaque ressource
-          if (!resource || !resource.title) return null;
-          
+        {categories.map((category, index) => {
           return (
             <button
               key={index}
               onClick={() => setActiveTab(index)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 ${
                 activeTab === index 
                   ? colors.tabActive 
                   : colors.tabInactive
               }`}
             >
-              {resource.title}
+              <span className="text-lg">{category.emoji}</span>
+              {category.name}
             </button>
           );
         })}
@@ -203,33 +167,40 @@ export default function OfficialResources({ score }: { score: number }) {
         transition={{ duration: 0.3 }}
         className="bg-white rounded-lg p-6 shadow-sm"
       >
-        {/* Guard pour la ressource active */}
-        {resources[activeTab] ? (
+        {/* Guard pour la catégorie active */}
+        {categories[activeTab] ? (
           <>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                {resources[activeTab].title || 'Ressource'}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {categories[activeTab].name}
               </h3>
-              <p className="text-text-secondary leading-relaxed">
-                {resources[activeTab].summary || 'Description non disponible'}
-              </p>
-            </div>
-            
-            <div className="flex justify-center">
-              <a
-                href={resources[activeTab].url || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${colors.button} hover:shadow-lg transform hover:scale-105`}
-              >
-                <ExternalLink className="w-4 h-4" />
-                Site web
-              </a>
+              
+              {categories[activeTab].resources.map((resource, resourceIndex) => (
+                <div key={resourceIndex} className="mb-6 last:mb-0">
+                  <h4 className="text-base font-medium text-gray-900 mb-2">
+                    {resource.title}
+                  </h4>
+                  <p className="text-text-secondary leading-relaxed mb-3">
+                    {resource.summary}
+                  </p>
+                  <div className="flex justify-center">
+                    <a
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${colors.button} hover:shadow-lg transform hover:scale-105`}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Site web
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
           </>
         ) : (
           <div className="text-center text-text-secondary">
-            Ressource non disponible
+            Catégorie non disponible
           </div>
         )}
       </motion.div>
