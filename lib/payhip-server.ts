@@ -1,8 +1,5 @@
 // lib/payhip-server.ts - Version complète côté serveur uniquement
 
-// Store global pour sauvegarder les scores par email
-const scoreStore = new Map<string, number>();
-
 export interface PayhipWebhookPayload {
   event?: 'paid' | 'refunded';
   type?: 'paid' | 'refunded';
@@ -58,8 +55,16 @@ export class PayhipServerService {
         const email = payload.email || payload.buyer_email || '';
         const name = payload.name || payload.buyer_name || '';
         
-        // Récupérer le score depuis les paramètres personnalisés Payhip
-        const score = parseInt(payload.custom_score || payload.custom_fields?.custom_score || '0', 10);
+        // Récupérer le score depuis Vercel KV
+        let score = 0;
+        try {
+          const { kv } = await import('@vercel/kv');
+          score = await kv.get<number>(`score:${email}`) || 0;
+          console.log('📊 Score récupéré depuis KV:', { email, score });
+        } catch (error) {
+          console.error('❌ Erreur récupération score KV:', error);
+          score = 0;
+        }
         
         console.log('📧 Tentative envoi email premium à:', email);
         console.log('🎯 Score extrait:', score);

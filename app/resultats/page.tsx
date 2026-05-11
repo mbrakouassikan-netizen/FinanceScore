@@ -112,7 +112,7 @@ function ResultsContent() {
             if (response.ok) {
               console.log('✅ Email de score envoyé à:', userEmail, 'avec score:', scoreFromUrl);
               
-              // Sauvegarder le score en mémoire pour le webhook Payhip
+              // Sauvegarder le score dans Vercel KV pour le webhook Payhip
               fetch("/api/save-score", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -122,11 +122,11 @@ function ResultsContent() {
                 }),
               }).then(saveResponse => {
                 if (saveResponse.ok) {
-                  console.log('✅ Score sauvegardé pour webhook Payhip');
+                  console.log('✅ Score sauvegardé dans KV pour webhook Payhip');
                 } else {
-                  console.error('❌ Erreur sauvegarde score:', saveResponse.status);
+                  console.error('❌ Erreur sauvegarde score KV:', saveResponse.status);
                 }
-              }).catch(error => console.error("Erreur sauvegarde score:", error));
+              }).catch(error => console.error("Erreur sauvegarde score KV:", error));
               
               setEmailSent(true);
             } else {
