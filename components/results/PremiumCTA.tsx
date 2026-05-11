@@ -55,27 +55,15 @@ export const PremiumCTA: React.FC<PremiumCTAProps> = ({ score: propScore }) => {
     trackPremiumCTAClicked();
 
     try {
-      // Appeler l'API route pour créer le lien Payhip
-      const response = await fetch('/api/payhip/payment-link', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: finalEmail,
-          name: finalName,
-          score: score,
-        }),
-      });
-
-      const data = await response.json();
+      // Construire directement l'URL Payhip avec les paramètres personnalisés
+      const payhipUrl = `https://payhip.com/b/53DCE?suggested_price=4.99&custom_score=${score}&custom_email=${encodeURIComponent(finalEmail)}`;
       
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de la création du lien de paiement');
-      }
+      console.log('🔗 URL Payhip générée:', payhipUrl);
+      console.log('📊 Score passé:', score);
+      console.log('📧 Email passé:', finalEmail);
 
-      // Rediriger vers la page de paiement Payhip
-      window.location.href = data.paymentLink;
+      // Rediriger directement vers la page de paiement Payhip
+      window.location.href = payhipUrl;
     } catch (error) {
       console.error('Erreur création paiement:', error);
       alert('Une erreur est survenue. Veuillez réessayer.');

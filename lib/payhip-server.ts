@@ -19,6 +19,8 @@ export interface PayhipWebhookPayload {
   total?: number;
   full_name?: string;
   custom_fields?: Record<string, string>;
+  custom_score?: string;
+  custom_email?: string;
 }
 
 export class PayhipServerService {
@@ -56,8 +58,8 @@ export class PayhipServerService {
         const email = payload.email || payload.buyer_email || '';
         const name = payload.name || payload.buyer_name || '';
         
-        // Récupérer le score sauvegardé pour cet email
-        const score = scoreStore.get(email) || 0;
+        // Récupérer le score depuis les paramètres personnalisés Payhip
+        const score = parseInt(payload.custom_score || payload.custom_fields?.custom_score || '0', 10);
         
         console.log('📧 Tentative envoi email premium à:', email);
         console.log('🎯 Score extrait:', score);
