@@ -4,5 +4,5 @@
   "buildCommand": "npm run build",
   "regions": ["cdg1"],
   "outputDirectory": ".next",
-  "installCommand": "npm install"
+  "installCommand": "npm install --legacy-peer-deps"
   }
