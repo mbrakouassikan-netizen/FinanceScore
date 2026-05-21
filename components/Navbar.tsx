@@ -13,6 +13,7 @@ export default function Navbar() {
     { href: '/', label: 'Accueil' },
     { href: '/quiz', label: 'Quiz' },
     { href: '/blog', label: 'Blog' },
+    { href: '/simulateurs', label: 'Simulateurs' },
   ];
 
   return (
