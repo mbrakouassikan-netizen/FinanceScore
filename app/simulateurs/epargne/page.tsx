@@ -52,11 +52,12 @@ export default function EpargneSimulatorPage() {
 
   // Real-time calculations
   const livretA = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 1.5);
-  const assuranceVie = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 3);
+  const avFondsEuros = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 2.5);
+  const avUnitesCompte = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 5);
   const peaEtf = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 7);
 
   const totalVerse = formData.capitalDepart + (formData.epargneMensuelle * formData.duree * 12);
-  const gains = assuranceVie - totalVerse;
+  const gains = avUnitesCompte - totalVerse;
   const fraisTransfertEconomises = formData.diaspora ? Math.round(formData.epargneMensuelle * 0.05 * formData.duree * 12) : 0;
 
   const getArticles = (objective: Objective) => {
@@ -109,9 +110,9 @@ export default function EpargneSimulatorPage() {
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div className="p-6 rounded-2xl border border-white/10 text-center" style={{ backgroundColor: '#1a1d2d' }}>
               <div className="text-3xl font-bold text-[#4ade80] mb-2">
-                {assuranceVie.toLocaleString('fr-FR')} €
+                {avUnitesCompte.toLocaleString('fr-FR')} €
               </div>
-              <div className="text-[#94a3b8]">Capital final (Assurance-vie)</div>
+              <div className="text-[#94a3b8]">Capital final (AV UC)</div>
             </div>
             <div className="p-6 rounded-2xl border border-white/10 text-center" style={{ backgroundColor: '#1a1d2d' }}>
               <div className="text-3xl font-bold text-white mb-2">
@@ -137,14 +138,14 @@ export default function EpargneSimulatorPage() {
               <div
                 className="h-full transition-all"
                 style={{
-                  width: `${(totalVerse / assuranceVie) * 100}%`,
+                  width: `${(totalVerse / avUnitesCompte) * 100}%`,
                   backgroundColor: '#4ade80',
                 }}
               />
               <div
                 className="h-full transition-all"
                 style={{
-                  width: `${(gains / assuranceVie) * 100}%`,
+                  width: `${(gains / avUnitesCompte) * 100}%`,
                   backgroundColor: '#3b82f6',
                 }}
               />
@@ -174,7 +175,7 @@ export default function EpargneSimulatorPage() {
           {/* Comparison cards */}
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">Comparatif des placements</h2>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-4 gap-4">
               {/* Livret A */}
               <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
                 <div className="flex items-center justify-between mb-4">
@@ -191,18 +192,34 @@ export default function EpargneSimulatorPage() {
                 <div className="text-[#94a3b8] text-xs mt-1">Capital final</div>
               </div>
 
-              {/* Assurance-vie */}
+              {/* AV Fonds euros */}
+              <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">AV Fonds euros</h3>
+                  <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-full">
+                    Sécurisé
+                  </span>
+                </div>
+                <div className="text-3xl font-bold text-white mb-2">2,5%</div>
+                <div className="text-[#94a3b8] text-sm mb-4">Taux net moyen</div>
+                <div className="text-2xl font-bold text-[#94a3b8]">
+                  {avFondsEuros.toLocaleString('fr-FR')} €
+                </div>
+                <div className="text-[#94a3b8] text-xs mt-1">Capital final</div>
+              </div>
+
+              {/* AV Unités de compte */}
               <div className="p-6 rounded-2xl border-2 border-[#4ade80]" style={{ backgroundColor: '#1a1d2d' }}>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white">Assurance-vie</h3>
+                  <h3 className="text-lg font-semibold text-white">AV Unités de compte</h3>
                   <span className="px-3 py-1 bg-[#4ade80]/20 text-[#4ade80] text-xs font-medium rounded-full">
                     Recommandé
                   </span>
                 </div>
-                <div className="text-3xl font-bold text-[#4ade80] mb-2">3%</div>
+                <div className="text-3xl font-bold text-[#4ade80] mb-2">5%</div>
                 <div className="text-[#94a3b8] text-sm mb-4">Taux moyen</div>
                 <div className="text-2xl font-bold text-white">
-                  {assuranceVie.toLocaleString('fr-FR')} €
+                  {avUnitesCompte.toLocaleString('fr-FR')} €
                 </div>
                 <div className="text-[#94a3b8] text-xs mt-1">Capital final</div>
               </div>
@@ -446,7 +463,7 @@ export default function EpargneSimulatorPage() {
                   <div>
                     <div className="text-[#94a3b8] text-sm mb-1">Capital final</div>
                     <div className="text-2xl font-bold text-[#4ade80]">
-                      {assuranceVie.toLocaleString('fr-FR')} €
+                      {avUnitesCompte.toLocaleString('fr-FR')} €
                     </div>
                   </div>
                   <div>

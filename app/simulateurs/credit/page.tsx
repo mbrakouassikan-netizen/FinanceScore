@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
 
 type Step = 1 | 2 | 3 | 4 | 'results' | 'redirect';
 
@@ -17,9 +17,12 @@ interface FormData {
   revenus: number;
   coEmprunteur: boolean;
   revenusCoEmprunteur: number;
-  charges: number;
+  loyer: number;
+  autresCredits: number;
+  revenusLocatifs: number;
   apport: number;
   duration: Duration | null;
+  taux: number;
 }
 
 export default function CreditSimulatorPage() {
@@ -31,9 +34,12 @@ export default function CreditSimulatorPage() {
     revenus: 0,
     coEmprunteur: false,
     revenusCoEmprunteur: 0,
-    charges: 0,
+    loyer: 0,
+    autresCredits: 0,
+    revenusLocatifs: 0,
     apport: 0,
     duration: null,
+    taux: 3.7,
   });
 
   const projects = [
@@ -64,12 +70,34 @@ export default function CreditSimulatorPage() {
 
   const calculateResults = () => {
     const totalRevenus = formData.revenus + (formData.coEmprunteur ? formData.revenusCoEmprunteur : 0);
-    const totalCharges = formData.charges;
-    const revenuDisponible = totalRevenus - totalCharges;
-    const tauxEndettementMax = 0.35;
-    const mensualiteMax = revenuDisponible * tauxEndettementMax;
-    const tauxInteret = 0.037; // 3.7%
+    const tauxInteret = formData.taux / 100;
     const dureeMois = (formData.duration || 20) * 12;
+    
+    // Calcul de la capacité d'emprunt basé sur 35% d'endettement
+    const tauxEndettementMax = 0.35;
+    
+    // Calcul des charges selon le projet
+    let chargesPourEndettement = 0;
+    
+    if (formData.project === 'residence-principale') {
+      // Loyer NON inclus (sera remplacé par la future mensualité)
+      // Autres crédits inclus
+      // Revenus locatifs inclus s'ils existent (réduisent le taux d'endettement)
+      chargesPourEndettement = formData.autresCredits - formData.revenusLocatifs;
+    } else if (formData.project === 'investissement-locatif') {
+      // Loyer inclus
+      // Autres crédits inclus
+      // Revenus locatifs attendus inclus (réduisent le taux d'endettement)
+      // Les banques retiennent 70% des revenus locatifs
+      chargesPourEndettement = formData.loyer + formData.autresCredits - (formData.revenusLocatifs * 0.7);
+    } else if (formData.project === 'residence-secondaire') {
+      // Loyer inclus
+      // Autres crédits inclus
+      chargesPourEndettement = formData.loyer + formData.autresCredits;
+    }
+    
+    const revenuDisponible = totalRevenus - chargesPourEndettement;
+    const mensualiteMax = revenuDisponible * tauxEndettementMax;
     
     // Calcul de la capacité d'emprunt
     const capaciteEmprunt = (mensualiteMax * dureeMois) / (1 - Math.pow(1 + tauxInteret / 12, -dureeMois));
@@ -77,13 +105,21 @@ export default function CreditSimulatorPage() {
     // Mensualité pour la capacité calculée
     const mensualite = (capaciteEmprunt * (tauxInteret / 12) * Math.pow(1 + tauxInteret / 12, dureeMois)) / (Math.pow(1 + tauxInteret / 12, dureeMois) - 1);
     
-    // Taux d'endettement réel
-    const tauxEndettement = (mensualite / revenuDisponible) * 100;
+    // Taux d'endettement réel selon le projet
+    let tauxEndettement = 0;
+    if (formData.project === 'residence-principale') {
+      tauxEndettement = ((mensualite + formData.autresCredits) / totalRevenus) * 100;
+    } else if (formData.project === 'investissement-locatif') {
+      tauxEndettement = ((mensualite + formData.loyer + formData.autresCredits - (formData.revenusLocatifs * 0.7)) / totalRevenus) * 100;
+    } else if (formData.project === 'residence-secondaire') {
+      tauxEndettement = ((mensualite + formData.loyer + formData.autresCredits) / totalRevenus) * 100;
+    }
 
     return {
       capaciteEmprunt: Math.round(capaciteEmprunt),
       mensualite: Math.round(mensualite),
       tauxEndettement: Math.round(tauxEndettement * 10) / 10,
+      tauxUtilise: formData.taux,
     };
   };
 
@@ -102,7 +138,7 @@ export default function CreditSimulatorPage() {
               Résultats de ta capacité d'emprunt
             </h1>
             <p className="text-[#94a3b8]">
-              Basé sur un taux indicatif de 3,7% (2025)
+              Calcul basé sur un taux de {results.tauxUtilise}%
             </p>
           </div>
 
@@ -148,6 +184,14 @@ export default function CreditSimulatorPage() {
                 <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                 <p className="text-sm">
                   Ton taux d'endettement dépasse les 35% recommandés. Considère d'augmenter ton apport ou de réduire la durée.
+                </p>
+              </div>
+            )}
+            {formData.project === 'investissement-locatif' && (
+              <div className="mt-3 flex items-start gap-2 text-[#94a3b8]">
+                <Info className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                <p className="text-sm">
+                  Les revenus locatifs sont retenus à 70% par les banques.
                 </p>
               </div>
             )}
@@ -343,13 +387,33 @@ export default function CreditSimulatorPage() {
                 </div>
               )}
               <div>
-                <label className="block text-white font-medium mb-2">Charges mensuelles (crédits, loyers, etc.) (€)</label>
+                <label className="block text-white font-medium mb-2">Loyer actuel mensuel (€)</label>
                 <input
                   type="number"
-                  value={formData.charges || ''}
-                  onChange={(e) => setFormData({ ...formData, charges: parseInt(e.target.value) || 0 })}
+                  value={formData.loyer || ''}
+                  onChange={(e) => setFormData({ ...formData, loyer: parseInt(e.target.value) || 0 })}
                   className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
                   placeholder="Ex: 800"
+                />
+              </div>
+              <div>
+                <label className="block text-white font-medium mb-2">Autres crédits en cours (€)</label>
+                <input
+                  type="number"
+                  value={formData.autresCredits || ''}
+                  onChange={(e) => setFormData({ ...formData, autresCredits: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                  placeholder="(crédit conso, leasing, pension alimentaire...)"
+                />
+              </div>
+              <div>
+                <label className="block text-white font-medium mb-2">Revenus locatifs mensuels (€)</label>
+                <input
+                  type="number"
+                  value={formData.revenusLocatifs || ''}
+                  onChange={(e) => setFormData({ ...formData, revenusLocatifs: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                  placeholder="(si vous avez déjà un bien en location)"
                 />
               </div>
             </div>
@@ -405,6 +469,21 @@ export default function CreditSimulatorPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+              <div>
+                <label className="block text-white font-medium mb-2">Taux du crédit (%)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0.1"
+                  max="15"
+                  value={formData.taux}
+                  onChange={(e) => setFormData({ ...formData, taux: parseFloat(e.target.value) || 3.7 })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                />
+                <p className="text-[#94a3b8] text-xs mt-1">
+                  Taux indicatif 2025 — modifiez selon votre banque
+                </p>
               </div>
             </div>
             <div className="flex justify-between mt-8">

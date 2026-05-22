@@ -91,12 +91,12 @@ export default function SimulateursPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
+        <div className="flex overflow-x-auto gap-2 mb-12 md:justify-center flex-nowrap">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                 activeTab === tab
                   ? 'bg-[#4ade80] text-black'
                   : 'bg-white/10 text-white hover:bg-white/20'
