@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Info, Home, Building } from 'lucide-react';
 
 type Step = 1 | 2 | 3 | 4 | 'results' | 'redirect';
 
 type Project = 'residence-principale' | 'investissement-locatif' | 'construction-pays' | 'residence-secondaire';
 type Situation = 'salarie-cdi' | 'fonctionnaire' | 'independant' | 'cdd';
 type Duration = 10 | 15 | 20 | 25;
+type TypeBien = 'ancien' | 'neuf';
 
 interface FormData {
   project: Project | null;
@@ -23,6 +24,11 @@ interface FormData {
   apport: number;
   duration: Duration | null;
   taux: number;
+  typeBien: TypeBien | null;
+  prixBien: number;
+  travaux: number;
+  fraisNotaire: number;
+  fraisAgence: number;
 }
 
 export default function CreditSimulatorPage() {
@@ -40,6 +46,11 @@ export default function CreditSimulatorPage() {
     apport: 0,
     duration: null,
     taux: 3.7,
+    typeBien: null,
+    prixBien: 0,
+    travaux: 0,
+    fraisNotaire: 0,
+    fraisAgence: 0,
   });
 
   const projects = [
@@ -73,39 +84,24 @@ export default function CreditSimulatorPage() {
     const tauxInteret = formData.taux / 100;
     const dureeMois = (formData.duration || 20) * 12;
     
-    // Calcul de la capacité d'emprunt basé sur 35% d'endettement
-    const tauxEndettementMax = 0.35;
+    // Calcul du coût total du projet
+    const coutProjet = formData.prixBien + formData.travaux + formData.fraisNotaire + formData.fraisAgence;
     
-    // Calcul des charges selon le projet
-    let chargesPourEndettement = 0;
+    // Calcul du besoin en financement
+    const besoinFinancement = coutProjet - formData.apport;
     
-    if (formData.project === 'residence-principale') {
-      // Loyer NON inclus (sera remplacé par la future mensualité)
-      // Autres crédits inclus
-      // Revenus locatifs inclus s'ils existent (réduisent le taux d'endettement)
-      chargesPourEndettement = formData.autresCredits - formData.revenusLocatifs;
-    } else if (formData.project === 'investissement-locatif') {
-      // Loyer inclus
-      // Autres crédits inclus
-      // Revenus locatifs attendus inclus (réduisent le taux d'endettement)
-      // Les banques retiennent 70% des revenus locatifs
-      chargesPourEndettement = formData.loyer + formData.autresCredits - (formData.revenusLocatifs * 0.7);
-    } else if (formData.project === 'residence-secondaire') {
-      // Loyer inclus
-      // Autres crédits inclus
-      chargesPourEndettement = formData.loyer + formData.autresCredits;
-    }
+    // Calcul de la mensualité basée sur le besoin en financement
+    const mensualite = besoinFinancement > 0 
+      ? (besoinFinancement * (tauxInteret / 12) * Math.pow(1 + tauxInteret / 12, dureeMois)) / (Math.pow(1 + tauxInteret / 12, dureeMois) - 1)
+      : 0;
     
-    const revenuDisponible = totalRevenus - chargesPourEndettement;
-    const mensualiteMax = revenuDisponible * tauxEndettementMax;
+    // Coût total du crédit
+    const coutTotalCredit = mensualite * dureeMois;
     
-    // Calcul de la capacité d'emprunt
-    const capaciteEmprunt = (mensualiteMax * dureeMois) / (1 - Math.pow(1 + tauxInteret / 12, -dureeMois));
+    // Coût des intérêts
+    const coutInterets = coutTotalCredit - besoinFinancement;
     
-    // Mensualité pour la capacité calculée
-    const mensualite = (capaciteEmprunt * (tauxInteret / 12) * Math.pow(1 + tauxInteret / 12, dureeMois)) / (Math.pow(1 + tauxInteret / 12, dureeMois) - 1);
-    
-    // Taux d'endettement réel selon le projet
+    // Taux d'endettement selon le projet
     let tauxEndettement = 0;
     if (formData.project === 'residence-principale') {
       tauxEndettement = ((mensualite + formData.autresCredits) / totalRevenus) * 100;
@@ -116,10 +112,14 @@ export default function CreditSimulatorPage() {
     }
 
     return {
-      capaciteEmprunt: Math.round(capaciteEmprunt),
+      coutProjet: Math.round(coutProjet),
+      besoinFinancement: Math.round(besoinFinancement),
       mensualite: Math.round(mensualite),
+      coutTotalCredit: Math.round(coutTotalCredit),
+      coutInterets: Math.round(coutInterets),
       tauxEndettement: Math.round(tauxEndettement * 10) / 10,
       tauxUtilise: formData.taux,
+      dureeAnnees: formData.duration || 20,
     };
   };
 
@@ -135,37 +135,98 @@ export default function CreditSimulatorPage() {
               ← Retour aux simulateurs
             </Link>
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-white mb-2">
-              Résultats de ta capacité d'emprunt
+              Résultats de ton projet
             </h1>
             <p className="text-[#94a3b8]">
-              Calcul basé sur un taux de {results.tauxUtilise}%
+              Calcul basé sur un taux de {results.tauxUtilise}% sur {results.dureeAnnees} ans
             </p>
           </div>
 
-          {/* Metrics */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="p-6 rounded-2xl border border-white/10 text-center" style={{ backgroundColor: '#1a1d2d' }}>
-              <div className="text-3xl font-bold text-[#4ade80] mb-2">
-                {results.capaciteEmprunt.toLocaleString('fr-FR')} €
+          {/* Bloc 1 — Coût total du projet */}
+          <div className="p-6 rounded-2xl border border-white/10 mb-8" style={{ backgroundColor: '#1a1d2d' }}>
+            <h3 className="text-xl font-semibold text-white mb-4">Coût total du projet</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-[#94a3b8]">Prix du bien</span>
+                <span className="text-white">{formData.prixBien.toLocaleString('fr-FR')} €</span>
               </div>
-              <div className="text-[#94a3b8]">Capacité d'emprunt</div>
-            </div>
-            <div className="p-6 rounded-2xl border border-white/10 text-center" style={{ backgroundColor: '#1a1d2d' }}>
-              <div className="text-3xl font-bold text-white mb-2">
-                {results.mensualite.toLocaleString('fr-FR')} €
+              {formData.travaux > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-[#94a3b8]">+ Travaux</span>
+                  <span className="text-white">+{formData.travaux.toLocaleString('fr-FR')} €</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-[#94a3b8]">+ Frais de notaire</span>
+                <span className="text-white">+{formData.fraisNotaire.toLocaleString('fr-FR')} €</span>
               </div>
-              <div className="text-[#94a3b8]">Mensualité</div>
-            </div>
-            <div className="p-6 rounded-2xl border border-white/10 text-center" style={{ backgroundColor: '#1a1d2d' }}>
-              <div className="text-3xl font-bold mb-2" style={{ color: results.tauxEndettement <= 35 ? '#4ade80' : '#f97316' }}>
-                {results.tauxEndettement}%
+              {formData.fraisAgence > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-[#94a3b8]">+ Frais d'agence</span>
+                  <span className="text-white">+{formData.fraisAgence.toLocaleString('fr-FR')} €</span>
+                </div>
+              )}
+              <div className="border-t border-white/20 pt-3 mt-3">
+                <div className="flex justify-between">
+                  <span className="text-white font-semibold">= Coût global du projet</span>
+                  <span className="text-[#4ade80] font-bold text-xl">{results.coutProjet.toLocaleString('fr-FR')} €</span>
+                </div>
               </div>
-              <div className="text-[#94a3b8]">Taux d'endettement</div>
             </div>
           </div>
 
-          {/* Visual bar */}
+          {/* Bloc 2 — Besoin en financement */}
           <div className="p-6 rounded-2xl border border-white/10 mb-8" style={{ backgroundColor: '#1a1d2d' }}>
+            <h3 className="text-xl font-semibold text-white mb-4">Besoin en financement</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-[#94a3b8]">Coût global</span>
+                <span className="text-white">{results.coutProjet.toLocaleString('fr-FR')} €</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#94a3b8]">- Apport personnel</span>
+                <span className="text-white">-{formData.apport.toLocaleString('fr-FR')} €</span>
+              </div>
+              <div className="border-t border-white/20 pt-3 mt-3">
+                <div className="flex justify-between">
+                  <span className="text-white font-semibold">= Besoin en financement</span>
+                  <span className="text-white font-bold text-xl">{results.besoinFinancement.toLocaleString('fr-FR')} €</span>
+                </div>
+              </div>
+            </div>
+            <p className="text-[#94a3b8] text-sm mt-4">
+              Votre financement bancaire doit couvrir ce montant
+            </p>
+          </div>
+
+          {/* Bloc 3 — Mensualités et capacité */}
+          <div className="p-6 rounded-2xl border border-white/10 mb-8" style={{ backgroundColor: '#1a1d2d' }}>
+            <h3 className="text-xl font-semibold text-white mb-4">Mensualités et capacité</h3>
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#4ade80] mb-2">
+                  {results.mensualite.toLocaleString('fr-FR')} €
+                </div>
+                <div className="text-[#94a3b8]">Mensualité estimée</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-2">
+                  {results.coutTotalCredit.toLocaleString('fr-FR')} €
+                </div>
+                <div className="text-[#94a3b8]">Coût total du crédit</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-2">
+                  {results.coutInterets.toLocaleString('fr-FR')} €
+                </div>
+                <div className="text-[#94a3b8]">Coût des intérêts</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bloc 4 — Taux d'endettement */}
+          <div className="p-6 rounded-2xl border border-white/10 mb-8" style={{ backgroundColor: '#1a1d2d' }}>
+            <h3 className="text-xl font-semibold text-white mb-4">Taux d'endettement</h3>
             <div className="flex justify-between mb-2">
               <span className="text-white font-medium">Taux d'endettement</span>
               <span className="text-[#94a3b8]">{results.tauxEndettement}% / 35%</span>
@@ -300,9 +361,9 @@ export default function CreditSimulatorPage() {
                   className={`p-6 rounded-2xl border text-left transition-all hover:border-[#4ade80]/30 ${
                     formData.project === project.id ? 'border-[#4ade80]' : 'border-white/10'
                   }`}
-                  style={{ backgroundColor: '#1a1d2d' }}
+                  style={{ backgroundColor: formData.project === project.id ? '#0d1f14' : '#1a1d2d' }}
                 >
-                  <h3 className="text-lg font-semibold text-white mb-2">{project.label}</h3>
+                  <h3 className={`text-lg font-semibold mb-2 ${formData.project === project.id ? 'text-[#4ade80]' : 'text-white'}`}>{project.label}</h3>
                   <p className="text-[#94a3b8] text-sm">{project.description}</p>
                 </button>
               ))}
@@ -322,9 +383,9 @@ export default function CreditSimulatorPage() {
                   className={`p-6 rounded-2xl border text-left transition-all hover:border-[#4ade80]/30 ${
                     formData.situation === situation.id ? 'border-[#4ade80]' : 'border-white/10'
                   }`}
-                  style={{ backgroundColor: '#1a1d2d' }}
+                  style={{ backgroundColor: formData.situation === situation.id ? '#0d1f14' : '#1a1d2d' }}
                 >
-                  <h3 className="text-lg font-semibold text-white mb-2">{situation.label}</h3>
+                  <h3 className={`text-lg font-semibold mb-2 ${formData.situation === situation.id ? 'text-[#4ade80]' : 'text-white'}`}>{situation.label}</h3>
                   <p className="text-[#94a3b8] text-sm">{situation.description}</p>
                 </button>
               ))}
@@ -435,11 +496,118 @@ export default function CreditSimulatorPage() {
           </div>
         )}
 
-        {/* Step 4 — Apport + Durée */}
+        {/* Step 4 — Détails du projet */}
         {step === 4 && (
           <div>
-            <h2 className="text-2xl font-semibold text-white mb-6">Apport personnel et durée</h2>
+            <h2 className="text-2xl font-semibold text-white mb-6">Détails de ton projet</h2>
             <div className="space-y-6">
+              {/* Type de bien */}
+              <div>
+                <label className="block text-white font-medium mb-4">Type de bien</label>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => {
+                      setFormData({ ...formData, typeBien: 'ancien' });
+                      // Auto-calculate frais de notaire
+                      if (formData.prixBien) {
+                        setFormData({ ...formData, typeBien: 'ancien', fraisNotaire: Math.round(formData.prixBien * 0.1) });
+                      }
+                    }}
+                    className={`p-6 rounded-2xl border text-left transition-all hover:border-[#4ade80]/30 ${
+                      formData.typeBien === 'ancien' ? 'border-[#4ade80]' : 'border-white/10'
+                    }`}
+                    style={{ backgroundColor: formData.typeBien === 'ancien' ? '#0d1f14' : '#1a1d2d' }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <Home className={`w-6 h-6 ${formData.typeBien === 'ancien' ? 'text-[#4ade80]' : 'text-white'}`} />
+                      <h3 className={`text-lg font-semibold ${formData.typeBien === 'ancien' ? 'text-[#4ade80]' : 'text-white'}`}>Achat dans l'ancien</h3>
+                    </div>
+                    <p className="text-[#94a3b8] text-sm">Bien immobilier déjà construit</p>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setFormData({ ...formData, typeBien: 'neuf' });
+                      // Auto-calculate frais de notaire
+                      if (formData.prixBien) {
+                        setFormData({ ...formData, typeBien: 'neuf', fraisNotaire: Math.round(formData.prixBien * 0.07) });
+                      }
+                    }}
+                    className={`p-6 rounded-2xl border text-left transition-all hover:border-[#4ade80]/30 ${
+                      formData.typeBien === 'neuf' ? 'border-[#4ade80]' : 'border-white/10'
+                    }`}
+                    style={{ backgroundColor: formData.typeBien === 'neuf' ? '#0d1f14' : '#1a1d2d' }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <Building className={`w-6 h-6 ${formData.typeBien === 'neuf' ? 'text-[#4ade80]' : 'text-white'}`} />
+                      <h3 className={`text-lg font-semibold ${formData.typeBien === 'neuf' ? 'text-[#4ade80]' : 'text-white'}`}>Achat dans le neuf / VEFA</h3>
+                    </div>
+                    <p className="text-[#94a3b8] text-sm">Bien en construction ou sur plan</p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Prix du bien */}
+              <div>
+                <label className="block text-white font-medium mb-2">Prix du bien (€)</label>
+                <input
+                  type="number"
+                  value={formData.prixBien || ''}
+                  onChange={(e) => {
+                    const prix = parseInt(e.target.value) || 0;
+                    setFormData({ ...formData, prixBien: prix });
+                    // Auto-calculate frais de notaire
+                    if (formData.typeBien) {
+                      const fraisNotaire = formData.typeBien === 'ancien' ? Math.round(prix * 0.1) : Math.round(prix * 0.07);
+                      setFormData({ ...formData, prixBien: prix, fraisNotaire });
+                    }
+                  }}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                  placeholder="ex : 200 000"
+                />
+              </div>
+
+              {/* Montant des travaux */}
+              <div>
+                <label className="block text-white font-medium mb-2">Montant des travaux (optionnel) (€)</label>
+                <input
+                  type="number"
+                  value={formData.travaux || ''}
+                  onChange={(e) => setFormData({ ...formData, travaux: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                  placeholder="ex : 15 000"
+                />
+              </div>
+
+              {/* Frais de notaire */}
+              <div>
+                <label className="block text-white font-medium mb-2">Frais de notaire (€)</label>
+                <input
+                  type="number"
+                  value={formData.fraisNotaire || ''}
+                  onChange={(e) => setFormData({ ...formData, fraisNotaire: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                />
+                <p className="text-[#94a3b8] text-xs mt-1">
+                  Estimés à 10% dans l'ancien, 7% dans le neuf — modifiables
+                </p>
+              </div>
+
+              {/* Frais d'agence immobilière */}
+              <div>
+                <label className="block text-white font-medium mb-2">Frais d'agence immobilière (optionnel) (€)</label>
+                <input
+                  type="number"
+                  value={formData.fraisAgence || ''}
+                  onChange={(e) => setFormData({ ...formData, fraisAgence: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                  placeholder="ex : 8 000"
+                />
+                <p className="text-[#94a3b8] text-xs mt-1">
+                  Laissez vide si achat entre particuliers
+                </p>
+              </div>
+
+              {/* Apport personnel */}
               <div>
                 <label className="block text-white font-medium mb-2">Apport personnel (€)</label>
                 <input
@@ -450,6 +618,8 @@ export default function CreditSimulatorPage() {
                   placeholder="Ex: 30000"
                 />
               </div>
+
+              {/* Durée du crédit */}
               <div>
                 <label className="block text-white font-medium mb-4">Durée du crédit</label>
                 <div className="grid grid-cols-4 gap-4">
@@ -470,6 +640,8 @@ export default function CreditSimulatorPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Taux du crédit */}
               <div>
                 <label className="block text-white font-medium mb-2">Taux du crédit (%)</label>
                 <input
@@ -495,7 +667,7 @@ export default function CreditSimulatorPage() {
               </button>
               <button
                 onClick={() => setStep('results')}
-                disabled={!formData.duration}
+                disabled={!formData.prixBien || !formData.duration}
                 className="flex items-center gap-2 px-6 py-3 bg-[#4ade80] text-black font-semibold rounded-full hover:bg-[#4ade80]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Voir les résultats <ArrowRight className="w-4 h-4" />

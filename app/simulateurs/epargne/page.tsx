@@ -321,11 +321,11 @@ export default function EpargneSimulatorPage() {
                     className={`p-6 rounded-2xl border text-left transition-all hover:border-[#4ade80]/30 ${
                       formData.objectif === objectif.id ? 'border-[#4ade80]' : 'border-white/10'
                     }`}
-                    style={{ backgroundColor: '#1a1d2d' }}
+                    style={{ backgroundColor: formData.objectif === objectif.id ? '#0d1f14' : '#1a1d2d' }}
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <Icon className="w-6 h-6 text-[#4ade80]" />
-                      <h3 className="text-lg font-semibold text-white">{objectif.label}</h3>
+                      <Icon className={`w-6 h-6 ${formData.objectif === objectif.id ? 'text-[#4ade80]' : 'text-white'}`} />
+                      <h3 className={`text-lg font-semibold ${formData.objectif === objectif.id ? 'text-[#4ade80]' : 'text-white'}`}>{objectif.label}</h3>
                     </div>
                     <p className="text-[#94a3b8] text-sm">{objectif.description}</p>
                   </button>
@@ -354,9 +354,9 @@ export default function EpargneSimulatorPage() {
                 className={`p-6 rounded-2xl border text-left transition-all hover:border-[#4ade80]/30 ${
                   formData.diaspora === true ? 'border-[#4ade80]' : 'border-white/10'
                 }`}
-                style={{ backgroundColor: '#1a1d2d' }}
+                style={{ backgroundColor: formData.diaspora === true ? '#0d1f14' : '#1a1d2d' }}
               >
-                <h3 className="text-lg font-semibold text-white mb-2">Oui, j'envoie de l'argent au pays</h3>
+                <h3 className={`text-lg font-semibold mb-2 ${formData.diaspora === true ? 'text-[#4ade80]' : 'text-white'}`}>Oui, j'envoie de l'argent au pays</h3>
                 <p className="text-[#94a3b8] text-sm">Transferts réguliers vers ma famille ou mes projets</p>
               </button>
               <button
@@ -364,9 +364,9 @@ export default function EpargneSimulatorPage() {
                 className={`p-6 rounded-2xl border text-left transition-all hover:border-[#4ade80]/30 ${
                   formData.diaspora === false ? 'border-[#4ade80]' : 'border-white/10'
                 }`}
-                style={{ backgroundColor: '#1a1d2d' }}
+                style={{ backgroundColor: formData.diaspora === false ? '#0d1f14' : '#1a1d2d' }}
               >
-                <h3 className="text-lg font-semibold text-white mb-2">Non</h3>
+                <h3 className={`text-lg font-semibold mb-2 ${formData.diaspora === false ? 'text-[#4ade80]' : 'text-white'}`}>Non</h3>
                 <p className="text-[#94a3b8] text-sm">Je n'envoie pas d'argent régulièrement</p>
               </button>
             </div>
