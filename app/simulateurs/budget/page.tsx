@@ -93,7 +93,7 @@ export default function BudgetSimulatorPage() {
   const statutEnvies = getStatut(budget.enviesPourcentage, 30, 'envies');
   const statutEpargne = getStatut(budget.epargnePourcentage, 20, 'epargne');
 
-  const downloadBudgetPlan = () => {
+  const printBudget = () => {
     const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
     const besoinsRecommande = formData.revenus * 0.5;
     const enviesRecommande = formData.revenus * 0.3;
@@ -141,57 +141,177 @@ export default function BudgetSimulatorPage() {
       conseils.push('• Explore des placements à long terme (PEA, assurance-vie)');
     }
 
-    const content = `MON PLAN BUDGET CULTUREFINANCE
-${'='.repeat(50)}
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Mon plan budget - CultureFinance</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              color: #000;
+              background: #fff;
+              margin: 0;
+              padding: 40px;
+              line-height: 1.6;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
+              border-bottom: 2px solid #4ade80;
+              padding-bottom: 20px;
+            }
+            .logo {
+              font-size: 24px;
+              font-weight: bold;
+              color: #4ade80;
+              margin-bottom: 10px;
+            }
+            .title {
+              font-size: 28px;
+              font-weight: bold;
+              margin-bottom: 10px;
+            }
+            .date {
+              color: #666;
+              font-size: 14px;
+            }
+            .section {
+              margin-bottom: 30px;
+            }
+            .section-title {
+              font-size: 18px;
+              font-weight: bold;
+              margin-bottom: 15px;
+              color: #333;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 20px;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 12px;
+              text-align: left;
+            }
+            th {
+              background-color: #f5f5f5;
+              font-weight: bold;
+            }
+            .statut-equilibre { color: #4ade80; font-weight: bold; }
+            .statut-surveiller { color: #f97316; font-weight: bold; }
+            .statut-eleve { color: #ef4444; font-weight: bold; }
+            .statut-insuffisant { color: #ef4444; font-weight: bold; }
+            .diagnostic {
+              background-color: #f9f9f9;
+              padding: 20px;
+              border-left: 4px solid ${diagnosticGlobal.color};
+              margin-bottom: 20px;
+            }
+            .diagnostic-title {
+              font-size: 18px;
+              font-weight: bold;
+              margin-bottom: 10px;
+              color: ${diagnosticGlobal.color};
+            }
+            .conseils {
+              background-color: #f9f9f9;
+              padding: 20px;
+            }
+            .conseil {
+              margin-bottom: 10px;
+              padding-left: 20px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 40px;
+              padding-top: 20px;
+              border-top: 1px solid #ddd;
+              color: #666;
+              font-size: 12px;
+            }
+            @media print {
+              body { padding: 20px; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">CultureFinance</div>
+            <div class="title">Mon plan budget</div>
+            <div class="date">${date}</div>
+          </div>
 
-Date : ${date}
-Revenus mensuels : ${formData.revenus.toLocaleString('fr-FR')} €
+          <div class="section">
+            <div class="section-title">Revenus mensuels</div>
+            <p><strong>${formData.revenus.toLocaleString('fr-FR')} €</strong></p>
+          </div>
 
-${'-'.repeat(50)}
-RÉPARTITION ACTUELLE VS RECOMMANDÉE
-${'-'.repeat(50)}
+          <div class="section">
+            <div class="section-title">Répartition actuelle vs recommandée</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Catégorie</th>
+                  <th>Recommandé</th>
+                  <th>Actuel</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Besoins essentiels</td>
+                  <td>${besoinsRecommande.toLocaleString('fr-FR')} € (50%)</td>
+                  <td>${budget.besoins.toLocaleString('fr-FR')} € (${budget.besoinsPourcentage.toFixed(1)}%)</td>
+                  <td class="${statutBesoins.color === '#4ade80' ? 'statut-equilibre' : statutBesoins.color === '#f97316' ? 'statut-surveiller' : 'statut-eleve'}">${statutBesoins.label}</td>
+                </tr>
+                <tr>
+                  <td>Envies & loisirs</td>
+                  <td>${enviesRecommande.toLocaleString('fr-FR')} € (30%)</td>
+                  <td>${budget.envies.toLocaleString('fr-FR')} € (${budget.enviesPourcentage.toFixed(1)}%)</td>
+                  <td class="${statutEnvies.color === '#4ade80' ? 'statut-equilibre' : statutEnvies.color === '#f97316' ? 'statut-surveiller' : 'statut-eleve'}">${statutEnvies.label}</td>
+                </tr>
+                <tr>
+                  <td>Épargne</td>
+                  <td>${epargneRecommande.toLocaleString('fr-FR')} € (20%)</td>
+                  <td>${budget.epargne.toLocaleString('fr-FR')} € (${budget.epargnePourcentage.toFixed(1)}%)</td>
+                  <td class="${statutEpargne.color === '#4ade80' ? 'statut-equilibre' : statutEpargne.color === '#f97316' ? 'statut-surveiller' : 'statut-insuffisant'}">${statutEpargne.label}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-Besoins essentiels
-  Recommandé : ${besoinsRecommande.toLocaleString('fr-FR')} € (50%)
-  Actuel     : ${budget.besoins.toLocaleString('fr-FR')} € (${budget.besoinsPourcentage.toFixed(1)}%)
-  Statut     : ${statutBesoins.label}
+          <div class="section">
+            <div class="section-title">Diagnostic</div>
+            <div class="diagnostic">
+              <div class="diagnostic-title">${diagnosticGlobal.title}</div>
+              <p>${diagnosticGlobal.description}</p>
+            </div>
+          </div>
 
-Envies & loisirs
-  Recommandé : ${enviesRecommande.toLocaleString('fr-FR')} € (30%)
-  Actuel     : ${budget.envies.toLocaleString('fr-FR')} € (${budget.enviesPourcentage.toFixed(1)}%)
-  Statut     : ${statutEnvies.label}
+          <div class="section">
+            <div class="section-title">Conseils</div>
+            <div class="conseils">
+              ${conseils.map(conseil => `<div class="conseil">${conseil}</div>`).join('')}
+            </div>
+          </div>
 
-Épargne
-  Recommandé : ${epargneRecommande.toLocaleString('fr-FR')} € (20%)
-  Actuel     : ${budget.epargne.toLocaleString('fr-FR')} € (${budget.epargnePourcentage.toFixed(1)}%)
-  Statut     : ${statutEpargne.label}
-
-${'-'.repeat(50)}
-DIAGNOSTIC
-${'-'.repeat(50)}
-
-${diagnosticGlobal.title}
-${diagnosticGlobal.description}
-
-${'-'.repeat(50)}
-CONSEILS
-${'-'.repeat(50)}
-
-${conseils.join('\n')}
-
-${'='.repeat(50)}
-Généré par CultureFinance - finance-score.vercel.app
-`;
-
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'mon-plan-budget-culturefinance.txt';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+          <div class="footer">
+            Généré par CultureFinance — finance-score.vercel.app
+          </div>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
+    }
   };
 
   if (step === 'results') {
@@ -385,13 +505,16 @@ Généré par CultureFinance - finance-score.vercel.app
           </div>
 
           {/* Bouton télécharger */}
-          <div className="flex justify-center mb-8">
+          <div className="flex flex-col items-center mb-8">
             <button
-              onClick={downloadBudgetPlan}
+              onClick={printBudget}
               className="flex items-center gap-2 px-6 py-3 border-2 border-[#4ade80] text-[#4ade80] font-semibold rounded-full hover:bg-[#4ade80]/10 transition-all"
             >
               <Download className="w-4 h-4" /> Télécharger mon plan budget
             </button>
+            <p className="text-[#94a3b8] text-xs mt-2">
+              Choisissez "Enregistrer en PDF" dans la boîte d'impression
+            </p>
           </div>
 
           {/* Bloc 4 — Diagnostic global */}
