@@ -160,6 +160,9 @@ export default function CreditSimulatorPage() {
                 <span className="text-[#94a3b8]">+ Frais de notaire</span>
                 <span className="text-white">+{formData.fraisNotaire.toLocaleString('fr-FR')} €</span>
               </div>
+              <p className="text-[#94a3b8] text-xs mt-2">
+                Les frais de notaire sont donnés à titre indicatif. Le montant exact peut varier selon la situation. Nous vous recommandons de consulter votre notaire pour une estimation précise.
+              </p>
               {formData.fraisAgence > 0 && (
                 <div className="flex justify-between">
                   <span className="text-[#94a3b8]">+ Frais d'agence</span>
@@ -175,6 +178,26 @@ export default function CreditSimulatorPage() {
             </div>
           </div>
 
+          {/* Encart frais supplémentaires */}
+          <div className="p-6 rounded-2xl border border-orange-500/30 mb-8" style={{ backgroundColor: '#1a1d2d' }}>
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="text-white font-semibold mb-2">Frais supplémentaires à prévoir</h4>
+                <p className="text-[#94a3b8] text-sm">
+                  En plus des frais ci-dessus, prévoyez également :
+                </p>
+                <ul className="text-[#94a3b8] text-sm mt-2 space-y-1">
+                  <li>• Frais de dossier bancaire : entre 500 € et 1 500 € selon les établissements</li>
+                  <li>• Frais de garantie (caution ou hypothèque) : entre 1% et 2% du montant emprunté</li>
+                </ul>
+                <p className="text-[#94a3b8] text-sm mt-2">
+                  Ces frais ne sont pas inclus dans le calcul mais doivent être anticipés dans votre budget.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Bloc 2 — Besoin en financement */}
           <div className="p-6 rounded-2xl border border-white/10 mb-8" style={{ backgroundColor: '#1a1d2d' }}>
             <h3 className="text-xl font-semibold text-white mb-4">Besoin en financement</h3>
@@ -185,7 +208,7 @@ export default function CreditSimulatorPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-[#94a3b8]">- Apport personnel</span>
-                <span className="text-white">-{formData.apport.toLocaleString('fr-FR')} €</span>
+                <span className="text-white">{formData.apport > 0 ? `-${formData.apport.toLocaleString('fr-FR')} €` : '0 €'}</span>
               </div>
               <div className="border-t border-white/20 pt-3 mt-3">
                 <div className="flex justify-between">
@@ -589,6 +612,9 @@ export default function CreditSimulatorPage() {
                 />
                 <p className="text-[#94a3b8] text-xs mt-1">
                   Estimés à 10% dans l'ancien, 7% dans le neuf — modifiables
+                </p>
+                <p className="text-[#94a3b8] text-xs mt-2">
+                  Les frais de notaire sont donnés à titre indicatif. Le montant exact peut varier selon la situation. Nous vous recommandons de consulter votre notaire pour une estimation précise.
                 </p>
               </div>
 
