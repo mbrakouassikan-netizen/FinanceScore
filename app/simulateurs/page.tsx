@@ -41,8 +41,8 @@ const simulators: SimulatorCard[] = [
     title: 'Budget 50/30/20',
     description: 'Organise tes dépenses selon la règle 50/30/20',
     tab: 'Budget',
-    badge: 'Bientôt',
-    active: false,
+    active: true,
+    link: '/simulateurs/budget',
   },
   {
     id: 'credit',
