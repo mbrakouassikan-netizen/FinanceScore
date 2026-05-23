@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Globe, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Globe, TrendingUp, TrendingDown, Minus, Download } from 'lucide-react';
 
 type Step = 1 | 2 | 'results';
 
@@ -92,6 +92,107 @@ export default function BudgetSimulatorPage() {
   const statutBesoins = getStatut(budget.besoinsPourcentage, 50, 'besoins');
   const statutEnvies = getStatut(budget.enviesPourcentage, 30, 'envies');
   const statutEpargne = getStatut(budget.epargnePourcentage, 20, 'epargne');
+
+  const downloadBudgetPlan = () => {
+    const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    const besoinsRecommande = formData.revenus * 0.5;
+    const enviesRecommande = formData.revenus * 0.3;
+    const epargneRecommande = formData.revenus * 0.2;
+
+    let diagnosticGlobal = { title: '', description: '', color: '' };
+    if (statutBesoins.color === '#ef4444') {
+      diagnosticGlobal = {
+        title: 'Tes charges fixes sont trop élevées',
+        description: 'Tes besoins essentiels dépassent 60% de tes revenus. Cela réduit ta capacité d\'épargne et te rend vulnérable en cas d\'imprévu.',
+        color: '#ef4444',
+      };
+    } else if (statutEpargne.color === '#ef4444') {
+      diagnosticGlobal = {
+        title: 'Ton épargne est insuffisante',
+        description: 'Tu épargnes moins de 10% de tes revenus. Pour construire un patrimoine et préparer l\'avenir, vise au moins 20%.',
+        color: '#ef4444',
+      };
+    } else if (statutBesoins.color === '#f97316' || statutEnvies.color === '#f97316' || statutEpargne.color === '#f97316') {
+      diagnosticGlobal = {
+        title: 'Ton budget est à surveiller',
+        description: 'Certains postes de dépense sont légèrement au-dessus des recommandations. Quelques ajustements suffiront pour équilibrer ton budget.',
+        color: '#f97316',
+      };
+    } else {
+      diagnosticGlobal = {
+        title: 'Ton budget est bien équilibré',
+        description: 'Ta répartition budgétaire suit la règle 50/30/20. Continue comme ça et envisage d\'augmenter progressivement ton épargne.',
+        color: '#4ade80',
+      };
+    }
+
+    let conseils = [];
+    if (statutBesoins.color === '#ef4444') {
+      conseils.push('• Renégocie ton crédit immobilier ou ton loyer');
+      conseils.push('• Réduise tes abonnements et charges fixes');
+      conseils.push('• Optimise tes dépenses alimentaires et transport');
+    } else if (statutEpargne.color === '#ef4444') {
+      conseils.push('• Automatise ton épargne dès le versement du salaire');
+      conseils.push('• Utilise la méthode des enveloppes pour contrôler tes dépenses');
+      conseils.push('• Augmente progressivement ton épargne de 1% par mois');
+    } else {
+      conseils.push('• Envisage d\'investir ton épargne pour la faire fructifier');
+      conseils.push('• Crée un fonds d\'urgence équivalent à 3 mois de revenus');
+      conseils.push('• Explore des placements à long terme (PEA, assurance-vie)');
+    }
+
+    const content = `MON PLAN BUDGET CULTUREFINANCE
+${'='.repeat(50)}
+
+Date : ${date}
+Revenus mensuels : ${formData.revenus.toLocaleString('fr-FR')} €
+
+${'-'.repeat(50)}
+RÉPARTITION ACTUELLE VS RECOMMANDÉE
+${'-'.repeat(50)}
+
+Besoins essentiels
+  Recommandé : ${besoinsRecommande.toLocaleString('fr-FR')} € (50%)
+  Actuel     : ${budget.besoins.toLocaleString('fr-FR')} € (${budget.besoinsPourcentage.toFixed(1)}%)
+  Statut     : ${statutBesoins.label}
+
+Envies & loisirs
+  Recommandé : ${enviesRecommande.toLocaleString('fr-FR')} € (30%)
+  Actuel     : ${budget.envies.toLocaleString('fr-FR')} € (${budget.enviesPourcentage.toFixed(1)}%)
+  Statut     : ${statutEnvies.label}
+
+Épargne
+  Recommandé : ${epargneRecommande.toLocaleString('fr-FR')} € (20%)
+  Actuel     : ${budget.epargne.toLocaleString('fr-FR')} € (${budget.epargnePourcentage.toFixed(1)}%)
+  Statut     : ${statutEpargne.label}
+
+${'-'.repeat(50)}
+DIAGNOSTIC
+${'-'.repeat(50)}
+
+${diagnosticGlobal.title}
+${diagnosticGlobal.description}
+
+${'-'.repeat(50)}
+CONSEILS
+${'-'.repeat(50)}
+
+${conseils.join('\n')}
+
+${'='.repeat(50)}
+Généré par CultureFinance - finance-score.vercel.app
+`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'mon-plan-budget-culturefinance.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   if (step === 'results') {
     const besoinsRecommande = formData.revenus * 0.5;
@@ -281,6 +382,16 @@ export default function BudgetSimulatorPage() {
             <p className="text-[#94a3b8] text-sm mt-4">
               {messagePersonnalise}
             </p>
+          </div>
+
+          {/* Bouton télécharger */}
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={downloadBudgetPlan}
+              className="flex items-center gap-2 px-6 py-3 border-2 border-[#4ade80] text-[#4ade80] font-semibold rounded-full hover:bg-[#4ade80]/10 transition-all"
+            >
+              <Download className="w-4 h-4" /> Télécharger mon plan budget
+            </button>
           </div>
 
           {/* Bloc 4 — Diagnostic global */}
