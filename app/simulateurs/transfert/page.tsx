@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ArrowLeft, Phone, Building2, Banknote, CheckCircle2, TrendingUp, Clock, DollarSign } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Phone, Building2, Banknote, CheckCircle2, TrendingUp, Clock, DollarSign, Loader2 } from 'lucide-react';
 
 type Step = 1 | 2 | 'results';
 
 interface FormData {
+  deviseEnvoi: string;
   montant: number;
   pays: string;
   mode: string;
@@ -23,6 +24,15 @@ interface Service {
   color: string;
   initials: string;
 }
+
+const deviseEnvoiOptions = [
+  { value: 'EUR', label: 'Euro (EUR)', emoji: '🇪🇺' },
+  { value: 'USD', label: 'Dollar américain (USD)', emoji: '🇺🇸' },
+  { value: 'GBP', label: 'Livre sterling (GBP)', emoji: '🇬🇧' },
+  { value: 'CNY', label: 'Yuan chinois (CNY)', emoji: '🇨🇳' },
+  { value: 'CAD', label: 'Dollar canadien (CAD)', emoji: '🇨🇦' },
+  { value: 'CHF', label: 'Franc suisse (CHF)', emoji: '🇨🇭' },
+];
 
 const paysOptions = [
   { value: 'senegal', label: 'Sénégal', devise: 'XOF' },
@@ -128,11 +138,41 @@ const tauxDeChange: Record<string, number> = {
 export default function TransfertSimulatorPage() {
   const [step, setStep] = useState<Step>(1);
   const [formData, setFormData] = useState<FormData>({
+    deviseEnvoi: 'EUR',
     montant: 300,
     pays: '',
     mode: '',
     frequence: '',
   });
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({});
+  const [ratesLoading, setRatesLoading] = useState(false);
+  const [ratesError, setRatesError] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    const fetchExchangeRates = async () => {
+      setRatesLoading(true);
+      setRatesError(false);
+      try {
+        const response = await fetch(`/api/exchange-rate?base=${formData.deviseEnvoi}`);
+        if (!response.ok) throw new Error('Failed to fetch rates');
+        const data = await response.json();
+        if (data.conversion_rates) {
+          setExchangeRates(data.conversion_rates);
+          setLastUpdate(new Date(data.time_last_update_utc));
+        } else {
+          setRatesError(true);
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rates:', error);
+        setRatesError(true);
+      } finally {
+        setRatesLoading(false);
+      }
+    };
+
+    fetchExchangeRates();
+  }, [formData.deviseEnvoi]);
 
   const getFilteredServices = () => {
     return services.filter(service => service.disponibilite.includes(formData.mode));
@@ -142,11 +182,9 @@ export default function TransfertSimulatorPage() {
     return service.fraisFixes + (formData.montant * service.pourcentage) / 100;
   };
 
-  const getMontantRecu = (service: Service) => {
+  const getMontantRecu = (service: Service, taux: number) => {
     const frais = calculateFrais(service);
-    const montantNet = formData.montant - frais;
-    const pays = paysOptions.find(p => p.value === formData.pays);
-    const taux = pays ? tauxDeChange[pays.devise] || 1 : 1;
+    const montantNet = (formData.montant - frais) * (1 - service.pourcentage / 100);
     return montantNet * taux;
   };
 
@@ -169,10 +207,17 @@ export default function TransfertSimulatorPage() {
     const economieAnnuelle = economieParEnvoi * frequenceAnnuelle;
 
     const pays = paysOptions.find(p => p.value === formData.pays);
-    const taux = pays ? tauxDeChange[pays.devise] || 1 : 1;
     const devise = pays ? pays.devise : '';
+    const taux = ratesError || Object.keys(exchangeRates).length === 0
+      ? (pays ? tauxDeChange[pays.devise] || 1 : 1)
+      : (exchangeRates[devise] || 1);
 
     const modeLabel = modes.find(m => m.id === formData.mode)?.label || '';
+
+    const formatDate = (date: Date | null) => {
+      if (!date) return '';
+      return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    };
 
     return (
       <div className="min-h-screen" style={{ backgroundColor: '#0d0f1a' }}>
@@ -192,13 +237,26 @@ export default function TransfertSimulatorPage() {
 
           {/* Bloc 1 — Résumé de la recherche */}
           <div className="p-6 rounded-2xl border border-white/10 mb-8" style={{ backgroundColor: '#1a1d2d' }}>
-            <h2 className="text-xl font-semibold text-white mb-2">
-              Envoi de {formData.montant.toLocaleString('fr-FR')} € vers {pays?.label} par {modeLabel}
-            </h2>
-            <div className="flex items-center gap-2 text-[#94a3b8]">
-              <span className="text-[#4ade80] font-semibold">1 € = {taux.toLocaleString('fr-FR')} {devise}</span>
-              <span className="text-xs">— Taux indicatif, mis à jour quotidiennement</span>
-            </div>
+            {ratesLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="w-6 h-6 text-[#4ade80] animate-spin mr-2" />
+                <span className="text-[#94a3b8]">Chargement des taux de change...</span>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-xl font-semibold text-white mb-2">
+                  Envoi de {formData.montant.toLocaleString('fr-FR')} {formData.deviseEnvoi} vers {pays?.label} par {modeLabel}
+                </h2>
+                <div className="flex items-center gap-2 text-[#94a3b8]">
+                  <span className="text-[#4ade80] font-semibold">1 {formData.deviseEnvoi} = {taux.toLocaleString('fr-FR')} {devise}</span>
+                  {ratesError ? (
+                    <span className="text-xs">— Taux indicatif</span>
+                  ) : (
+                    <span className="text-xs">— Taux mis à jour le {formatDate(lastUpdate)}</span>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Bloc 2 — Comparatif des services */}
@@ -207,7 +265,7 @@ export default function TransfertSimulatorPage() {
             <div className="space-y-4">
               {filteredServices.map((service, index) => {
                 const frais = calculateFrais(service);
-                const montantRecu = getMontantRecu(service);
+                const montantRecu = getMontantRecu(service, taux);
                 const isMeilleur = index === 0;
                 const isPlusRapide = service.id === 'westernunion' && formData.mode === 'cash';
 
@@ -239,7 +297,7 @@ export default function TransfertSimulatorPage() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
                             <span className="text-[#94a3b8]">Frais total</span>
-                            <div className="text-white font-semibold">{frais.toFixed(2)} €</div>
+                            <div className="text-white font-semibold">{frais.toFixed(2)} {formData.deviseEnvoi}</div>
                           </div>
                           <div>
                             <span className="text-[#94a3b8]">Montant reçu</span>
@@ -384,9 +442,25 @@ export default function TransfertSimulatorPage() {
         {/* Step 1 — Formulaire de saisie */}
         {step === 1 && (
           <div>
-            {/* Champ 1 — Montant */}
+            {/* Champ 1 — Devise d'envoi */}
             <div className="mb-8">
-              <label className="block text-white font-medium mb-2">Montant à envoyer (€)</label>
+              <label className="block text-white font-medium mb-2">Devise d'envoi</label>
+              <select
+                value={formData.deviseEnvoi}
+                onChange={(e) => setFormData({ ...formData, deviseEnvoi: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg bg-[#1a1d2e] border border-[#2a2d3e] text-white focus:border-[#4ade80] focus:outline-none"
+              >
+                {deviseEnvoiOptions.map((devise) => (
+                  <option key={devise.value} value={devise.value}>
+                    {devise.emoji} {devise.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Champ 2 — Montant */}
+            <div className="mb-8">
+              <label className="block text-white font-medium mb-2">Montant à envoyer ({formData.deviseEnvoi})</label>
               <input
                 type="number"
                 value={formData.montant || ''}
@@ -396,13 +470,13 @@ export default function TransfertSimulatorPage() {
               />
             </div>
 
-            {/* Champ 2 — Pays de destination */}
+            {/* Champ 3 — Pays de destination */}
             <div className="mb-8">
               <label className="block text-white font-medium mb-2">Pays de destination</label>
               <select
                 value={formData.pays}
                 onChange={(e) => setFormData({ ...formData, pays: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:border-[#4ade80] focus:outline-none"
+                className="w-full px-4 py-3 rounded-lg bg-[#1a1d2e] border border-[#2a2d3e] text-white focus:border-[#4ade80] focus:outline-none"
               >
                 <option value="">Sélectionnez un pays</option>
                 {paysOptions.map((pays) => (
