@@ -248,7 +248,7 @@ export default function BudgetSimulatorPage() {
 
           <div class="section">
             <div class="section-title">Revenus mensuels</div>
-            <p><strong>${formData.revenus.toLocaleString('fr-FR')} €</strong></p>
+            <p><strong>${Math.round(formData.revenus).toLocaleString('fr-FR')} €</strong></p>
           </div>
 
           <div class="section">
@@ -265,20 +265,20 @@ export default function BudgetSimulatorPage() {
               <tbody>
                 <tr>
                   <td>Besoins essentiels</td>
-                  <td>${besoinsRecommande.toLocaleString('fr-FR')} € (50%)</td>
-                  <td>${budget.besoins.toLocaleString('fr-FR')} € (${budget.besoinsPourcentage.toFixed(1)}%)</td>
+                  <td>${Math.round(besoinsRecommande).toLocaleString('fr-FR')} € (50%)</td>
+                  <td>${Math.round(budget.besoins).toLocaleString('fr-FR')} € (${budget.besoinsPourcentage.toFixed(1)}%)</td>
                   <td class="${statutBesoins.color === '#4ade80' ? 'statut-equilibre' : statutBesoins.color === '#f97316' ? 'statut-surveiller' : 'statut-eleve'}">${statutBesoins.label}</td>
                 </tr>
                 <tr>
                   <td>Envies & loisirs</td>
-                  <td>${enviesRecommande.toLocaleString('fr-FR')} € (30%)</td>
-                  <td>${budget.envies.toLocaleString('fr-FR')} € (${budget.enviesPourcentage.toFixed(1)}%)</td>
+                  <td>${Math.round(enviesRecommande).toLocaleString('fr-FR')} € (30%)</td>
+                  <td>${Math.round(budget.envies).toLocaleString('fr-FR')} € (${budget.enviesPourcentage.toFixed(1)}%)</td>
                   <td class="${statutEnvies.color === '#4ade80' ? 'statut-equilibre' : statutEnvies.color === '#f97316' ? 'statut-surveiller' : 'statut-eleve'}">${statutEnvies.label}</td>
                 </tr>
                 <tr>
                   <td>Épargne</td>
-                  <td>${epargneRecommande.toLocaleString('fr-FR')} € (20%)</td>
-                  <td>${budget.epargne.toLocaleString('fr-FR')} € (${budget.epargnePourcentage.toFixed(1)}%)</td>
+                  <td>${Math.round(epargneRecommande).toLocaleString('fr-FR')} € (20%)</td>
+                  <td>${Math.round(budget.epargne).toLocaleString('fr-FR')} € (${budget.epargnePourcentage.toFixed(1)}%)</td>
                   <td class="${statutEpargne.color === '#4ade80' ? 'statut-equilibre' : statutEpargne.color === '#f97316' ? 'statut-surveiller' : 'statut-insuffisant'}">${statutEpargne.label}</td>
                 </tr>
               </tbody>
