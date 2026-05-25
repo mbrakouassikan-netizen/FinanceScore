@@ -26,12 +26,12 @@ interface Service {
 }
 
 const deviseEnvoiOptions = [
-  { value: 'EUR', label: 'Euro (EUR)', emoji: '🇪🇺' },
-  { value: 'USD', label: 'Dollar américain (USD)', emoji: '🇺🇸' },
-  { value: 'GBP', label: 'Livre sterling (GBP)', emoji: '🇬🇧' },
-  { value: 'CNY', label: 'Yuan chinois (CNY)', emoji: '🇨🇳' },
-  { value: 'CAD', label: 'Dollar canadien (CAD)', emoji: '🇨🇦' },
-  { value: 'CHF', label: 'Franc suisse (CHF)', emoji: '🇨🇭' },
+  { value: 'EUR', label: '🇪🇺 Euro (EUR)' },
+  { value: 'USD', label: '🇺🇸 Dollar américain (USD)' },
+  { value: 'GBP', label: '🇬🇧 Livre sterling (GBP)' },
+  { value: 'CNY', label: '🇨🇳 Yuan chinois (CNY)' },
+  { value: 'CAD', label: '🇨🇦 Dollar canadien (CAD)' },
+  { value: 'CHF', label: '🇨🇭 Franc suisse (CHF)' },
 ];
 
 const paysOptions = [
@@ -622,7 +622,7 @@ export default function TransfertSimulatorPage() {
               >
                 {deviseEnvoiOptions.map((devise) => (
                   <option key={devise.value} value={devise.value}>
-                    {devise.emoji} {devise.label}
+                    {devise.label}
                   </option>
                 ))}
               </select>
