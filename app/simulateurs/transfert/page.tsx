@@ -29,6 +29,9 @@ const deviseEnvoiOptions = [
   { value: 'EUR', label: '🇪🇺 Euro (EUR)' },
   { value: 'USD', label: '🇺🇸 Dollar USD' },
   { value: 'GBP', label: '🇬🇧 Livre Sterling' },
+  { value: 'CAD', label: '🇨🇦 Dollar Canadien' },
+  { value: 'CHF', label: '🇨🇭 Franc Suisse' },
+  { value: 'CNY', label: '🇨🇳 Yuan Chinois' },
 ];
 
 const paysOptions = [
