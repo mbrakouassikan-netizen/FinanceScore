@@ -33,8 +33,8 @@ const simulators: SimulatorCard[] = [
     title: 'Comparateur de transfert',
     description: 'Compare les frais et les taux des services de transfert d\'argent',
     tab: 'Transfert',
-    badge: 'Bientôt',
-    active: false,
+    active: true,
+    link: '/simulateurs/transfert',
   },
   {
     id: 'budget',
