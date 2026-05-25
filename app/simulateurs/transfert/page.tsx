@@ -27,27 +27,27 @@ interface Service {
 
 const deviseEnvoiOptions = [
   { value: 'EUR', label: '🇪🇺 Euro (EUR)' },
-  { value: 'USD', label: '🇺🇸 Dollar américain (USD)' },
-  { value: 'GBP', label: '🇬🇧 Livre sterling (GBP)' },
-  { value: 'CNY', label: '🇨🇳 Yuan chinois (CNY)' },
-  { value: 'CAD', label: '🇨🇦 Dollar canadien (CAD)' },
-  { value: 'CHF', label: '🇨🇭 Franc suisse (CHF)' },
+  { value: 'USD', label: '🇺🇸 Dollar USD' },
+  { value: 'GBP', label: '🇬🇧 Livre Sterling' },
+  { value: 'CAD', label: '🇨� Dollar Canadien' },
+  { value: 'CHF', label: '🇨� Franc Suisse' },
+  { value: 'CNY', label: '🇨� Yuan Chinois' },
 ];
 
 const paysOptions = [
-  { value: 'SN', label: '🇸🇳 Sénégal', devise: 'XOF' },
-  { value: 'CI', label: "🇨🇮 Côte d'Ivoire", devise: 'XOF' },
-  { value: 'ML', label: '🇲🇱 Mali', devise: 'XOF' },
-  { value: 'BF', label: '🇧🇫 Burkina Faso', devise: 'XOF' },
-  { value: 'GN', label: '🇬🇳 Guinée', devise: 'GNF' },
-  { value: 'TG', label: '🇹🇬 Togo', devise: 'XOF' },
-  { value: 'BJ', label: '🇧🇯 Bénin', devise: 'XOF' },
-  { value: 'CM', label: '🇨🇲 Cameroun', devise: 'XAF' },
-  { value: 'MG', label: '🇲🇬 Madagascar', devise: 'MGA' },
-  { value: 'CD', label: '🇨🇩 Congo RDC', devise: 'CDF' },
-  { value: 'NG', label: '🇳🇬 Nigeria', devise: 'NGN' },
-  { value: 'GH', label: '🇬🇭 Ghana', devise: 'GHS' },
-  { value: 'MA', label: '🇲🇦 Maroc', devise: 'MAD' },
+  { value: 'SN', label: '🇸🇳 Sénégal (XOF)', devise: 'XOF' },
+  { value: 'CI', label: "🇨🇮 Côte d'Ivoire (XOF)", devise: 'XOF' },
+  { value: 'ML', label: '🇲🇱 Mali (XOF)', devise: 'XOF' },
+  { value: 'BF', label: '🇧🇫 Burkina Faso (XOF)', devise: 'XOF' },
+  { value: 'GN', label: '🇬🇳 Guinée (GNF)', devise: 'GNF' },
+  { value: 'TG', label: '🇹🇬 Togo (XOF)', devise: 'XOF' },
+  { value: 'BJ', label: '🇧🇯 Bénin (XOF)', devise: 'XOF' },
+  { value: 'CM', label: '🇨🇲 Cameroun (XAF)', devise: 'XAF' },
+  { value: 'MG', label: '🇲🇬 Madagascar (MGA)', devise: 'MGA' },
+  { value: 'CD', label: '🇨🇩 Congo RDC (CDF)', devise: 'CDF' },
+  { value: 'NG', label: '🇳🇬 Nigeria (NGN)', devise: 'NGN' },
+  { value: 'GH', label: '🇬🇭 Ghana (GHS)', devise: 'GHS' },
+  { value: 'MA', label: '🇲🇦 Maroc (MAD)', devise: 'MAD' },
 ];
 
 const modes = [
@@ -651,7 +651,7 @@ export default function TransfertSimulatorPage() {
                 <option value="">Sélectionnez un pays</option>
                 {paysOptions.map((pays) => (
                   <option key={pays.value} value={pays.value}>
-                    {pays.label} ({pays.devise})
+                    {pays.label}
                   </option>
                 ))}
               </select>
