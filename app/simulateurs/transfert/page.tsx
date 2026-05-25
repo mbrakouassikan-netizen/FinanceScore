@@ -125,6 +125,60 @@ const services: Service[] = [
   },
 ];
 
+const servicesModes: Record<string, {
+  modes: string[];
+  partenaires: Record<string, string[]>;
+}> = {
+  lemfi: {
+    modes: ['mobile', 'bancaire'],
+    partenaires: {
+      mobile: ['Orange Money', 'Wave', 'MTN Mobile Money', 'Moov Money'],
+      bancaire: ['Virement bancaire direct'],
+      cash: [],
+    },
+  },
+  wave: {
+    modes: ['mobile'],
+    partenaires: {
+      mobile: ['Wave', 'Orange Money'],
+      bancaire: [],
+      cash: [],
+    },
+  },
+  wise: {
+    modes: ['bancaire'],
+    partenaires: {
+      mobile: [],
+      bancaire: ['Virement bancaire direct'],
+      cash: [],
+    },
+  },
+  remitly: {
+    modes: ['mobile', 'bancaire', 'cash'],
+    partenaires: {
+      mobile: ['Orange Money', 'MTN Mobile Money', 'Wave'],
+      bancaire: ['Virement bancaire direct'],
+      cash: ['Agences partenaires locales'],
+    },
+  },
+  worldremit: {
+    modes: ['mobile', 'bancaire', 'cash'],
+    partenaires: {
+      mobile: ['Orange Money', 'MTN Mobile Money', 'Airtel Money'],
+      bancaire: ['Virement bancaire direct'],
+      cash: ['Agences Western Union', 'Partenaires locaux'],
+    },
+  },
+  westernunion: {
+    modes: ['cash', 'mobile'],
+    partenaires: {
+      mobile: ['Orange Money', 'MTN Mobile Money'],
+      bancaire: [],
+      cash: ['Agences Western Union', 'Points de retrait partenaires'],
+    },
+  },
+};
+
 const tauxDeChange: Record<string, number> = {
   'XOF': 655.957,
   'XAF': 655.957,
@@ -148,6 +202,9 @@ export default function TransfertSimulatorPage() {
   const [ratesLoading, setRatesLoading] = useState(false);
   const [ratesError, setRatesError] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [expandedService, setExpandedService] = useState<string | null>(null);
+  const [expandedMode, setExpandedMode] = useState<string | null>(null);
+  const [unavailableMessage, setUnavailableMessage] = useState<{ service: string; mode: string } | null>(null);
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -186,6 +243,26 @@ export default function TransfertSimulatorPage() {
     const frais = calculateFrais(service);
     const montantNet = (formData.montant - frais) * (1 - service.pourcentage / 100);
     return montantNet * taux;
+  };
+
+  const handleModeBadgeClick = (serviceId: string, mode: string) => {
+    const serviceModesData = servicesModes[serviceId];
+    if (!serviceModesData) return;
+
+    const isAvailable = serviceModesData.modes.includes(mode);
+    if (isAvailable) {
+      if (expandedService === serviceId && expandedMode === mode) {
+        setExpandedService(null);
+        setExpandedMode(null);
+      } else {
+        setExpandedService(serviceId);
+        setExpandedMode(mode);
+      }
+      setUnavailableMessage(null);
+    } else {
+      setUnavailableMessage({ service: serviceId, mode });
+      setTimeout(() => setUnavailableMessage(null), 3000);
+    }
   };
 
   const getFrequenceAnnuelle = () => {
@@ -268,6 +345,10 @@ export default function TransfertSimulatorPage() {
                 const montantRecu = getMontantRecu(service, taux);
                 const isMeilleur = index === 0;
                 const isPlusRapide = service.id === 'westernunion' && formData.mode === 'cash';
+                const serviceModesData = servicesModes[service.id];
+                const isModeSelected = formData.mode && !service.disponibilite.includes(formData.mode);
+                const modeLabels = { mobile: 'Mobile Money', bancaire: 'Bancaire', cash: 'Cash' };
+                const modeIcons = { mobile: '📱', bancaire: '🏦', cash: '💵' };
 
                 return (
                   <div
@@ -314,6 +395,74 @@ export default function TransfertSimulatorPage() {
                             <div className="text-white font-semibold">{service.disponibilite.length} modes</div>
                           </div>
                         </div>
+
+                        {/* Modes disponibles badges */}
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {(['mobile', 'bancaire', 'cash'] as const).map((mode) => {
+                            const isAvailable = serviceModesData?.modes.includes(mode);
+                            const isSelected = formData.mode === mode;
+                            return (
+                              <button
+                                key={mode}
+                                onClick={() => handleModeBadgeClick(service.id, mode)}
+                                className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all ${
+                                  isAvailable
+                                    ? 'bg-[#4ade80]/20 text-[#4ade80] border border-[#4ade80]/50 hover:bg-[#4ade80]/30'
+                                    : 'bg-white/5 text-[#94a3b8] border border-white/10 cursor-not-allowed'
+                                } ${isSelected ? 'border-2 border-white' : ''}`}
+                              >
+                                <span>{modeIcons[mode]}</span>
+                                {modeLabels[mode]}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Message mode non disponible */}
+                        {unavailableMessage?.service === service.id && (
+                          <div className="mt-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
+                            <p className="text-red-400 text-xs">
+                              Ce mode n'est pas disponible avec {service.name}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Panneau déroulant partenaires */}
+                        {expandedService === service.id && expandedMode && serviceModesData && (
+                          <div className="mt-4 p-4 bg-white/5 rounded-lg border border-white/10">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="text-white font-medium text-sm">
+                                Partenaires {modeLabels[expandedMode as keyof typeof modeLabels]} disponibles
+                              </h4>
+                              <button
+                                onClick={() => { setExpandedService(null); setExpandedMode(null); }}
+                                className="text-[#94a3b8] hover:text-white text-xs"
+                              >
+                                Fermer
+                              </button>
+                            </div>
+                            <ul className="space-y-1">
+                              {serviceModesData.partenaires[expandedMode]?.map((partenaire) => (
+                                <li key={partenaire} className="flex items-center gap-2 text-sm text-white">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
+                                  {partenaire}
+                                </li>
+                              ))}
+                              {serviceModesData.partenaires[expandedMode]?.length === 0 && (
+                                <li className="text-sm text-[#94a3b8]">Aucun partenaire disponible</li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Bandeau mode non disponible */}
+                        {isModeSelected && (
+                          <div className="mt-3 p-2 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+                            <p className="text-orange-400 text-xs">
+                              Mode {formData.mode} non disponible avec ce service
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
