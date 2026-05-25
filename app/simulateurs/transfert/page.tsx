@@ -35,18 +35,19 @@ const deviseEnvoiOptions = [
 ];
 
 const paysOptions = [
-  { value: 'senegal', label: 'Sénégal', devise: 'XOF' },
-  { value: 'cote-ivoire', label: "Côte d'Ivoire", devise: 'XOF' },
-  { value: 'cameroun', label: 'Cameroun', devise: 'XAF' },
-  { value: 'congo-rdc', label: 'Congo RDC', devise: 'CDF' },
-  { value: 'nigeria', label: 'Nigeria', devise: 'NGN' },
-  { value: 'ghana', label: 'Ghana', devise: 'GHS' },
-  { value: 'guinee', label: 'Guinée', devise: 'GNF' },
-  { value: 'mali', label: 'Mali', devise: 'XOF' },
-  { value: 'burkina', label: 'Burkina Faso', devise: 'XOF' },
-  { value: 'togo', label: 'Togo', devise: 'XOF' },
-  { value: 'benin', label: 'Bénin', devise: 'XOF' },
-  { value: 'maroc', label: 'Maroc', devise: 'MAD' },
+  { value: 'SN', label: '🇸🇳 Sénégal', devise: 'XOF' },
+  { value: 'CI', label: "🇨🇮 Côte d'Ivoire", devise: 'XOF' },
+  { value: 'ML', label: '🇲🇱 Mali', devise: 'XOF' },
+  { value: 'BF', label: '🇧🇫 Burkina Faso', devise: 'XOF' },
+  { value: 'GN', label: '🇬🇳 Guinée', devise: 'GNF' },
+  { value: 'TG', label: '🇹🇬 Togo', devise: 'XOF' },
+  { value: 'BJ', label: '🇧🇯 Bénin', devise: 'XOF' },
+  { value: 'CM', label: '🇨🇲 Cameroun', devise: 'XAF' },
+  { value: 'MG', label: '🇲🇬 Madagascar', devise: 'MGA' },
+  { value: 'CD', label: '🇨🇩 Congo RDC', devise: 'CDF' },
+  { value: 'NG', label: '🇳🇬 Nigeria', devise: 'NGN' },
+  { value: 'GH', label: '🇬🇭 Ghana', devise: 'GHS' },
+  { value: 'MA', label: '🇲🇦 Maroc', devise: 'MAD' },
 ];
 
 const modes = [
@@ -195,7 +196,7 @@ export default function TransfertSimulatorPage() {
     deviseEnvoi: 'EUR',
     montant: 300,
     pays: '',
-    mode: '',
+    mode: 'mobile',
     frequence: '',
   });
   const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({});
@@ -243,6 +244,11 @@ export default function TransfertSimulatorPage() {
     const frais = calculateFrais(service);
     const montantNet = (formData.montant - frais) * (1 - service.pourcentage / 100);
     return montantNet * taux;
+  };
+
+  const formatMontant = (montant: number, devise: string) => {
+    const rounded = devise === 'XOF' || devise === 'XAF' ? Math.round(montant) : montant;
+    return rounded.toLocaleString('fr-FR', { minimumFractionDigits: devise === 'XOF' || devise === 'XAF' ? 0 : 2, maximumFractionDigits: 2 });
   };
 
   const handleModeBadgeClick = (serviceId: string, mode: string) => {
@@ -332,6 +338,12 @@ export default function TransfertSimulatorPage() {
                     <span className="text-xs">— Taux mis à jour le {formatDate(lastUpdate)}</span>
                   )}
                 </div>
+                <div className="flex items-center gap-2 text-[#4ade80] mt-2">
+                  <DollarSign className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    Avec {meilleurService.name}, vous économisez {formatMontant(getMontantRecu(pireService, taux) - getMontantRecu(meilleurService, taux), devise)} {devise} par rapport au service le plus cher
+                  </span>
+                </div>
               </>
             )}
           </div>
@@ -382,7 +394,17 @@ export default function TransfertSimulatorPage() {
                           </div>
                           <div>
                             <span className="text-[#94a3b8]">Montant reçu</span>
-                            <div className="text-white font-semibold">{montantRecu.toLocaleString('fr-FR')} {devise}</div>
+                            <div className={`font-semibold ${isMeilleur ? 'text-green-400' : 'text-white'}`}>
+                              {formatMontant(montantRecu, devise)} {devise}
+                            </div>
+                            {isMeilleur && (
+                              <div className="text-green-400 text-xs mt-1">Meilleur taux disponible</div>
+                            )}
+                            {!isMeilleur && meilleurService && (
+                              <div className="text-red-400 text-xs mt-1">
+                                - {formatMontant(getMontantRecu(meilleurService, taux) - montantRecu, devise)} {devise} vs {meilleurService.name}
+                              </div>
+                            )}
                           </div>
                           <div>
                             <span className="text-[#94a3b8]">Délai</span>
@@ -392,27 +414,26 @@ export default function TransfertSimulatorPage() {
                           </div>
                           <div>
                             <span className="text-[#94a3b8]">Disponible</span>
-                            <div className="text-white font-semibold">{service.disponibilite.length} modes</div>
+                            <div className="text-white font-semibold">{service.disponibilite.length === 1 ? '1 mode' : `${service.disponibilite.length} modes`}</div>
                           </div>
                         </div>
 
                         {/* Modes disponibles badges */}
                         <div className="flex flex-wrap gap-2 mt-4">
-                          {(['mobile', 'bancaire', 'cash'] as const).map((mode) => {
-                            const isAvailable = serviceModesData?.modes.includes(mode);
+                          {serviceModesData?.modes.map((mode) => {
                             const isSelected = formData.mode === mode;
                             return (
                               <button
                                 key={mode}
                                 onClick={() => handleModeBadgeClick(service.id, mode)}
-                                className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all ${
-                                  isAvailable
-                                    ? 'bg-[#4ade80]/20 text-[#4ade80] border border-[#4ade80]/50 hover:bg-[#4ade80]/30'
-                                    : 'bg-white/5 text-[#94a3b8] border border-white/10 cursor-not-allowed'
-                                } ${isSelected ? 'border-2 border-white' : ''}`}
+                                className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                                  isSelected
+                                    ? 'bg-[#4ade80]/20 text-[#4ade80] border-2 border-white'
+                                    : 'bg-[#4ade80]/20 text-[#4ade80] border border-[#4ade80]/50 hover:bg-[#4ade80]/30'
+                                }`}
                               >
-                                <span>{modeIcons[mode]}</span>
-                                {modeLabels[mode]}
+                                <span>{modeIcons[mode as keyof typeof modeIcons]}</span>
+                                {modeLabels[mode as keyof typeof modeLabels]}
                               </button>
                             );
                           })}
