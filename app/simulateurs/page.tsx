@@ -57,8 +57,8 @@ const simulators: SimulatorCard[] = [
     title: 'Simulateur de remboursement',
     description: 'Simule tes mensualités selon le montant et la durée',
     tab: 'Crédit',
-    badge: 'Bientôt',
-    active: false,
+    active: true,
+    link: '/simulateurs/remboursement',
   },
   {
     id: 'investissement',
