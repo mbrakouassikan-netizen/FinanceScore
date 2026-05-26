@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowLeft, Phone, Building2, Banknote, CheckCircle2, TrendingUp, Clock, DollarSign, Loader2 } from 'lucide-react';
+import { EU, US, GB, CA, CH, CN } from 'country-flag-icons/react/3x2';
+import { SN, CI, ML, BF, GN, TG, BJ, CM, MG, CD, NG, GH, MA } from 'country-flag-icons/react/3x2';
 
 type Step = 1 | 2 | 'results';
 
@@ -26,28 +29,28 @@ interface Service {
 }
 
 const deviseEnvoiOptions = [
-  { value: 'EUR', label: '🇪🇺 Euro (EUR)' },
-  { value: 'USD', label: '🇺🇸 Dollar américain (USD)' },
-  { value: 'GBP', label: '🇬🇧 Livre sterling (GBP)' },
-  { value: 'CAD', label: '🇨🇦 Dollar canadien (CAD)' },
-  { value: 'CHF', label: '🇨🇭 Franc suisse (CHF)' },
-  { value: 'CNY', label: '🇨🇳 Yuan chinois (CNY)' },
+  { value: 'EUR', label: 'Euro (EUR)', flag: EU },
+  { value: 'USD', label: 'Dollar américain (USD)', flag: US },
+  { value: 'GBP', label: 'Livre sterling (GBP)', flag: GB },
+  { value: 'CAD', label: 'Dollar canadien (CAD)', flag: CA },
+  { value: 'CHF', label: 'Franc suisse (CHF)', flag: CH },
+  { value: 'CNY', label: 'Yuan chinois (CNY)', flag: CN },
 ];
 
 const paysOptions = [
-  { value: 'SN', label: '🇸🇳 Sénégal', currency: 'XOF' },
-  { value: 'CI', label: "🇨🇮 Côte d'Ivoire", currency: 'XOF' },
-  { value: 'ML', label: '🇲🇱 Mali', currency: 'XOF' },
-  { value: 'BF', label: '🇧🇫 Burkina Faso', currency: 'XOF' },
-  { value: 'GN', label: '🇬🇳 Guinée', currency: 'GNF' },
-  { value: 'TG', label: '🇹🇬 Togo', currency: 'XOF' },
-  { value: 'BJ', label: '🇧🇯 Bénin', currency: 'XOF' },
-  { value: 'CM', label: '🇨🇲 Cameroun', currency: 'XAF' },
-  { value: 'MG', label: '🇲🇬 Madagascar', currency: 'MGA' },
-  { value: 'CD', label: '🇨🇩 Congo RDC', currency: 'CDF' },
-  { value: 'NG', label: '🇳🇬 Nigeria', currency: 'NGN' },
-  { value: 'GH', label: '🇬🇭 Ghana', currency: 'GHS' },
-  { value: 'MA', label: '🇲🇦 Maroc', currency: 'MAD' },
+  { value: 'SN', label: 'Sénégal', currency: 'XOF', flag: SN },
+  { value: 'CI', label: "Côte d'Ivoire", currency: 'XOF', flag: CI },
+  { value: 'ML', label: 'Mali', currency: 'XOF', flag: ML },
+  { value: 'BF', label: 'Burkina Faso', currency: 'XOF', flag: BF },
+  { value: 'GN', label: 'Guinée', currency: 'GNF', flag: GN },
+  { value: 'TG', label: 'Togo', currency: 'XOF', flag: TG },
+  { value: 'BJ', label: 'Bénin', currency: 'XOF', flag: BJ },
+  { value: 'CM', label: 'Cameroun', currency: 'XAF', flag: CM },
+  { value: 'MG', label: 'Madagascar', currency: 'MGA', flag: MG },
+  { value: 'CD', label: 'Congo RDC', currency: 'CDF', flag: CD },
+  { value: 'NG', label: 'Nigeria', currency: 'NGN', flag: NG },
+  { value: 'GH', label: 'Ghana', currency: 'GHS', flag: GH },
+  { value: 'MA', label: 'Maroc', currency: 'MAD', flag: MA },
 ];
 
 const modes = [
@@ -645,7 +648,14 @@ export default function TransfertSimulatorPage() {
                   onClick={() => setIsDeviseDropdownOpen(!isDeviseDropdownOpen)}
                   className="w-full flex items-center justify-between px-4 py-3 bg-[#1a1d2e] border border-[#2a2d3e] rounded-lg text-white cursor-pointer hover:border-[#4ade80] transition-colors"
                 >
-                  <span>{deviseEnvoiOptions.find(d => d.value === formData.deviseEnvoi)?.label || 'Sélectionnez une devise'}</span>
+                  <div className="flex items-center gap-2">
+                    {deviseEnvoiOptions.find(d => d.value === formData.deviseEnvoi)?.flag && (
+                      <span className="w-6 h-4">
+                        {React.createElement(deviseEnvoiOptions.find(d => d.value === formData.deviseEnvoi)?.flag!)}
+                      </span>
+                    )}
+                    <span>{deviseEnvoiOptions.find(d => d.value === formData.deviseEnvoi)?.label || 'Sélectionnez une devise'}</span>
+                  </div>
                   <span>{isDeviseDropdownOpen ? '▲' : '▼'}</span>
                 </button>
                 {isDeviseDropdownOpen && (
@@ -658,8 +668,11 @@ export default function TransfertSimulatorPage() {
                           setFormData({ ...formData, deviseEnvoi: devise.value })
                           setIsDeviseDropdownOpen(false)
                         }}
-                        className="w-full text-left px-4 py-3 text-white hover:bg-[#4ade80] hover:text-black transition-colors"
+                        className="w-full text-left px-4 py-3 text-white hover:bg-[#4ade80] hover:text-black transition-colors flex items-center gap-2"
                       >
+                        <span className="w-6 h-4">
+                          {React.createElement(devise.flag)}
+                        </span>
                         {devise.label}
                       </button>
                     ))}
@@ -689,7 +702,14 @@ export default function TransfertSimulatorPage() {
                   onClick={() => setIsPaysDropdownOpen(!isPaysDropdownOpen)}
                   className="w-full flex items-center justify-between px-4 py-3 bg-[#1a1d2e] border border-[#2a2d3e] rounded-lg text-white cursor-pointer hover:border-[#4ade80] transition-colors"
                 >
-                  <span>{paysOptions.find(p => p.value === formData.pays)?.label || 'Sélectionnez un pays'}</span>
+                  <div className="flex items-center gap-2">
+                    {paysOptions.find(p => p.value === formData.pays)?.flag && (
+                      <span className="w-6 h-4">
+                        {React.createElement(paysOptions.find(p => p.value === formData.pays)?.flag!)}
+                      </span>
+                    )}
+                    <span>{paysOptions.find(p => p.value === formData.pays)?.label || 'Sélectionnez un pays'}</span>
+                  </div>
                   <span>{isPaysDropdownOpen ? '▲' : '▼'}</span>
                 </button>
                 {isPaysDropdownOpen && (
@@ -702,8 +722,11 @@ export default function TransfertSimulatorPage() {
                           setFormData({ ...formData, pays: pays.value })
                           setIsPaysDropdownOpen(false)
                         }}
-                        className="w-full text-left px-4 py-3 text-white hover:bg-[#4ade80] hover:text-black transition-colors"
+                        className="w-full text-left px-4 py-3 text-white hover:bg-[#4ade80] hover:text-black transition-colors flex items-center gap-2"
                       >
+                        <span className="w-6 h-4">
+                          {React.createElement(pays.flag)}
+                        </span>
                         {pays.label}
                       </button>
                     ))}
