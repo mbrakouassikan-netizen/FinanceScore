@@ -65,8 +65,8 @@ const simulators: SimulatorCard[] = [
     title: 'Investissement locatif',
     description: 'Évalue la rentabilité d\'un investissement immobilier',
     tab: 'Investissement',
-    badge: 'Bientôt',
-    active: false,
+    active: true,
+    link: '/simulateurs/investissement-locatif',
   },
 ];
 
