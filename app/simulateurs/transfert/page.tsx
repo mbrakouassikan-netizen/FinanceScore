@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowLeft, Phone, Building2, Banknote, CheckCircle2, TrendingUp, Clock, DollarSign, Loader2 } from 'lucide-react';
 
@@ -27,27 +27,27 @@ interface Service {
 
 const deviseEnvoiOptions = [
   { value: 'EUR', label: '🇪🇺 Euro (EUR)' },
-  { value: 'USD', label: '🇺🇸 Dollar USD' },
-  { value: 'GBP', label: '🇬🇧 Livre Sterling' },
-  { value: 'CAD', label: '🇨🇦 Dollar Canadien' },
-  { value: 'CHF', label: '🇨🇭 Franc Suisse' },
-  { value: 'CNY', label: '🇨🇳 Yuan Chinois' },
+  { value: 'USD', label: '🇺🇸 Dollar américain (USD)' },
+  { value: 'GBP', label: '🇬🇧 Livre sterling (GBP)' },
+  { value: 'CAD', label: '🇨🇦 Dollar canadien (CAD)' },
+  { value: 'CHF', label: '🇨🇭 Franc suisse (CHF)' },
+  { value: 'CNY', label: '🇨🇳 Yuan chinois (CNY)' },
 ];
 
 const paysOptions = [
-  { value: 'SN', label: '🇸🇳 Sénégal (XOF)', devise: 'XOF' },
-  { value: 'CI', label: "🇨🇮 Côte d'Ivoire (XOF)", devise: 'XOF' },
-  { value: 'ML', label: '🇲🇱 Mali (XOF)', devise: 'XOF' },
-  { value: 'BF', label: '🇧🇫 Burkina Faso (XOF)', devise: 'XOF' },
-  { value: 'GN', label: '🇬🇳 Guinée (GNF)', devise: 'GNF' },
-  { value: 'TG', label: '🇹🇬 Togo (XOF)', devise: 'XOF' },
-  { value: 'BJ', label: '🇧🇯 Bénin (XOF)', devise: 'XOF' },
-  { value: 'CM', label: '🇨🇲 Cameroun (XAF)', devise: 'XAF' },
-  { value: 'MG', label: '🇲🇬 Madagascar (MGA)', devise: 'MGA' },
-  { value: 'CD', label: '🇨🇩 Congo RDC (CDF)', devise: 'CDF' },
-  { value: 'NG', label: '🇳🇬 Nigeria (NGN)', devise: 'NGN' },
-  { value: 'GH', label: '🇬🇭 Ghana (GHS)', devise: 'GHS' },
-  { value: 'MA', label: '🇲🇦 Maroc (MAD)', devise: 'MAD' },
+  { value: 'SN', label: '🇸🇳 Sénégal', currency: 'XOF' },
+  { value: 'CI', label: "🇨🇮 Côte d'Ivoire", currency: 'XOF' },
+  { value: 'ML', label: '🇲🇱 Mali', currency: 'XOF' },
+  { value: 'BF', label: '🇧🇫 Burkina Faso', currency: 'XOF' },
+  { value: 'GN', label: '🇬🇳 Guinée', currency: 'GNF' },
+  { value: 'TG', label: '🇹🇬 Togo', currency: 'XOF' },
+  { value: 'BJ', label: '🇧🇯 Bénin', currency: 'XOF' },
+  { value: 'CM', label: '🇨🇲 Cameroun', currency: 'XAF' },
+  { value: 'MG', label: '🇲🇬 Madagascar', currency: 'MGA' },
+  { value: 'CD', label: '🇨🇩 Congo RDC', currency: 'CDF' },
+  { value: 'NG', label: '🇳🇬 Nigeria', currency: 'NGN' },
+  { value: 'GH', label: '🇬🇭 Ghana', currency: 'GHS' },
+  { value: 'MA', label: '🇲🇦 Maroc', currency: 'MAD' },
 ];
 
 const modes = [
@@ -206,6 +206,30 @@ export default function TransfertSimulatorPage() {
   const [expandedService, setExpandedService] = useState<string | null>(null);
   const [expandedMode, setExpandedMode] = useState<string | null>(null);
   const [unavailableMessage, setUnavailableMessage] = useState<{ service: string; mode: string } | null>(null);
+  const [isDeviseDropdownOpen, setIsDeviseDropdownOpen] = useState(false);
+  const [isPaysDropdownOpen, setIsPaysDropdownOpen] = useState(false);
+  const deviseDropdownRef = useRef<HTMLDivElement>(null);
+  const paysDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleDeviseClick = (e: MouseEvent) => {
+      if (deviseDropdownRef.current && !deviseDropdownRef.current.contains(e.target as Node)) {
+        setIsDeviseDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleDeviseClick)
+    return () => document.removeEventListener('mousedown', handleDeviseClick)
+  }, [])
+
+  useEffect(() => {
+    const handlePaysClick = (e: MouseEvent) => {
+      if (paysDropdownRef.current && !paysDropdownRef.current.contains(e.target as Node)) {
+        setIsPaysDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handlePaysClick)
+    return () => document.removeEventListener('mousedown', handlePaysClick)
+  }, [])
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -290,9 +314,9 @@ export default function TransfertSimulatorPage() {
     const economieAnnuelle = economieParEnvoi * frequenceAnnuelle;
 
     const pays = paysOptions.find(p => p.value === formData.pays);
-    const devise = pays ? pays.devise : '';
+    const devise = pays ? pays.currency : '';
     const taux = ratesError || Object.keys(exchangeRates).length === 0
-      ? (pays ? tauxDeChange[pays.devise] || 1 : 1)
+      ? (pays ? tauxDeChange[pays.currency] || 1 : 1)
       : (exchangeRates[devise] || 1);
 
     const modeLabel = modes.find(m => m.id === formData.mode)?.label || '';
@@ -615,17 +639,33 @@ export default function TransfertSimulatorPage() {
             {/* Champ 1 — Devise d'envoi */}
             <div className="mb-8">
               <label className="block text-white font-medium mb-2">Devise d'envoi</label>
-              <select
-                value={formData.deviseEnvoi}
-                onChange={(e) => setFormData({ ...formData, deviseEnvoi: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg bg-[#1a1d2e] border border-[#2a2d3e] text-white focus:border-[#4ade80] focus:outline-none"
-              >
-                {deviseEnvoiOptions.map((devise) => (
-                  <option key={devise.value} value={devise.value}>
-                    {devise.label}
-                  </option>
-                ))}
-              </select>
+              <div ref={deviseDropdownRef} className="relative w-full">
+                <button
+                  type="button"
+                  onClick={() => setIsDeviseDropdownOpen(!isDeviseDropdownOpen)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-[#1a1d2e] border border-[#2a2d3e] rounded-lg text-white cursor-pointer hover:border-[#4ade80] transition-colors"
+                >
+                  <span>{deviseEnvoiOptions.find(d => d.value === formData.deviseEnvoi)?.label || 'Sélectionnez une devise'}</span>
+                  <span>{isDeviseDropdownOpen ? '▲' : '▼'}</span>
+                </button>
+                {isDeviseDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-[#1a1d2e] border border-[#2a2d3e] rounded-lg overflow-y-auto max-h-60 shadow-lg">
+                    {deviseEnvoiOptions.map((devise) => (
+                      <button
+                        key={devise.value}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, deviseEnvoi: devise.value })
+                          setIsDeviseDropdownOpen(false)
+                        }}
+                        className="w-full text-left px-4 py-3 text-white hover:bg-[#4ade80] hover:text-black transition-colors"
+                      >
+                        {devise.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Champ 2 — Montant */}
@@ -643,18 +683,33 @@ export default function TransfertSimulatorPage() {
             {/* Champ 3 — Pays de destination */}
             <div className="mb-8">
               <label className="block text-white font-medium mb-2">Pays de destination</label>
-              <select
-                value={formData.pays}
-                onChange={(e) => setFormData({ ...formData, pays: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg bg-[#1a1d2e] border border-[#2a2d3e] text-white focus:border-[#4ade80] focus:outline-none"
-              >
-                <option value="">Sélectionnez un pays</option>
-                {paysOptions.map((pays) => (
-                  <option key={pays.value} value={pays.value}>
-                    {pays.label}
-                  </option>
-                ))}
-              </select>
+              <div ref={paysDropdownRef} className="relative w-full">
+                <button
+                  type="button"
+                  onClick={() => setIsPaysDropdownOpen(!isPaysDropdownOpen)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-[#1a1d2e] border border-[#2a2d3e] rounded-lg text-white cursor-pointer hover:border-[#4ade80] transition-colors"
+                >
+                  <span>{paysOptions.find(p => p.value === formData.pays)?.label || 'Sélectionnez un pays'}</span>
+                  <span>{isPaysDropdownOpen ? '▲' : '▼'}</span>
+                </button>
+                {isPaysDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-[#1a1d2e] border border-[#2a2d3e] rounded-lg overflow-y-auto max-h-60 shadow-lg">
+                    {paysOptions.map((pays) => (
+                      <button
+                        key={pays.value}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, pays: pays.value })
+                          setIsPaysDropdownOpen(false)
+                        }}
+                        className="w-full text-left px-4 py-3 text-white hover:bg-[#4ade80] hover:text-black transition-colors"
+                      >
+                        {pays.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Champ 3 — Mode de réception */}
