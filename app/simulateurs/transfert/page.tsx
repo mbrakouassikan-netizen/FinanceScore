@@ -708,7 +708,14 @@ export default function TransfertSimulatorPage() {
                         {React.createElement(paysOptions.find(p => p.value === formData.pays)?.flag!)}
                       </span>
                     )}
-                    <span>{paysOptions.find(p => p.value === formData.pays)?.label || 'Sélectionnez un pays'}</span>
+                    {paysOptions.find(p => p.value === formData.pays) ? (
+                      <span>
+                        {paysOptions.find(p => p.value === formData.pays)!.label}
+                        <span className="text-gray-400 text-sm ml-1">({paysOptions.find(p => p.value === formData.pays)!.currency})</span>
+                      </span>
+                    ) : (
+                      <span>Sélectionnez un pays</span>
+                    )}
                   </div>
                   <span>{isPaysDropdownOpen ? '▲' : '▼'}</span>
                 </button>
@@ -724,10 +731,13 @@ export default function TransfertSimulatorPage() {
                         }}
                         className="w-full text-left px-4 py-3 text-white hover:bg-[#4ade80] hover:text-black transition-colors flex items-center gap-2"
                       >
-                        <span className="w-6 h-4">
+                        <span className="w-6 h-4 flex-shrink-0">
                           {React.createElement(pays.flag)}
                         </span>
-                        {pays.label}
+                        <span>
+                          {pays.label}
+                          <span className="text-gray-400 text-sm ml-1">({pays.currency})</span>
+                        </span>
                       </button>
                     ))}
                   </div>
