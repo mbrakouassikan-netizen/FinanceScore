@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { AlertTriangle, ArrowRight, Lock } from 'lucide-react';
+import { AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function ConstructionPaysPage() {
   return (
@@ -48,20 +48,19 @@ export default function ConstructionPaysPage() {
           </Link>
 
           {/* Card 2: Optimiser ses transferts */}
-          <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-xl font-semibold text-white">Optimiser ses transferts</h3>
-              <span className="px-3 py-1 bg-[#4ade80]/20 text-[#4ade80] text-xs font-medium rounded-full">
-                Bientôt disponible
-              </span>
-            </div>
+          <Link
+            href="/simulateurs/transfert"
+            className="p-6 rounded-2xl border border-white/10 hover:border-[#4ade80]/30 transition-all block"
+            style={{ backgroundColor: '#1a1d2d' }}
+          >
+            <h3 className="text-xl font-semibold text-white mb-2">Optimiser ses transferts</h3>
             <p className="text-[#94a3b8] mb-4">
               Compare les frais et les taux des services de transfert d'argent pour maximiser tes envois
             </p>
-            <button disabled className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 text-[#94a3b8] font-medium rounded-full cursor-not-allowed">
-              <Lock className="w-4 h-4" /> Bientôt disponible
-            </button>
-          </div>
+            <div className="flex items-center gap-2 text-[#4ade80] font-medium">
+              Démarrer le comparateur <ArrowRight className="w-4 h-4" />
+            </div>
+          </Link>
 
           {/* Card 3: Crédit banque locale */}
           <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
