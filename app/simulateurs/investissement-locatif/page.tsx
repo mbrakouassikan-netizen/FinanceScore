@@ -69,7 +69,7 @@ export default function InvestissementLocatifPage() {
   const update = (key: keyof FormData, value: string | number) =>
     setFormData(prev => ({ ...prev, [key]: value }));
 
-  const fraisNotaire = formData.prixAchat * (formData.etat === 'neuf' ? 0.03 : 0.075);
+  const fraisNotaire = formData.prixAchat * (formData.etat === 'neuf' ? 0.07 : 0.10);
   const coutTotal = formData.prixAchat + fraisNotaire + formData.travaux;
   const montantEmprunt = Math.max(0, coutTotal - formData.apport);
   const tauxMensuel = formData.tauxInteret / 100 / 12;
@@ -121,7 +121,7 @@ export default function InvestissementLocatifPage() {
   const scoreLabels = ['', 'Insuffisant', 'Faible', 'Correct', 'Très bon', 'Excellent'];
 
   const fmt = (v: number) => v.toLocaleString('fr-FR', { maximumFractionDigits: 0 });
-  const fmtPct = (v: number) => v.toFixed(2);
+  const fmtPct = (v: number) => v.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const canGoNext = (s: Step): boolean => {
     if (s === 1) return !!formData.prixAchat && !!formData.typeBien && !!formData.etat;
@@ -189,7 +189,7 @@ export default function InvestissementLocatifPage() {
                 ))}
               </div>
               <p className="text-[#94a3b8] text-xs mt-2">
-                Frais de notaire : {formData.etat === 'neuf' ? '3%' : '7.5%'} — soit <span className="text-white">{fmt(fraisNotaire)} €</span>
+                Frais de notaire : {formData.etat === 'neuf' ? '7%' : '10%'} — soit <span className="text-white">{fmt(fraisNotaire)} €</span>
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
@@ -211,7 +211,7 @@ export default function InvestissementLocatifPage() {
             </div>
             <div className="p-4 rounded-xl border border-white/10 bg-white/5 text-sm space-y-1">
               <div className="flex justify-between"><span className="text-[#94a3b8]">Prix d'achat</span><span className="text-white">{fmt(formData.prixAchat)} €</span></div>
-              <div className="flex justify-between"><span className="text-[#94a3b8]">Frais de notaire ({formData.etat === 'neuf' ? '3%' : '7.5%'})</span><span className="text-white">{fmt(fraisNotaire)} €</span></div>
+              <div className="flex justify-between"><span className="text-[#94a3b8]">Frais de notaire ({formData.etat === 'neuf' ? '7%' : '10%'})</span><span className="text-white">{fmt(fraisNotaire)} €</span></div>
               {formData.travaux > 0 && <div className="flex justify-between"><span className="text-[#94a3b8]">Travaux</span><span className="text-white">{fmt(formData.travaux)} €</span></div>}
               <div className="flex justify-between font-semibold pt-2 border-t border-white/10"><span className="text-white">Coût total d'acquisition</span><span className="text-[#4ade80]">{fmt(coutTotal)} €</span></div>
             </div>
@@ -248,7 +248,7 @@ export default function InvestissementLocatifPage() {
             <div>
               <label className="block text-white font-medium mb-2">Frais de notaire <span className="text-[#94a3b8] font-normal text-sm">— calculés automatiquement</span></label>
               <div className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-[#94a3b8]">
-                {fmt(fraisNotaire)} € ({formData.etat === 'neuf' ? '3%' : '7.5%'} — bien {formData.etat})
+                {fmt(fraisNotaire)} € ({formData.etat === 'neuf' ? '7%' : '10%'} — bien {formData.etat})
               </div>
             </div>
             <div className="p-4 rounded-xl border border-white/10 bg-white/5 text-sm space-y-1">
@@ -400,7 +400,7 @@ export default function InvestissementLocatifPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-[#4ade80] mt-1.5 flex-shrink-0" />
-                  <p className="text-[#94a3b8]">Ton loyer mensuel couvre <span className="text-white font-semibold">{Math.floor(Math.max(0, loyerMensuelNet) / 300)} transferts de 300 €</span> vers l'Afrique chaque mois</p>
+                  <p className="text-[#94a3b8]">Ton loyer mensuel couvre <span className="text-white font-semibold">{(() => { const c = Math.floor(Math.max(0, loyerMensuelNet) / 300); return c === 1 ? '1 transfert de 300 €' : `${c} transferts de 300 €`; })()}</span> vers l'Afrique chaque mois</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-[#4ade80] mt-1.5 flex-shrink-0" />
@@ -408,7 +408,11 @@ export default function InvestissementLocatifPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-[#4ade80] mt-1.5 flex-shrink-0" />
-                  <p className="text-[#94a3b8]">Ton cashflow de <span className={`font-semibold ${cashflow >= 0 ? 'text-green-400' : 'text-red-400'}`}>{cashflow >= 0 ? '+' : ''}{fmt(cashflow)} €/mois</span> équivaut à ta cotisation retraite complémentaire</p>
+                  {cashflow >= 0 ? (
+                    <p className="text-[#94a3b8]">Ton cashflow de <span className="font-semibold text-green-400">+{fmt(cashflow)} €/mois</span> couvre ta cotisation retraite complémentaire</p>
+                  ) : (
+                    <p className="text-[#94a3b8]">Ton effort d'épargne de <span className="font-semibold text-red-400">{fmt(Math.abs(cashflow))} €/mois</span> construit ton patrimoine — le locataire rembourse 80% de ton crédit</p>
+                  )}
                 </div>
               </div>
             </div>
