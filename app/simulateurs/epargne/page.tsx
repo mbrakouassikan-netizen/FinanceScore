@@ -35,6 +35,7 @@ const calculateCompoundInterest = (
 
 export default function EpargneSimulatorPage() {
   const [step, setStep] = useState<Step>(1);
+  const [livretARate, setLivretARate] = useState(2.4);
   const gamifCalled = useRef(false);
   useEffect(() => {
     if (step === 'results' && !gamifCalled.current) {
@@ -59,10 +60,10 @@ export default function EpargneSimulatorPage() {
   ];
 
   // Real-time calculations
-  const livretA = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 1.5);
-  const avFondsEuros = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 2.5);
-  const avUnitesCompte = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 5);
-  const peaEtf = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 7);
+  const livretA = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, livretARate);
+  const avFondsEuros = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 3.5);
+  const avUnitesCompte = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 7);
+  const peaEtf = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 8);
 
   const totalVerse = formData.capitalDepart + (formData.epargneMensuelle * formData.duree * 12);
   const gains = avUnitesCompte - totalVerse;
@@ -192,8 +193,8 @@ export default function EpargneSimulatorPage() {
                     Sécurisé
                   </span>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2">1,5%</div>
-                <div className="text-[#94a3b8] text-sm mb-4">Taux net</div>
+                <div className="text-3xl font-bold text-white mb-2">{livretARate}%</div>
+                <div className="text-[#94a3b8] text-xs mb-3">Taux brut — les performances passées ne préjugent pas des performances futures</div>
                 <div className="text-2xl font-bold text-[#94a3b8]">
                   {livretA.toLocaleString('fr-FR')} €
                 </div>
@@ -208,8 +209,8 @@ export default function EpargneSimulatorPage() {
                     Sécurisé
                   </span>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2">2,5%</div>
-                <div className="text-[#94a3b8] text-sm mb-4">Taux net moyen</div>
+                <div className="text-3xl font-bold text-white mb-2">3,5%</div>
+                <div className="text-[#94a3b8] text-xs mb-3">Taux brut moyen 2024 — les performances passées ne préjugent pas des performances futures</div>
                 <div className="text-2xl font-bold text-[#94a3b8]">
                   {avFondsEuros.toLocaleString('fr-FR')} €
                 </div>
@@ -224,8 +225,8 @@ export default function EpargneSimulatorPage() {
                     Recommandé
                   </span>
                 </div>
-                <div className="text-3xl font-bold text-[#4ade80] mb-2">5%</div>
-                <div className="text-[#94a3b8] text-sm mb-4">Taux moyen</div>
+                <div className="text-3xl font-bold text-[#4ade80] mb-2">7%</div>
+                <div className="text-[#94a3b8] text-xs mb-3">Taux brut moyen historique — les performances passées ne préjugent pas des performances futures</div>
                 <div className="text-2xl font-bold text-white">
                   {avUnitesCompte.toLocaleString('fr-FR')} €
                 </div>
@@ -240,8 +241,8 @@ export default function EpargneSimulatorPage() {
                     Long terme
                   </span>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2">7%</div>
-                <div className="text-[#94a3b8] text-sm mb-4">Taux historique</div>
+                <div className="text-3xl font-bold text-white mb-2">8%</div>
+                <div className="text-[#94a3b8] text-xs mb-3">Taux brut moyen historique — les performances passées ne préjugent pas des performances futures</div>
                 <div className="text-2xl font-bold text-[#94a3b8]">
                   {peaEtf.toLocaleString('fr-FR')} €
                 </div>
@@ -462,6 +463,33 @@ export default function EpargneSimulatorPage() {
                   <span>1 an</span>
                   <span>30 ans</span>
                 </div>
+              </div>
+
+              {/* Taux Livret A */}
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                  <label className="text-white font-medium">Taux Livret A</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="10"
+                      value={livretARate}
+                      onChange={(e) => setLivretARate(parseFloat(e.target.value) || 0)}
+                      className="w-20 px-2 py-1 bg-white/10 border border-white/20 rounded-lg text-[#4ade80] font-semibold text-center focus:outline-none focus:border-[#4ade80]"
+                    />
+                    <span className="text-white">%</span>
+                    <button
+                      type="button"
+                      onClick={() => setLivretARate(2.4)}
+                      className="px-3 py-1 text-xs border border-white/20 text-[#94a3b8] rounded-full hover:border-[#4ade80] hover:text-[#4ade80] transition-all"
+                    >
+                      Réinitialiser
+                    </button>
+                  </div>
+                </div>
+                <p className="text-[#94a3b8] text-xs">Taux actuel : 2,4% — modifiable si changement</p>
               </div>
 
               {/* Real-time preview */}

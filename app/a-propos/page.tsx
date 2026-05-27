@@ -75,7 +75,7 @@ export default function AProposPage() {
                 </div>
                 <h3 className="font-semibold text-text-primary mb-2">Éducation</h3>
                 <p className="text-sm text-text-secondary">
-                  Des conseils financiers adaptés à notre réalité
+                  Des ressources éducatives adaptées à notre réalité
                 </p>
               </div>
               <div className="text-center">
@@ -160,7 +160,7 @@ export default function AProposPage() {
         {/* CTA */}
         <FadeUpSection delay={0.5} className="text-center">
           <h2 className="text-2xl font-serif font-bold text-text-primary mb-4">
-            Prêt à découvrir ton score financier ?
+            Prêt à découvrir ton score éducatif ?
           </h2>
           <p className="text-text-secondary mb-8">
             Rejoins les milliers de personnes qui ont déjà pris le contrôle de leurs finances.

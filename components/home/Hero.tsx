@@ -46,7 +46,7 @@ export const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Découvre ton score de santé financière sur 100 et reçois un plan d'action personnalisé — gratuit.
+            Découvre ton score éducatif sur 100 et reçois ton guide personnalisé — gratuit.
           </motion.p>
 
           {/* CTA Button */}

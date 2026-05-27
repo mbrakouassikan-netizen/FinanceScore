@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
               FinanceScore
             </h3>
             <p className="text-text-secondary mb-4">
-              Ton bilan financier gratuit en 10 minutes. Découvre ton score de santé financière sur 100 et reçois un plan d'action personnalisé.
+              Ton bilan financier gratuit en 10 minutes. Découvre ton score éducatif sur 100 et reçois ton guide personnalisé.
             </p>
             <p className="text-sm text-text-secondary">
               Par Transfair · Éducation Financière

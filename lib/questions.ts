@@ -97,7 +97,7 @@ export const questions: Question[] = [
   {
     id: 9,
     pillar: "Dettes",
-    text: "Utilises-tu le BNPL (Klarna, Alma, PayPal 3x) ?",
+    text: "Utilises-tu le paiement en plusieurs fois (Klarna, Alma, PayPal 3x) ?",
     options: [
       { text: "Oui, souvent", points: 0 },
       { text: "Oui, parfois", points: 3 },

@@ -9,7 +9,6 @@ import { StrengthsWeaknesses } from '@/components/results/StrengthsWeaknesses';
 import { ActionPlan } from '@/components/results/ActionPlan';
 import { PremiumCTA } from '@/components/results/PremiumCTA';
 import OfficialResources from '@/components/results/OfficialResources';
-import { Button } from '@/components/ui/Button';
 import { calculateScore } from '@/lib/scoring';
 import { ScoreResult, QuizAnswer, PillarScore, ScoreLevel } from '@/lib/types';
 import { Share2, Copy, RotateCcw, MessageCircle, CheckCircle, Info, ExternalLink } from 'lucide-react';
@@ -208,22 +207,18 @@ function ResultsContent() {
               </h2>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button
+                <button
                   onClick={handleShareWhatsApp}
-                  variant="outline"
-                  size="lg"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 px-6 py-3 bg-[#4ade80] text-[#052e16] font-semibold rounded-full hover:bg-[#4ade80]/90 transition-all"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Partager sur WhatsApp
-                </Button>
-                
-                <Button
+                </button>
+
+                <button
                   onClick={handleCopyLink}
-                  variant="outline"
-                  size="lg"
-                  className={`flex items-center gap-2 transition-all duration-300 ${
-                    copied ? 'bg-accent-primary text-black border-accent-primary' : ''
+                  className={`flex items-center gap-2 px-6 py-3 border font-semibold rounded-full transition-all ${
+                    copied ? 'bg-[#4ade80] text-[#052e16] border-[#4ade80]' : 'border-[#4ade80] text-[#4ade80] bg-transparent hover:bg-[#4ade80]/10'
                   }`}
                 >
                   {copied ? (
@@ -237,7 +232,7 @@ function ResultsContent() {
                       Copier le message
                     </>
                   )}
-                </Button>
+                </button>
               </div>
             </motion.div>
 
@@ -249,15 +244,13 @@ function ResultsContent() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Button
+              <button
                 onClick={handleRetakeTest}
-                variant="outline"
-                size="lg"
-                className="flex items-center gap-2 mx-auto"
+                className="flex items-center gap-2 px-6 py-3 border border-[#334155] text-[#94a3b8] bg-transparent font-medium rounded-full hover:bg-white/5 transition-all mx-auto"
               >
                 <RotateCcw className="w-5 h-5" />
                 Refaire le test
-              </Button>
+              </button>
             </motion.div>
           </>
         )}

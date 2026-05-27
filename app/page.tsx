@@ -28,7 +28,7 @@ export default async function HomePage() {
 
             {/* Sous-titre */}
             <p className="text-lg md:text-xl text-[#94a3b8] mb-10 max-w-3xl mx-auto">
-              Quiz gratuit · Plan d'action personnalisé · Ressources exclusives — Conçu pour la réalité de la diaspora
+              Quiz gratuit · Guide personnalisé · Ressources exclusives — Conçu pour la réalité de la diaspora
             </p>
 
             {/* Boutons */}
@@ -106,12 +106,12 @@ export default async function HomePage() {
             <div className="text-center">
               <div className="text-6xl font-bold text-[#4ade80]/30 mb-4">02</div>
               <h3 className="text-xl font-semibold text-white mb-2">Tu reçois ton score</h3>
-              <p className="text-[#94a3b8]">Score financier sur 100</p>
+              <p className="text-[#94a3b8]">Score éducatif sur 100</p>
             </div>
             <div className="text-center">
               <div className="text-6xl font-bold text-[#4ade80]/30 mb-4">03</div>
               <h3 className="text-xl font-semibold text-white mb-2">Tu obtiens ton plan</h3>
-              <p className="text-[#94a3b8]">Plan d'action personnalisé PDF</p>
+              <p className="text-[#94a3b8]">Guide personnalisé PDF</p>
             </div>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default async function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="p-8 rounded-2xl border border-white/10 hover:border-[#4ade80]/30 transition-all hover:shadow-xl hover:shadow-green-500/10 hover:-translate-y-1" style={{ backgroundColor: '#1a1d2d' }}>
               <CheckCircle2 className="w-12 h-12 text-[#4ade80] mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">Score financier</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Score éducatif</h3>
               <p className="text-[#94a3b8]">Évalue ta santé financière sur 100 avec 6 piliers analysés</p>
             </div>
             <div className="p-8 rounded-2xl border border-white/10 hover:border-[#4ade80]/30 transition-all hover:shadow-xl hover:shadow-green-500/10 hover:-translate-y-1" style={{ backgroundColor: '#1a1d2d' }}>
@@ -206,7 +206,7 @@ export default async function HomePage() {
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center p-12 rounded-3xl" style={{ background: 'linear-gradient(135deg, #1a2e1a 0%, #0d1f0d 100%)' }}>
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">
-            Prêt à connaître ton score financier ?
+            Prêt à connaître ton score éducatif ?
           </h2>
           <p className="text-lg text-[#94a3b8] mb-8">
             Gratuit · 5 minutes · Résultat immédiat

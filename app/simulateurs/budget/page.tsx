@@ -697,7 +697,7 @@ export default function BudgetSimulatorPage() {
             Simulateur budget 50/30/20
           </h1>
           <p className="text-[#94a3b8]">
-            Analyse ta répartition budgétaire et reçois un plan d'action personnalisé.
+            Analyse ta répartition budgétaire et reçois ton guide personnalisé.
           </p>
         </div>
 

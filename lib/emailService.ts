@@ -77,7 +77,7 @@ export class EmailService {
             
             <h3>🚀 Prochaines étapes :</h3>
             <ul>
-              <li>Consulte ton plan d'action personnalisé sur le site</li>
+              <li>Consulte ton guide personnalisé sur le site</li>
               <li>Partage tes résultats avec ta communauté</li>
               <li>Suis les recommandations pour améliorer ton score</li>
             </ul>
@@ -116,7 +116,7 @@ export class EmailService {
       ${this.getScoreInterpretation(data.niveau)}
       
       Prochaines étapes :
-      - Consulte ton plan d'action personnalisé sur le site
+      - Consulte ton guide personnalisé sur le site
       - Partage tes résultats avec ta communauté
       - Suis les recommandations pour améliorer ton score
       

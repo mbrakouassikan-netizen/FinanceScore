@@ -30,7 +30,7 @@ export default function MerciPage() {
               Ton bilan financier a bien été envoyé à ton adresse email.
             </p>
             <p>
-              Tu y trouveras ton score détaillé, ton plan d'action personnalisé et des conseils exclusifs pour améliorer ta situation financière.
+              Tu y trouveras ton score détaillé, ton guide personnalisé et des ressources éducatives exclusives pour améliorer ta situation financière.
             </p>
           </div>
 

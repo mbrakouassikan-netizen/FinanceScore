@@ -69,7 +69,7 @@ export default function RGPDPage() {
                   <li>Adresse email (pour recevoir tes résultats)</li>
                   <li>Prénom (optionnel, pour personnaliser ton expérience)</li>
                   <li>Réponses au questionnaire financier</li>
-                  <li>Score financier et résultats associés</li>
+                  <li>Score éducatif et résultats associés</li>
                 </ul>
               </div>
               
@@ -103,9 +103,9 @@ export default function RGPDPage() {
             <div className="space-y-4 text-text-secondary">
               <p>Tes données sont utilisées uniquement pour :</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>T'envoyer tes résultats financiers et ton plan d'action personnalisé</li>
+                <li>T'envoyer tes résultats et ton guide personnalisé</li>
                 <li>Améliorer nos services et l'algorithme de scoring</li>
-                <li>Te contacter avec des conseils financiers pertinents (avec ton consentement)</li>
+                <li>Te contacter avec des ressources éducatives pertinentes (avec ton consentement)</li>
                 <li>Analyser les données anonymisées pour des statistiques globales</li>
               </ul>
             </div>

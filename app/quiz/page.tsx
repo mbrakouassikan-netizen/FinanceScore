@@ -156,7 +156,7 @@ export default function QuizPage() {
                 Où envoyer tes résultats ?
               </h2>
               <p className="text-text-secondary">
-                Entre ton email pour recevoir ton score et ton plan d'action personnalisé
+                Entre ton email pour recevoir ton score et ton guide personnalisé
               </p>
             </div>
 
@@ -207,7 +207,7 @@ export default function QuizPage() {
                     className="mt-1 w-4 h-4 text-accent-primary bg-bg-primary border-bg-card rounded focus:ring-accent-primary"
                   />
                   <span className="text-sm text-text-secondary leading-relaxed">
-                    J'accepte de recevoir mon score et des conseils financiers. 
+                    J'accepte de recevoir mon score et des ressources éducatives gratuites.
                     Désinscription possible à tout moment. Conforme RGPD.
                   </span>
                 </label>
