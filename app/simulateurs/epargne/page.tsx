@@ -35,7 +35,7 @@ const calculateCompoundInterest = (
 
 export default function EpargneSimulatorPage() {
   const [step, setStep] = useState<Step>(1);
-  const [livretARate, setLivretARate] = useState(2.4);
+  const [livretARate, setLivretARate] = useState(1.5);
   const gamifCalled = useRef(false);
   useEffect(() => {
     if (step === 'results' && !gamifCalled.current) {
@@ -61,6 +61,8 @@ export default function EpargneSimulatorPage() {
 
   // Real-time calculations
   const livretA = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, livretARate);
+  const ldds = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, livretARate);
+  const lep = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 2.5);
   const avFondsEuros = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 3.5);
   const avUnitesCompte = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 7);
   const peaEtf = calculateCompoundInterest(formData.epargneMensuelle, formData.capitalDepart, formData.duree, 8);
@@ -184,7 +186,7 @@ export default function EpargneSimulatorPage() {
           {/* Comparison cards */}
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">Comparatif des placements</h2>
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Livret A */}
               <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
                 <div className="flex items-center justify-between mb-4">
@@ -193,10 +195,45 @@ export default function EpargneSimulatorPage() {
                     Sécurisé
                   </span>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2">{livretARate}%</div>
-                <div className="text-[#94a3b8] text-xs mb-3">Taux brut — les performances passées ne préjugent pas des performances futures</div>
+                <div className="text-3xl font-bold text-white mb-2">{livretARate.toLocaleString('fr-FR')}%</div>
+                <div className="text-[#94a3b8] text-xs mb-3">Taux réglementé par l'État — exonéré d'impôt</div>
                 <div className="text-2xl font-bold text-[#94a3b8]">
                   {livretA.toLocaleString('fr-FR')} €
+                </div>
+                <div className="text-[#94a3b8] text-xs mt-1">Capital final</div>
+              </div>
+
+              {/* LDDS */}
+              <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">LDDS</h3>
+                  <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-full">
+                    Sécurisé
+                  </span>
+                </div>
+                <div className="text-xs text-[#94a3b8] mb-1">Livret Développement Durable</div>
+                <div className="text-3xl font-bold text-white mb-2">{livretARate.toLocaleString('fr-FR')}%</div>
+                <div className="text-[#94a3b8] text-xs mb-3">Taux réglementé par l'État — exonéré d'impôt</div>
+                <div className="text-2xl font-bold text-[#94a3b8]">
+                  {ldds.toLocaleString('fr-FR')} €
+                </div>
+                <div className="text-[#94a3b8] text-xs mt-1">Capital final</div>
+              </div>
+
+              {/* LEP */}
+              <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">LEP</h3>
+                  <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-full">
+                    Sécurisé
+                  </span>
+                </div>
+                <div className="text-xs text-[#94a3b8] mb-1">Livret d'Épargne Populaire</div>
+                <div className="text-3xl font-bold text-white mb-2">2,5%</div>
+                <div className="text-[#94a3b8] text-xs mb-1">Taux réglementé par l'État — exonéré d'impôt</div>
+                <div className="text-[#94a3b8] text-xs mb-3">Réservé aux foyers sous conditions de revenus</div>
+                <div className="text-2xl font-bold text-[#94a3b8]">
+                  {lep.toLocaleString('fr-FR')} €
                 </div>
                 <div className="text-[#94a3b8] text-xs mt-1">Capital final</div>
               </div>
@@ -482,14 +519,14 @@ export default function EpargneSimulatorPage() {
                     <span className="text-white">%</span>
                     <button
                       type="button"
-                      onClick={() => setLivretARate(2.4)}
+                      onClick={() => setLivretARate(1.5)}
                       className="px-3 py-1 text-xs border border-white/20 text-[#94a3b8] rounded-full hover:border-[#4ade80] hover:text-[#4ade80] transition-all"
                     >
                       Réinitialiser
                     </button>
                   </div>
                 </div>
-                <p className="text-[#94a3b8] text-xs">Taux actuel : 2,4% — modifiable si changement</p>
+                <p className="text-[#94a3b8] text-xs">Taux actuel : 1,5% — taux réglementé, exonéré d'impôt — modifiable si changement</p>
               </div>
 
               {/* Real-time preview */}
