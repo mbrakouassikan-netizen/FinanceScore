@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getAllArticles } from '@/lib/sanity.queries';
 import { Target, FileText, Zap, ArrowRight, CheckCircle2, TrendingUp, BookOpen } from 'lucide-react';
+import ProfilWidget from '@/components/ProfilWidget';
 
 export default async function HomePage() {
   const articles = await getAllArticles();
@@ -44,6 +45,11 @@ export default async function HomePage() {
               >
                 Lire le blog
               </Link>
+            </div>
+
+            {/* Widget parcours */}
+            <div className="flex justify-center mb-4">
+              <ProfilWidget />
             </div>
 
             {/* Compteur animé */}
