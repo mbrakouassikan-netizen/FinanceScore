@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowLeft, Star, TrendingUp, AlertTriangle, CheckCircle2, Home, DollarSign } from 'lucide-react';
 
@@ -47,6 +47,14 @@ const fraisGestionOptions = [
 
 export default function InvestissementLocatifPage() {
   const [step, setStep] = useState<Step>(1);
+  const gamifCalled = useRef(false);
+  useEffect(() => {
+    if (step === 4 && !gamifCalled.current) {
+      gamifCalled.current = true;
+      const email = localStorage.getItem('cf_email');
+      if (email) fetch('/api/gamification/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, action: 'simulateur_use', details: { simulateur: 'investissement-locatif' } }) }).catch(() => {});
+    }
+  }, [step]);
   const [formData, setFormData] = useState<FormData>({
     prixAchat: 150000,
     typeBien: 'appartement',

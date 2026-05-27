@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2, Info, ChevronDown, ChevronUp, TrendingDown } from 'lucide-react';
 
@@ -28,6 +28,14 @@ const formatDuree = (mois: number) => {
 
 export default function RemboursementPage() {
   const [step, setStep] = useState<Step>(1);
+  const gamifCalled = useRef(false);
+  useEffect(() => {
+    if (step === 3 && !gamifCalled.current) {
+      gamifCalled.current = true;
+      const email = localStorage.getItem('cf_email');
+      if (email) fetch('/api/gamification/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, action: 'simulateur_use', details: { simulateur: 'remboursement' } }) }).catch(() => {});
+    }
+  }, [step]);
   const [formData, setFormData] = useState<FormData>({
     montant: 200000,
     tauxInteret: 3.5,

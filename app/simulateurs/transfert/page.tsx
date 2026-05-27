@@ -213,6 +213,14 @@ export default function TransfertSimulatorPage() {
   const [isPaysDropdownOpen, setIsPaysDropdownOpen] = useState(false);
   const deviseDropdownRef = useRef<HTMLDivElement>(null);
   const paysDropdownRef = useRef<HTMLDivElement>(null);
+  const gamifCalled = useRef(false);
+  useEffect(() => {
+    if (step === 'results' && !gamifCalled.current) {
+      gamifCalled.current = true;
+      const email = localStorage.getItem('cf_email');
+      if (email) fetch('/api/gamification/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, action: 'simulateur_use', details: { simulateur: 'transfert' } }) }).catch(() => {});
+    }
+  }, [step]);
 
   useEffect(() => {
     const handleDeviseClick = (e: MouseEvent) => {

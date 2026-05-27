@@ -2,18 +2,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
+
+  useEffect(() => {
+    setHasProfile(!!localStorage.getItem('cf_email'));
+  }, []);
 
   const navLinks = [
     { href: '/', label: 'Accueil' },
     { href: '/quiz', label: 'Quiz' },
     { href: '/blog', label: 'Blog' },
     { href: '/simulateurs', label: 'Simulateurs' },
+    ...(hasProfile ? [{ href: '/profil', label: 'Mon parcours' }] : []),
   ];
 
   return (

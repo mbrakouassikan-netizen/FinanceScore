@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Info, Home, Building } from 'lucide-react';
@@ -34,6 +34,14 @@ interface FormData {
 export default function CreditSimulatorPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
+  const gamifCalled = useRef(false);
+  useEffect(() => {
+    if (step === 'results' && !gamifCalled.current) {
+      gamifCalled.current = true;
+      const email = localStorage.getItem('cf_email');
+      if (email) fetch('/api/gamification/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, action: 'simulateur_use', details: { simulateur: 'credit' } }) }).catch(() => {});
+    }
+  }, [step]);
   const [formData, setFormData] = useState<FormData>({
     project: null,
     situation: null,

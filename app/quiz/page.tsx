@@ -117,6 +117,17 @@ export default function QuizPage() {
           body: JSON.stringify(subscribeData),
         });
 
+        // Save email for gamification
+        localStorage.setItem('cf_email', email);
+        if (name) localStorage.setItem('cf_nom', name);
+
+        // Gamification — quiz complété
+        fetch('/api/gamification/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, action: 'quiz_complete', details: { nom: name, score: scoreData.data.totalScore } }),
+        }).catch(() => {});
+
         // Redirect to results
         router.push(`/resultats?score=${scoreData.data.totalScore}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`);
       }

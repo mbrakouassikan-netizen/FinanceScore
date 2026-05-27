@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, TrendingUp, PiggyBank, Home, Briefcase, Target, Info } from 'lucide-react';
 
@@ -35,6 +35,14 @@ const calculateCompoundInterest = (
 
 export default function EpargneSimulatorPage() {
   const [step, setStep] = useState<Step>(1);
+  const gamifCalled = useRef(false);
+  useEffect(() => {
+    if (step === 'results' && !gamifCalled.current) {
+      gamifCalled.current = true;
+      const email = localStorage.getItem('cf_email');
+      if (email) fetch('/api/gamification/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, action: 'simulateur_use', details: { simulateur: 'epargne' } }) }).catch(() => {});
+    }
+  }, [step]);
   const [formData, setFormData] = useState<FormData>({
     objectif: null,
     diaspora: null,
