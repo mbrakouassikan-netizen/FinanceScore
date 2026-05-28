@@ -31,26 +31,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const response = await fetch(
-      'https://api.anthropic.com/v1/messages',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY!,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
-          max_tokens: 1024,
-          tools: [
-            {
-              type: 'web_search_20250305',
-              name: 'web_search',
-              max_uses: 3
-            }
-          ],
-          system: `Tu es l'assistant éducatif de CultureFinance, une plateforme d'éducation financière pour la diaspora africaine en France. Tu expliques les concepts financiers simplement, en contextualisant pour la réalité diaspora (envois au pays, construction au pays, famille à charge). Tu réponds en français, avec "tu", en 4-5 phrases max. Tu n'es pas un conseiller financier — tu fournis des informations éducatives générales uniquement. Pour toute décision importante, tu renvoies vers un professionnel agréé.
+    const SYSTEM_PROMPT = `Tu es l'assistant éducatif de CultureFinance, une plateforme d'éducation financière pour la diaspora africaine en France. Tu expliques les concepts financiers simplement, en contextualisant pour la réalité diaspora (envois au pays, construction au pays, famille à charge). Tu réponds en français, avec "tu", en 4-5 phrases max. Tu n'es pas un conseiller financier — tu fournis des informations éducatives générales uniquement. Pour toute décision importante, tu renvoies vers un professionnel agréé.
 
 TAUX RÉGLEMENTÉS EN VIGUEUR (février 2026) :
 - Livret A : 1,5% net — exonéré d'impôt
@@ -60,11 +41,48 @@ TAUX RÉGLEMENTÉS EN VIGUEUR (février 2026) :
 - CEL : 1% brut
 - PEL : 1,75% brut
 
-Ces taux sont en vigueur depuis le 1er février 2026. La prochaine révision est prévue en août 2026. Source : economie.gouv.fr et Banque de France. Si un utilisateur pose une question sur les taux, utilise toujours la recherche web pour confirmer les informations les plus récentes.`,
-          messages: messages,
+Ces taux sont en vigueur depuis le 1er février 2026. La prochaine révision est prévue en août 2026. Source : economie.gouv.fr et Banque de France. Si un utilisateur pose une question sur les taux, utilise toujours la recherche web pour confirmer les informations les plus récentes.`
+
+    const HEADERS = {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.ANTHROPIC_API_KEY!,
+      'anthropic-version': '2023-06-01',
+    }
+
+    const callWithSearch = async () =>
+      fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 1024,
+          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 2 }],
+          system: SYSTEM_PROMPT,
+          messages,
         }),
-      }
-    )
+        signal: AbortSignal.timeout(15000),
+      })
+
+    const callWithoutSearch = async () =>
+      fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 1024,
+          system: SYSTEM_PROMPT,
+          messages,
+        }),
+      })
+
+    let response: Response
+    try {
+      response = await callWithSearch()
+      if (!response.ok) throw new Error(`Search call failed: ${response.status}`)
+    } catch (searchErr) {
+      console.warn('Web search fallback triggered:', searchErr instanceof Error ? searchErr.message : searchErr)
+      response = await callWithoutSearch()
+    }
 
     if (!response.ok) {
       const errorText = await response.text()
