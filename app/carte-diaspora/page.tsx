@@ -129,11 +129,13 @@ export default function CarteDiasporaPage() {
           .append('text')
           .attr('class', 'flag')
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .attr('x', (d) => { const c = pathGen.centroid(d as any); return c[0] ?? 0 })
+          .attr('x', (d) => { const c = pathGen.centroid(d as any); return isFinite(c[0]) ? c[0] : 0 })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .attr('y', (d) => { const c = pathGen.centroid(d as any); return (c[1] ?? 0) + 5 })
+          .attr('y', (d) => { const c = pathGen.centroid(d as any); return isFinite(c[1]) ? c[1] : 0 })
           .attr('text-anchor', 'middle')
-          .attr('font-size', '14px')
+          .attr('dominant-baseline', 'middle')
+          .attr('font-size', 16)
+          .style('font-family', '"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif')
           .attr('pointer-events', 'none')
           .text((d) => paysData[d.id].flag)
 
