@@ -50,6 +50,38 @@ interface ProfilData {
   prochainNiveau: { level: number; label: string; min: number } | null;
 }
 
+interface DefiData { type: string; objectif: string; montantCible: number; montantEpargne: number; semainesCompletees: number[]; nomObjectif: string }
+
+function DefiActifSection({ email }: { email: string | null }) {
+  const [defi, setDefi] = useState<DefiData | null>(null)
+  useEffect(() => {
+    if (!email) return
+    fetch(`/api/defis?email=${encodeURIComponent(email)}`)
+      .then(r => r.json())
+      .then(d => { if (d.success && d.defi) setDefi(typeof d.defi === 'string' ? JSON.parse(d.defi) : d.defi) })
+      .catch(() => {})
+  }, [email])
+  if (!defi) return null
+  const periodes = defi.type === 'mensuel' || defi.type === 'transfert' ? 12 : defi.type === 'immo' ? 24 : 52
+  const pct = Math.min(100, Math.round((defi.montantEpargne / defi.montantCible) * 100))
+  return (
+    <div className="p-5 rounded-2xl border" style={{ backgroundColor: '#052e16', borderColor: '#166534' }}>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-base font-semibold text-white">Mon défi actif</h2>
+        <Link href="/defis" className="text-[#4ade80] text-xs hover:underline">Voir le défi →</Link>
+      </div>
+      <p className="text-white font-semibold text-sm mb-1">{defi.objectif}{defi.nomObjectif ? ` — ${defi.nomObjectif}` : ''}</p>
+      <div className="flex items-center gap-3 mb-2">
+        <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: '#0a1f0f' }}>
+          <div className="h-1.5 rounded-full" style={{ width: `${pct}%`, backgroundColor: '#4ade80' }} />
+        </div>
+        <span className="text-[#4ade80] text-xs font-semibold">{pct}%</span>
+      </div>
+      <p className="text-[#94a3b8] text-xs">{defi.montantEpargne.toLocaleString('fr-FR')}€ / {defi.montantCible.toLocaleString('fr-FR')}€ · {defi.semainesCompletees.length}/{periodes} complétées</p>
+    </div>
+  )
+}
+
 const fmt = (iso: string) => { try { return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }); } catch { return ''; } };
 const daysLeft = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth() + 1, 0).getDate() - n.getDate(); };
 
@@ -248,6 +280,9 @@ export default function ProfilPage() {
             </div>
           </div>
         )}
+
+        {/* S6b — Mon défi actif */}
+        <DefiActifSection email={email} />
 
         {/* S7 — Partager */}
         <div className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1a1d2d' }}>
