@@ -23,11 +23,11 @@ export async function POST(request: NextRequest) {
     )
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error('Anthropic API error:', error)
+      const errorText = await response.text()
+      console.error('API Error:', response.status, errorText)
       return NextResponse.json(
-        { error: 'API error', details: error },
-        { status: response.status }
+        { content: `Erreur API ${response.status}: ${errorText}` },
+        { status: 200 }
       )
     }
 
@@ -36,11 +36,14 @@ export async function POST(request: NextRequest) {
       content: data.content[0].text
     })
 
-  } catch (error) {
-    console.error('Assistant error:', error)
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error
+      ? error.message
+      : 'Erreur inconnue'
+    console.error('Assistant error:', errorMessage)
     return NextResponse.json(
-      { error: 'Internal error' },
-      { status: 500 }
+      { content: `Erreur technique: ${errorMessage}` },
+      { status: 200 }
     )
   }
 }
