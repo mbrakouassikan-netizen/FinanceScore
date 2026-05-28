@@ -23,9 +23,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'messages invalides' }, { status: 400 })
     }
     for (const msg of messages) {
-      if (typeof msg.content !== 'string' || msg.content.length > 500) {
+      const contentValid =
+        typeof msg.content === 'string'
+        || (Array.isArray(msg.content)
+            && msg.content.every(
+              (block: { type: string }) =>
+                block.type === 'text' || block.type === 'tool_result'
+            ))
+
+      if (!contentValid) {
         return NextResponse.json(
-          { error: 'Message trop long (max 500 caractères)' },
+          { error: 'Format message invalide' },
           { status: 400 }
         )
       }
