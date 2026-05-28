@@ -15,6 +15,7 @@ export default function Navbar() {
     { href: '/blog', label: 'Blog', badge: '' },
     { href: '/simulateurs', label: 'Simulateurs', badge: '' },
     { href: '/assistant', label: 'Assistant IA', badge: 'Nouveau' },
+    { href: '/carte-diaspora', label: 'Carte diaspora', badge: '' },
     { href: '/profil', label: 'Mon parcours', badge: '' },
   ];
 

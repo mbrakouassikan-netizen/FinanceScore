@@ -174,6 +174,36 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* SECTION 4c — Carte diaspora */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="border border-[#1e293b] rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8" style={{ backgroundColor: '#0f172a' }}>
+            {/* Mini preview map visuelle */}
+            <div className="w-full md:w-48 flex-shrink-0 rounded-xl overflow-hidden border border-[#1e293b]" style={{ backgroundColor: '#162032', height: 120 }}>
+              <div className="w-full h-full flex items-center justify-center relative">
+                <span className="text-5xl">🌍</span>
+                <div className="absolute top-3 right-4 w-2 h-2 rounded-full bg-[#4ade80] animate-pulse" />
+                <div className="absolute top-6 left-6 w-2 h-2 rounded-full bg-[#4ade80]" />
+                <div className="absolute bottom-5 right-8 w-2 h-2 rounded-full bg-[#2d5a3d]" />
+                <div className="absolute bottom-8 left-8 w-2 h-2 rounded-full bg-[#2d5a3d]" />
+              </div>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-xl font-semibold text-white mb-2">Carte des transferts diaspora</h2>
+              <p className="text-[#94a3b8] text-sm mb-4">
+                Visualise les flux de transfert vers l&apos;Afrique pays par pays — taux, délais, meilleurs services.
+              </p>
+              <Link
+                href="/carte-diaspora"
+                className="inline-flex items-center gap-2 bg-[#4ade80] text-[#052e16] font-semibold px-5 py-2.5 rounded-full hover:bg-[#22c55e] transition-colors text-sm"
+              >
+                Explorer la carte →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 5 — Aperçu blog */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
