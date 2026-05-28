@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getAllArticles } from '@/lib/sanity.queries';
-import { Target, FileText, Zap, ArrowRight, CheckCircle2, TrendingUp, BookOpen, Bot } from 'lucide-react';
+import { Target, FileText, Zap, ArrowRight, CheckCircle2, TrendingUp, BookOpen } from 'lucide-react';
 import ProfilWidget from '@/components/ProfilWidget';
 
 export default async function HomePage() {
@@ -140,6 +140,40 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* SECTION 4b — Widget Assistant IA */}
+      <section className="py-12 px-4 bg-[#0f172a]">
+        <div className="max-w-4xl mx-auto">
+          <div className="border border-[#1e293b] rounded-2xl p-8 text-center">
+            <div className="w-12 h-12 bg-[#052e16] rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-[#4ade80] text-2xl">🤖</span>
+            </div>
+            <h2 className="text-2xl font-semibold text-white mb-3">
+              Une question sur ta finance ?
+            </h2>
+            <p className="text-[#94a3b8] mb-6 max-w-lg mx-auto">
+              Notre assistant éducatif répond à tes questions sur l&apos;épargne, les transferts, le crédit et le budget — adapté à la réalité de la diaspora
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center mb-6">
+              <span className="bg-[#1e293b] text-[#94a3b8] text-xs px-3 py-1 rounded-full">
+                Comment fonctionne le Livret A ?
+              </span>
+              <span className="bg-[#1e293b] text-[#94a3b8] text-xs px-3 py-1 rounded-full">
+                Quel service pour envoyer au Sénégal ?
+              </span>
+              <span className="bg-[#1e293b] text-[#94a3b8] text-xs px-3 py-1 rounded-full">
+                Comment calculer mon taux d&apos;endettement ?
+              </span>
+            </div>
+            <a
+              href="/assistant"
+              className="inline-flex items-center gap-2 bg-[#4ade80] text-[#052e16] font-semibold px-6 py-3 rounded-full hover:bg-[#22c55e] transition-colors"
+            >
+              Poser ma question →
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 5 — Aperçu blog */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
@@ -199,36 +233,6 @@ export default async function HomePage() {
               </div>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* SECTION 5b — Widget Assistant IA */}
-      <section className="py-12 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="p-8 rounded-2xl border border-[#1e293b] flex flex-col sm:flex-row items-start sm:items-center gap-6" style={{ backgroundColor: '#0f172a' }}>
-            <div className="w-14 h-14 bg-[#4ade80]/20 rounded-2xl flex items-center justify-center flex-shrink-0">
-              <Bot className="w-7 h-7 text-[#4ade80]" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-semibold text-white mb-1">Une question sur ta finance ?</h3>
-              <p className="text-[#94a3b8] text-sm mb-4">
-                Notre assistant éducatif répond à tes questions sur l'épargne, les transferts, le crédit et le budget.
-              </p>
-              <div className="flex flex-wrap gap-2 mb-5">
-                {["Livret A vs LEP ?", "Optimiser mes transferts", "Mon taux d'endettement"].map((q) => (
-                  <span key={q} className="px-3 py-1 bg-white/5 text-[#94a3b8] text-xs rounded-full border border-white/10">
-                    {q}
-                  </span>
-                ))}
-              </div>
-              <Link
-                href="/assistant"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4ade80] text-black font-semibold rounded-full text-sm hover:bg-[#4ade80]/90 transition-all"
-              >
-                Poser ma question <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
 
