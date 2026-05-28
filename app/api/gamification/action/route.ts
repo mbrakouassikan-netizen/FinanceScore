@@ -1,5 +1,6 @@
 import { Redis } from '@upstash/redis';
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit } from '@/lib/rateLimit';
 
 const redis = Redis.fromEnv();
 
@@ -34,6 +35,15 @@ export async function POST(req: NextRequest) {
     if (!email || !action) {
       return NextResponse.json({ error: 'email et action requis' }, { status: 400 });
     }
+    if (typeof email !== 'string' || email.length > 500) {
+      return NextResponse.json({ error: 'email invalide' }, { status: 400 });
+    }
+    if (typeof action !== 'string' || action.length > 100) {
+      return NextResponse.json({ error: 'action invalide' }, { status: 400 });
+    }
+
+    const limited = await rateLimit(req, 'gamification', 30);
+    if (limited) return limited;
 
     const p = `user:${email}`;
 

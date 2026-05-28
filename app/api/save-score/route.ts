@@ -13,6 +13,12 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    if (typeof email !== 'string' || email.length > 500 || !email.includes('@')) {
+      return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
+    }
+    if (typeof score !== 'number' || score < 0 || score > 100) {
+      return NextResponse.json({ error: 'Score invalide (doit être entre 0 et 100)' }, { status: 400 });
+    }
 
     // Sauvegarder le score dans Upstash Redis avec expiration de 1h
     const key = `score:${email}`;

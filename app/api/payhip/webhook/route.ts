@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { payhipServerService, PayhipWebhookPayload } from '@/lib/payhip-server';
+import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,8 +8,20 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
     const signature = req.headers.get('x-payhip-signature');
 
-    // Vérification signature désactivée temporairement
-    // TODO: Reconfigurer PAYHIP_WEBHOOK_SECRET
+    const webhookSecret = process.env.PAYHIP_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      if (!signature) {
+        return NextResponse.json({ error: 'Signature manquante' }, { status: 401 });
+      }
+      const expectedSig = crypto
+        .createHmac('sha256', webhookSecret)
+        .update(body)
+        .digest('hex');
+      if (signature !== expectedSig) {
+        console.warn('❌ Signature Payhip invalide');
+        return NextResponse.json({ error: 'Signature invalide' }, { status: 401 });
+      }
+    }
     console.log('✅ Webhook Payhip reçu - traitement en cours');
 
     // Parser le payload

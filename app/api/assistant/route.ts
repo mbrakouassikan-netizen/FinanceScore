@@ -1,8 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
+
+const ALLOWED_ORIGINS = [
+  'https://finance-score.vercel.app',
+  'http://localhost:3000',
+]
 
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin')
+  if (!ALLOWED_ORIGINS.includes(origin ?? '')) {
+    return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+  }
+
+  const limited = await rateLimit(request, 'assistant', 10)
+  if (limited) return limited
+
   try {
-    const { messages } = await request.json()
+    const body = await request.json()
+    const { messages } = body
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return NextResponse.json({ error: 'messages invalides' }, { status: 400 })
+    }
+    for (const msg of messages) {
+      if (typeof msg.content !== 'string' || msg.content.length > 500) {
+        return NextResponse.json(
+          { error: 'Message trop long (max 500 caractères)' },
+          { status: 400 }
+        )
+      }
+    }
 
     const response = await fetch(
       'https://api.anthropic.com/v1/messages',
