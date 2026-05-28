@@ -143,6 +143,7 @@ export default function CarteDiasporaPage() {
   }, [])
 
   const selected = selectedPays ? paysData[selectedPays] : null
+  const FlagComp = selectedPays ? (FLAG_COMPONENTS[selectedPays] ?? null) : null
 
   return (
     <div className="min-h-screen pt-16" style={{ backgroundColor: '#0d0f1a' }}>
@@ -248,8 +249,9 @@ export default function CarteDiasporaPage() {
         <div className="max-w-5xl mx-auto">
           {selected ? (
             <div className="p-8 rounded-2xl border border-[#1e293b]" style={{ backgroundColor: '#0f172a' }}>
-              <h2 className="text-2xl font-bold text-white mb-6">
-                {selected.flag} {selected.name}
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                {FlagComp && <FlagComp className="w-8 h-6 rounded flex-shrink-0" />}
+                {selected.name}
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {[
