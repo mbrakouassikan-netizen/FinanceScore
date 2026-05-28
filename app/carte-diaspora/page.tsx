@@ -122,6 +122,21 @@ export default function CarteDiasporaPage() {
             if (d.id in paysData) setSelectedPays(d.id)
           })
 
+        const coveredFeatures = africaFeatures.filter(f => f.id in paysData)
+        svg.selectAll<SVGTextElement, GeoFeature>('text.flag')
+          .data(coveredFeatures)
+          .enter()
+          .append('text')
+          .attr('class', 'flag')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .attr('x', (d) => { const c = pathGen.centroid(d as any); return c[0] ?? 0 })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .attr('y', (d) => { const c = pathGen.centroid(d as any); return (c[1] ?? 0) + 5 })
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '14px')
+          .attr('pointer-events', 'none')
+          .text((d) => paysData[d.id].flag)
+
         setLoading(false)
       })
       .catch(() => { setLoading(false); setMapError(true) })

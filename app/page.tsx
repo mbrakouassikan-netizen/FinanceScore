@@ -52,9 +52,22 @@ export default async function HomePage() {
               <ProfilWidget />
             </div>
 
-            {/* Compteur animé */}
-            <div className="text-[#94a3b8] text-sm">
-              + 1 200 personnes ont déjà fait leur bilan
+            {/* Avatar stack */}
+            <div style={{display:'flex', alignItems:'center', gap:'12px', justifyContent:'center', marginBottom:'16px'}}>
+              <div style={{display:'flex'}}>
+                {[
+                  {initiales:'MK', bg:'#4ade80', color:'#052e16'},
+                  {initiales:'AS', bg:'#60a5fa', color:'#1e3a5f'},
+                  {initiales:'FD', bg:'#f472b6', color:'#500724'},
+                  {initiales:'BT', bg:'#fb923c', color:'#431407'},
+                ].map((av, i) => (
+                  <div key={i} style={{width:'36px',height:'36px',borderRadius:'50%',background:av.bg,color:av.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'12px',fontWeight:'500',border:'2px solid #0f172a',marginLeft:i===0?'0':'-10px',zIndex:4-i,position:'relative'}}>{av.initiales}</div>
+                ))}
+                <div style={{width:'36px',height:'36px',borderRadius:'50%',background:'#1e293b',color:'#94a3b8',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',border:'2px solid #0f172a',marginLeft:'-10px',position:'relative'}}>+1k</div>
+              </div>
+              <span style={{fontSize:'14px', color:'#94a3b8'}}>
+                <span style={{color:'#4ade80', fontWeight:'500'}}>+ 1 200 personnes</span> ont déjà fait leur bilan
+              </span>
             </div>
           </div>
         </div>
