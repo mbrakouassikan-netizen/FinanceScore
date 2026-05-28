@@ -10,11 +10,12 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { href: '/', label: 'Accueil' },
-    { href: '/quiz', label: 'Quiz' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/simulateurs', label: 'Simulateurs' },
-    { href: '/profil', label: 'Mon parcours' },
+    { href: '/', label: 'Accueil', badge: '' },
+    { href: '/quiz', label: 'Quiz', badge: '' },
+    { href: '/blog', label: 'Blog', badge: '' },
+    { href: '/simulateurs', label: 'Simulateurs', badge: '' },
+    { href: '/assistant', label: 'Assistant IA', badge: 'Nouveau' },
+    { href: '/profil', label: 'Mon parcours', badge: '' },
   ];
 
   return (
@@ -41,6 +42,11 @@ export default function Navbar() {
                 }`}
               >
                 {link.label}
+                {link.badge && (
+                  <span className="ml-1.5 px-1.5 py-0.5 bg-[#4ade80] text-black text-[10px] font-bold rounded-full align-middle">
+                    {link.badge}
+                  </span>
+                )}
               </Link>
             ))}
           </div>
@@ -73,6 +79,11 @@ export default function Navbar() {
                 }`}
               >
                 {link.label}
+                {link.badge && (
+                  <span className="ml-1.5 px-1.5 py-0.5 bg-[#4ade80] text-black text-[10px] font-bold rounded-full align-middle">
+                    {link.badge}
+                  </span>
+                )}
               </Link>
             ))}
           </div>
