@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import Link from 'next/link'
+import { SN, CI, ML, GN, CM, MA, CD, NG, GH, MG, BF, TG, BJ } from 'country-flag-icons/react/3x2'
 
 type Volume = 'eleve' | 'moyen' | 'faible'
 
@@ -63,6 +64,12 @@ const LEGEND = [
   { color: '#2d3f55', label: 'Non couvert' },
 ]
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const FLAG_COMPONENTS: Record<string, React.ComponentType<any>> = {
+  SEN: SN, CIV: CI, MLI: ML, GIN: GN, CMR: CM, MAR: MA,
+  COD: CD, NGA: NG, GHA: GH, MDG: MG, BFA: BF, TGO: TG, BEN: BJ,
+}
+
 const STATS = [
   { value: '26 Mds €', label: 'envoyés chaque année' },
   { value: '4,2 M', label: 'membres de la diaspora africaine en France' },
@@ -76,6 +83,7 @@ export default function CarteDiasporaPage() {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
   const [loading, setLoading] = useState(true)
   const [mapError, setMapError] = useState(false)
+  const [flagPositions, setFlagPositions] = useState<Array<{code: string; x: number; y: number}>>([])
 
   useEffect(() => {
     const svg = d3.select(svgRef.current)
@@ -123,21 +131,11 @@ export default function CarteDiasporaPage() {
           })
 
         const coveredFeatures = africaFeatures.filter(f => f.id in paysData)
-        svg.selectAll<SVGTextElement, GeoFeature>('text.flag')
-          .data(coveredFeatures)
-          .enter()
-          .append('text')
-          .attr('class', 'flag')
+        const positions = coveredFeatures
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .attr('x', (d) => { const c = pathGen.centroid(d as any); return isFinite(c[0]) ? c[0] : 0 })
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .attr('y', (d) => { const c = pathGen.centroid(d as any); return isFinite(c[1]) ? c[1] : 0 })
-          .attr('text-anchor', 'middle')
-          .attr('dominant-baseline', 'middle')
-          .attr('font-size', 16)
-          .style('font-family', '"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif')
-          .attr('pointer-events', 'none')
-          .text((d) => paysData[d.id].flag)
+          .map(f => { const c = pathGen.centroid(f as any); return isFinite(c[0]) && isFinite(c[1]) ? { code: f.id, x: c[0], y: c[1] } : null })
+          .filter((p): p is {code: string; x: number; y: number} => p !== null)
+        setFlagPositions(positions)
 
         setLoading(false)
       })
@@ -197,6 +195,25 @@ export default function CarteDiasporaPage() {
               viewBox={`0 0 ${W} ${H}`}
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />
+            {flagPositions.map(pos => {
+              const Flag = FLAG_COMPONENTS[pos.code]
+              if (!Flag) return null
+              return (
+                <div
+                  key={pos.code}
+                  style={{
+                    position: 'absolute',
+                    left: `${(pos.x / W) * 100}%`,
+                    top: `${(pos.y / H) * 100}%`,
+                    transform: 'translate(-50%, -50%)',
+                    pointerEvents: 'none',
+                    zIndex: 5,
+                  }}
+                >
+                  <Flag style={{ width: 20, height: 14, borderRadius: 2, display: 'block' }} />
+                </div>
+              )
+            })}
             {tooltip && tooltip.code in paysData && (
               <div
                 className="absolute pointer-events-none z-20 px-3 py-2 rounded-lg shadow-xl"
