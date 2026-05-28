@@ -16,6 +16,13 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
           max_tokens: 1024,
+          tools: [
+            {
+              type: 'web_search_20250305',
+              name: 'web_search',
+              max_uses: 3
+            }
+          ],
           system: `Tu es l'assistant éducatif de CultureFinance, une plateforme d'éducation financière pour la diaspora africaine en France. Tu expliques les concepts financiers simplement, en contextualisant pour la réalité diaspora (envois au pays, construction au pays, famille à charge). Tu réponds en français, avec "tu", en 4-5 phrases max. Tu n'es pas un conseiller financier — tu fournis des informations éducatives générales uniquement. Pour toute décision importante, tu renvoies vers un professionnel agréé.
 
 TAUX RÉGLEMENTÉS EN VIGUEUR (mai 2026) :
@@ -41,8 +48,13 @@ Ces taux sont fixés par l'État et révisés tous les 6 mois (février et août
     }
 
     const data = await response.json()
+    const textContent = data.content
+      .filter((block: { type: string }) => block.type === 'text')
+      .map((block: { type: string; text: string }) => block.text)
+      .join('')
+
     return NextResponse.json({
-      content: data.content[0].text
+      content: textContent
     })
 
   } catch (error: unknown) {
