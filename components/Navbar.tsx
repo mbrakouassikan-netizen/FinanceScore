@@ -13,6 +13,7 @@ export default function Navbar() {
     { href: '/', label: 'Accueil', badge: '' },
     { href: '/quiz', label: 'Quiz', badge: '' },
     { href: '/blog', label: 'Blog', badge: '' },
+    { href: '/a-propos', label: 'À propos', badge: '' },
     { href: '/simulateurs', label: 'Simulateurs', badge: '' },
     { href: '/assistant', label: 'Assistant IA', badge: 'Nouveau' },
     { href: '/defis', label: 'Défis', badge: '' },
