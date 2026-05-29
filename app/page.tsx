@@ -108,57 +108,52 @@ export default async function HomePage() {
       </section>
 
       {/* CARDS FONCTIONNALITÉS */}
-      <section className="px-4 mb-16">
-        <div className="max-w-4xl mx-auto" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-          {/* Card principale - Bilan éducatif */}
-          <Link href="/quiz" className="p-6 rounded-2xl transition-all hover:border-[#4ade80]/40" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(74,222,128,0.3)' }}>
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#052e16' }}>
-                <BarChart3 className="w-6 h-6 text-[#4ade80]" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="font-bold text-white" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px' }}>Bilan éducatif</h3>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(74,222,128,0.15)', color: '#4ade80' }}>Commencer ici</span>
-                </div>
-                <p className="text-sm text-[#64748b] mb-4">
-                  19 questions pour évaluer ton niveau en épargne, crédit, transferts et budget. Reçois un guide personnalisé selon ton profil.
-                </p>
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-all hover:shadow-lg hover:shadow-green-500/20" style={{ backgroundColor: '#4ade80', color: '#052e16', fontFamily: 'var(--font-syne)' }}>
-                  Faire le bilan <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 px-6 lg:px-8 mb-16">
+        {/* Card 1 - Bilan éducatif */}
+        <div className="rounded-2xl hover:translate-y-[-4px] hover:border-[#4ade80]/50" style={{ background: '#0d1f17', border: '1px solid rgba(74,222,128,0.4)', borderRadius: '16px', padding: '28px', transition: 'all 0.2s ease' }}>
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(74,222,128,0.1)' }}>
+              <BarChart3 className="w-5 h-5" style={{ color: '#4ade80' }} />
             </div>
-          </Link>
-
-          {/* Cards secondaires - grille 2 cols sur desktop */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }} className="md:grid-cols-2">
-            {[
-              {
-                icon: Calculator,
-                title: '6 simulateurs',
-                desc: 'Crédit, épargne, transfert, budget, locatif, remboursement.',
-                href: '/simulateurs',
-              },
-              {
-                icon: Map,
-                title: 'Carte diaspora',
-                desc: '26 Mds€ envoyés chaque année — compare les meilleurs services de transfert.',
-                href: '/carte-diaspora',
-              },
-            ].map((card, i) => (
-              <Link key={i} href={card.href} className="p-5 rounded-2xl transition-all hover:border-[#4ade80]/30" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: '#052e16' }}>
-                  <card.icon className="w-5 h-5 text-[#4ade80]" />
-                </div>
-                <h3 className="font-semibold text-white mb-2" style={{ fontFamily: 'var(--font-syne)' }}>{card.title}</h3>
-                <p className="text-sm text-[#64748b] mb-3">{card.desc}</p>
-                <span className="text-[#4ade80] text-sm font-medium flex items-center gap-1">
-                  Découvrir <ArrowRight className="w-4 h-4" />
-                </span>
-              </Link>
-            ))}
+            <span className="text-xs font-medium" style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.3)', padding: '4px 10px', borderRadius: '20px' }}>
+              Commencer ici
+            </span>
           </div>
+          <h3 className="font-bold text-white mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px', fontWeight: 700, marginTop: '16px', marginBottom: '8px' }}>Bilan éducatif</h3>
+          <p className="text-sm mb-5" style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>
+            19 questions pour évaluer ton niveau en épargne, crédit, transferts et budget.
+          </p>
+          <Link href="/quiz" className="block text-center font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-green-500/20" style={{ width: '100%', marginTop: '20px', background: '#4ade80', color: '#052e16', fontWeight: 600, fontSize: '14px', padding: '11px', borderRadius: '10px', fontFamily: 'var(--font-syne)' }}>
+            Faire le bilan →
+          </Link>
+        </div>
+
+        {/* Card 2 - 6 simulateurs */}
+        <div className="rounded-2xl hover:translate-y-[-4px] hover:border-[#4ade80]/50" style={{ background: '#0d1f17', border: '1px solid rgba(74,222,128,0.15)', borderRadius: '16px', padding: '28px', transition: 'all 0.2s ease' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(74,222,128,0.1)' }}>
+            <Calculator className="w-5 h-5" style={{ color: '#4ade80' }} />
+          </div>
+          <h3 className="font-bold text-white mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px', fontWeight: 700, marginTop: '16px', marginBottom: '8px' }}>6 simulateurs</h3>
+          <p className="text-sm mb-5" style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>
+            Crédit, épargne, transfert, budget, locatif, remboursement.
+          </p>
+          <Link href="/simulateurs" className="flex items-center gap-1" style={{ color: '#4ade80', fontSize: '13px', marginTop: '20px' }}>
+            Découvrir <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Card 3 - Carte diaspora */}
+        <div className="rounded-2xl hover:translate-y-[-4px] hover:border-[#4ade80]/50" style={{ background: '#0d1f17', border: '1px solid rgba(74,222,128,0.15)', borderRadius: '16px', padding: '28px', transition: 'all 0.2s ease' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(74,222,128,0.1)' }}>
+            <Map className="w-5 h-5" style={{ color: '#4ade80' }} />
+          </div>
+          <h3 className="font-bold text-white mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px', fontWeight: 700, marginTop: '16px', marginBottom: '8px' }}>Carte diaspora</h3>
+          <p className="text-sm mb-5" style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>
+            26 Mds€ envoyés chaque année — compare les meilleurs services de transfert.
+          </p>
+          <Link href="/carte-diaspora" className="flex items-center gap-1" style={{ color: '#4ade80', fontSize: '13px', marginTop: '20px' }}>
+            Découvrir <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
