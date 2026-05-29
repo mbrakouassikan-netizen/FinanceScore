@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getAllArticles } from '@/lib/sanity.queries'
-import { BarChart3, Calculator, Map, Play, ArrowRight, CheckCircle, MessageSquare, FileText } from 'lucide-react'
+import { BarChart3, Calculator, Map, Play, ArrowRight, CheckCircle, MessageSquare } from 'lucide-react'
 import ProfilWidget from '@/components/ProfilWidget'
 import AnimatedStats from '@/components/AnimatedStats'
 
@@ -31,11 +31,11 @@ export default async function HomePage() {
           </div>
 
           {/* Titre */}
-          <h1 className="font-bold text-white mb-6" style={{ fontFamily: 'var(--font-syne)', fontWeight: 800, letterSpacing: '-2px' }}>
-            <div className="text-4xl md:text-5xl lg:text-6xl whitespace-nowrap">Prends enfin le</div>
-            <div className="text-4xl md:text-5xl lg:text-6xl whitespace-nowrap">
-              <span className="text-[#4ade80]" style={{ backgroundColor: 'rgba(74,222,128,0.15)', borderRadius: '4px', padding: '0 6px' }}>contrôle</span> de tes finances
-            </div>
+          <h1 className="font-bold text-white mb-6 md:whitespace-nowrap" style={{ fontFamily: 'var(--font-syne)', fontWeight: 800, letterSpacing: '-2px' }}>
+            <span className="text-4xl md:text-5xl lg:text-6xl">Prends enfin le{' '}</span>
+            <span className="text-4xl md:text-5xl lg:text-6xl text-[#4ade80]" style={{ display: 'inline', background: 'rgba(74,222,128,0.15)', borderRadius: '6px', padding: '0 8px', position: 'relative' }}>contrôle</span>
+            <br className="hidden md:block" />
+            <span className="text-4xl md:text-5xl lg:text-6xl">de tes finances</span>
           </h1>
 
           {/* Sous-titre */}
@@ -229,8 +229,10 @@ export default async function HomePage() {
                   style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)', minHeight: '280px' }}
                 >
                   {/* Image area */}
-                  <div className="h-40 rounded-t-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f2e 100%)' }}>
-                    <FileText className="w-16 h-16" style={{ color: '#1e293b' }} />
+                  <div className="h-40 rounded-t-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #052e16 0%, #14532d 100%)' }}>
+                    <span style={{ color: '#4ade80', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-syne)', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', padding: '6px 16px', borderRadius: '20px' }}>
+                      {article.category || 'Article'}
+                    </span>
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
                     <span className="px-2 py-1 rounded-full text-xs w-fit" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>
@@ -257,8 +259,10 @@ export default async function HomePage() {
                 { category: 'Investissement', title: 'Investir pour la diaspora : guide complet', excerpt: 'Les opportunités d\'investissement adaptées à ta situation...' },
               ].map((article, i) => (
                 <div key={i} className="rounded-2xl flex flex-col" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)', minHeight: '280px' }}>
-                  <div className="h-40 rounded-t-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f2e 100%)' }}>
-                    <FileText className="w-16 h-16" style={{ color: '#1e293b' }} />
+                  <div className="h-40 rounded-t-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #052e16 0%, #14532d 100%)' }}>
+                    <span style={{ color: '#4ade80', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-syne)', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', padding: '6px 16px', borderRadius: '20px' }}>
+                      {article.category}
+                    </span>
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
                     <span className="px-2 py-1 rounded-full text-xs w-fit" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>{article.category}</span>
