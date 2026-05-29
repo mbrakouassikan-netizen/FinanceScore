@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getAllArticles } from '@/lib/sanity.queries'
-import { BarChart3, Calculator, Map, Play, ArrowRight, CheckCircle, MessageSquare } from 'lucide-react'
+import { BarChart3, Calculator, Map, Play, ArrowRight, CheckCircle, MessageSquare, FileText } from 'lucide-react'
 import ProfilWidget from '@/components/ProfilWidget'
 import AnimatedStats from '@/components/AnimatedStats'
 
@@ -25,16 +25,17 @@ export default async function HomePage() {
 
         <div className="relative max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8" style={{ backgroundColor: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.2)' }}>
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full mb-8" style={{ backgroundColor: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.4)', boxShadow: '0 0 20px rgba(74,222,128,0.15)' }}>
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#4ade80', animation: 'blink 2s infinite' }} />
-            <span className="text-[#4ade80] text-sm font-medium">Éducation financière pour la diaspora</span>
+            <span className="text-[#4ade80] font-medium" style={{ fontSize: '13px' }}>Éducation financière pour la diaspora</span>
           </div>
 
           {/* Titre */}
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight" style={{ fontFamily: 'var(--font-syne)', fontWeight: 800, letterSpacing: '-2px' }}>
-            Prends enfin le <span className="text-[#4ade80] relative inline-block">contrôle
-              <span className="absolute left-0 right-0 bottom-0 h-0.5" style={{ backgroundColor: '#4ade80', opacity: 0.4 }} />
-            </span> de tes finances
+          <h1 className="font-bold text-white mb-6" style={{ fontFamily: 'var(--font-syne)', fontWeight: 800, letterSpacing: '-2px' }}>
+            <div className="text-4xl md:text-5xl lg:text-6xl whitespace-nowrap">Prends enfin le</div>
+            <div className="text-4xl md:text-5xl lg:text-6xl whitespace-nowrap">
+              <span className="text-[#4ade80]" style={{ backgroundColor: 'rgba(74,222,128,0.15)', borderRadius: '4px', padding: '0 6px' }}>contrôle</span> de tes finances
+            </div>
           </h1>
 
           {/* Sous-titre */}
@@ -108,51 +109,79 @@ export default async function HomePage() {
 
       {/* CARDS FONCTIONNALITÉS */}
       <section className="px-4 mb-16">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            {
-              icon: BarChart3,
-              title: 'Bilan éducatif',
-              desc: '19 questions pour évaluer ton niveau et recevoir un guide personnalisé.',
-              href: '/quiz',
-            },
-            {
-              icon: Calculator,
-              title: '6 simulateurs',
-              desc: 'Crédit, épargne, transfert, budget, locatif, remboursement.',
-              href: '/simulateurs',
-            },
-            {
-              icon: Map,
-              title: 'Carte diaspora',
-              desc: '26 Mds€ envoyés chaque année — compare les meilleurs services de transfert.',
-              href: '/carte-diaspora',
-            },
-          ].map((card, i) => (
-            <Link key={i} href={card.href} className="p-5 rounded-2xl transition-all hover:border-[#4ade80]/30" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: '#052e16' }}>
-                <card.icon className="w-5 h-5 text-[#4ade80]" />
+        <div className="max-w-4xl mx-auto" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+          {/* Card principale - Bilan éducatif */}
+          <Link href="/quiz" className="p-6 rounded-2xl transition-all hover:border-[#4ade80]/40" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(74,222,128,0.3)' }}>
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#052e16' }}>
+                <BarChart3 className="w-6 h-6 text-[#4ade80]" />
               </div>
-              <h3 className="font-semibold text-white mb-2" style={{ fontFamily: 'var(--font-syne)' }}>{card.title}</h3>
-              <p className="text-sm text-[#64748b] mb-3">{card.desc}</p>
-              <span className="text-[#4ade80] text-sm font-medium flex items-center gap-1">
-                Découvrir <ArrowRight className="w-4 h-4" />
-              </span>
-            </Link>
-          ))}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-bold text-white" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px' }}>Bilan éducatif</h3>
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(74,222,128,0.15)', color: '#4ade80' }}>Commencer ici</span>
+                </div>
+                <p className="text-sm text-[#64748b] mb-4">
+                  19 questions pour évaluer ton niveau en épargne, crédit, transferts et budget. Reçois un guide personnalisé selon ton profil.
+                </p>
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-all hover:shadow-lg hover:shadow-green-500/20" style={{ backgroundColor: '#4ade80', color: '#052e16', fontFamily: 'var(--font-syne)' }}>
+                  Faire le bilan <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          {/* Cards secondaires - grille 2 cols sur desktop */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }} className="md:grid-cols-2">
+            {[
+              {
+                icon: Calculator,
+                title: '6 simulateurs',
+                desc: 'Crédit, épargne, transfert, budget, locatif, remboursement.',
+                href: '/simulateurs',
+              },
+              {
+                icon: Map,
+                title: 'Carte diaspora',
+                desc: '26 Mds€ envoyés chaque année — compare les meilleurs services de transfert.',
+                href: '/carte-diaspora',
+              },
+            ].map((card, i) => (
+              <Link key={i} href={card.href} className="p-5 rounded-2xl transition-all hover:border-[#4ade80]/30" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: '#052e16' }}>
+                  <card.icon className="w-5 h-5 text-[#4ade80]" />
+                </div>
+                <h3 className="font-semibold text-white mb-2" style={{ fontFamily: 'var(--font-syne)' }}>{card.title}</h3>
+                <p className="text-sm text-[#64748b] mb-3">{card.desc}</p>
+                <span className="text-[#4ade80] text-sm font-medium flex items-center gap-1">
+                  Découvrir <ArrowRight className="w-4 h-4" />
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* PREVIEW ASSISTANT IA */}
       <section className="px-4 mb-16">
-        <div className="max-w-4xl mx-auto p-6 rounded-2xl" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(74,222,128,0.15)' }}>
-          <div className="flex items-center gap-3 mb-6">
+        <div className="max-w-4xl mx-auto p-6 rounded-2xl relative" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(74,222,128,0.3)', boxShadow: '0 0 40px rgba(74,222,128,0.08), inset 0 0 40px rgba(74,222,128,0.02)' }}>
+          {/* Halo secondaire */}
+          <div style={{
+            position: 'absolute',
+            width: '300px', height: '300px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(74,222,128,0.06), transparent)',
+            right: '-50px', top: '50%',
+            transform: 'translateY(-50%)',
+            pointerEvents: 'none',
+          }} />
+          <div className="flex items-center gap-3 mb-6 relative z-10">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#4ade80', animation: 'blink 2s infinite' }} />
             <h3 className="font-semibold text-white" style={{ fontFamily: 'var(--font-syne)' }}>Assistant CultureFinance</h3>
             <span className="px-2 py-0.5 rounded-full text-xs" style={{ backgroundColor: '#052e16', color: '#4ade80' }}>IA — connectée à internet</span>
           </div>
 
-          <div className="space-y-4 mb-6">
+          <div className="space-y-4 mb-6 relative z-10">
             {/* Bulle utilisateur */}
             <div className="flex justify-end">
               <div className="max-w-xs px-4 py-3 rounded-2xl rounded-tr-sm" style={{ backgroundColor: 'rgba(74,222,128,0.08)', color: '#86efac' }}>
@@ -167,7 +196,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 relative z-10">
             <Link href="/simulateurs/transfert" className="px-3 py-1.5 rounded-full text-sm transition-all" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.2)' }}>
               Comparer les transferts
             </Link>
@@ -196,29 +225,56 @@ export default async function HomePage() {
                 <Link
                   key={article._id}
                   href={`/blog/${article.slug.current}`}
-                  className="p-5 rounded-2xl transition-all hover:border-[#4ade80]/30"
-                  style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)' }}
+                  className="rounded-2xl transition-all hover:border-[#4ade80]/30 flex flex-col"
+                  style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)', minHeight: '280px' }}
                 >
-                  <span className="px-2 py-1 rounded-full text-xs" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>
-                    {article.category}
-                  </span>
-                  <h3 className="font-semibold text-white mt-3 mb-2" style={{ fontFamily: 'var(--font-syne)' }}>{article.title}</h3>
-                  <p className="text-sm text-[#64748b] line-clamp-2">{article.excerpt}</p>
+                  {/* Image area */}
+                  <div className="h-40 rounded-t-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f2e 100%)' }}>
+                    <FileText className="w-16 h-16" style={{ color: '#1e293b' }} />
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <span className="px-2 py-1 rounded-full text-xs w-fit" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>
+                      {article.category}
+                    </span>
+                    <h3 className="font-bold text-white mt-3 mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '16px' }}>{article.title}</h3>
+                    <div className="flex items-center gap-3 text-xs text-[#64748b] mb-3">
+                      <span>12 mai 2026</span>
+                      <span>•</span>
+                      <span>5 min de lecture</span>
+                    </div>
+                    <p className="text-sm text-[#64748b] line-clamp-2 mb-4 flex-1">{article.excerpt}</p>
+                    <span className="text-[#4ade80] text-sm font-medium flex items-center gap-1 mt-auto">
+                      Lire l'article <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-5 rounded-2xl" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <span className="px-2 py-1 rounded-full text-xs" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>Budget</span>
-                <h3 className="font-semibold text-white mt-3 mb-2" style={{ fontFamily: 'var(--font-syne)' }}>Comment gérer ton budget efficacement</h3>
-                <p className="text-sm text-[#64748b]">Découvre les meilleures pratiques pour maîtriser tes finances...</p>
-              </div>
-              <div className="p-5 rounded-2xl" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <span className="px-2 py-1 rounded-full text-xs" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>Investissement</span>
-                <h3 className="font-semibold text-white mt-3 mb-2" style={{ fontFamily: 'var(--font-syne)' }}>Investir pour la diaspora : guide complet</h3>
-                <p className="text-sm text-[#64748b]">Les opportunités d'investissement adaptées à ta situation...</p>
-              </div>
+              {[
+                { category: 'Budget', title: 'Comment gérer ton budget efficacement', excerpt: 'Découvre les meilleures pratiques pour maîtriser tes finances...' },
+                { category: 'Investissement', title: 'Investir pour la diaspora : guide complet', excerpt: 'Les opportunités d\'investissement adaptées à ta situation...' },
+              ].map((article, i) => (
+                <div key={i} className="rounded-2xl flex flex-col" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.06)', minHeight: '280px' }}>
+                  <div className="h-40 rounded-t-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f2e 100%)' }}>
+                    <FileText className="w-16 h-16" style={{ color: '#1e293b' }} />
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <span className="px-2 py-1 rounded-full text-xs w-fit" style={{ backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>{article.category}</span>
+                    <h3 className="font-bold text-white mt-3 mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '16px' }}>{article.title}</h3>
+                    <div className="flex items-center gap-3 text-xs text-[#64748b] mb-3">
+                      <span>12 mai 2026</span>
+                      <span>•</span>
+                      <span>5 min de lecture</span>
+                    </div>
+                    <p className="text-sm text-[#64748b] mb-4 flex-1">{article.excerpt}</p>
+                    <span className="text-[#64748b] text-sm font-medium flex items-center gap-1 mt-auto">
+                      Lire l'article <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
