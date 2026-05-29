@@ -1,12 +1,11 @@
-import { Inter } from 'next/font/google';
-import { Fraunces } from 'next/font/google';
+import { Inter, Syne } from 'next/font/google';
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces' });
+const syne = Syne({ subsets: ['latin'], weight: ['400', '700', '800'], variable: '--font-syne' });
 
 export const metadata: Metadata = {
   title: 'CultureFinance — Ton bilan financier gratuit en 10 min',
@@ -33,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${inter.variable} ${fraunces.variable}`}>
+    <html lang="fr" className={`${inter.variable} ${syne.variable}`}>
       <body className="bg-bg-primary text-text-primary min-h-screen">
         <Script
           async

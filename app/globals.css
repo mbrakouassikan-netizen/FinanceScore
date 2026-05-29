@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --font-inter: var(--font-inter);
-    --font-fraunces: var(--font-fraunces);
+    --font-syne: var(--font-syne);
   }
 
   html {
@@ -14,10 +14,23 @@
 
   body {
     font-family: var(--font-inter);
+    background-color: #060d18;
+    background-image: linear-gradient(rgba(74,222,128,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(74,222,128,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-fraunces);
+    font-family: var(--font-syne);
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
 }
 
