@@ -172,7 +172,7 @@ export default async function HomePage() {
 
       {/* PREVIEW ASSISTANT IA */}
       <section className="px-4 mb-16">
-        <div className="max-w-4xl mx-auto p-6 rounded-2xl relative" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(74,222,128,0.3)', boxShadow: '0 0 40px rgba(74,222,128,0.08), inset 0 0 40px rgba(74,222,128,0.02)' }}>
+        <div className="max-w-4xl mx-auto p-6 rounded-2xl relative hover:border-[#4ade80]/60 transition-all" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(74,222,128,0.3)', boxShadow: '0 0 40px rgba(74,222,128,0.06)', transition: 'border 0.2s ease' }}>
           {/* Halo secondaire */}
           <div style={{
             position: 'absolute',
@@ -184,7 +184,7 @@ export default async function HomePage() {
             pointerEvents: 'none',
           }} />
           <div className="flex items-center gap-3 mb-6 relative z-10">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#4ade80', animation: 'blink 2s infinite' }} />
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#4ade80', animation: 'pulse 2s infinite' }} />
             <h3 className="font-semibold text-white" style={{ fontFamily: 'var(--font-syne)' }}>Assistant CultureFinance</h3>
             <span className="px-2 py-0.5 rounded-full text-xs" style={{ backgroundColor: '#052e16', color: '#4ade80' }}>IA — connectée à internet</span>
           </div>
