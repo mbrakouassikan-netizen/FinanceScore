@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import ChatWidget from '@/components/ChatWidget';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const syne = Syne({ subsets: ['latin'], weight: ['400', '700', '800'], variable: '--font-syne' });
@@ -102,7 +104,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-bg-primary text-text-primary min-h-screen">
+      <body className="bg-bg-primary text-text-primary min-h-screen flex flex-col">
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-SNWL61PBJF"
@@ -117,7 +119,9 @@ export default function RootLayout({
           `}
         </Script>
         <Navbar />
-        <main className="pt-16">{children}</main>
+        <main className="pt-16 flex-1">{children}</main>
+        <Footer />
+        <ChatWidget />
       </body>
     </html>
   );
