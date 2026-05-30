@@ -2,6 +2,12 @@ import { getAllArticles } from '@/lib/sanity.queries';
 import Link from 'next/link';
 import Image from 'next/image';
 import { urlFor } from '@/lib/sanity.image';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Blog éducation financière diaspora',
+  description: 'Articles sur l\'épargne, les transferts, le crédit et le budget pour la diaspora africaine en France.',
+};
 
 export default async function BlogPage() {
   const articles = await getAllArticles();

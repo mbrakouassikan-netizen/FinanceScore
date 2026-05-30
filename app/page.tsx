@@ -4,6 +4,12 @@ import { urlFor } from '@/lib/sanity.image'
 import { BarChart3, Calculator, Map, Play, ArrowRight, CheckCircle, MessageSquare } from 'lucide-react'
 import ProfilWidget from '@/components/ProfilWidget'
 import AnimatedStats from '@/components/AnimatedStats'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'CultureFinance — Éducation financière pour la diaspora africaine',
+  description: 'Quiz gratuit, 6 simulateurs et assistant IA pour maîtriser ta finance. Épargne, transferts, crédit, budget.',
+}
 
 export default async function HomePage() {
   const articles = await getAllArticles()
