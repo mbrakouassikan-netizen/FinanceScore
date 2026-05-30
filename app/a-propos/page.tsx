@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { BookOpen, Globe, Shield, Heart, Target, GraduationCap, ArrowRight } from 'lucide-react'
+import { Target, Shield, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'À propos | CultureFinance',
@@ -21,7 +21,7 @@ export default function AProposPage() {
             L'éducation financière, enfin à <span className="text-[#4ade80]">notre portée</span>
           </h1>
           <p className="text-lg md:text-xl text-[#94a3b8] max-w-2xl mx-auto">
-            Épargne, transferts, crédit, budget — conçu pour la diaspora africaine en France.
+            CultureFinance est une plateforme d'éducation financière indépendante, conçue pour la diaspora africaine en France. Épargne, transferts, crédit, budget.
           </p>
         </section>
 
@@ -51,13 +51,10 @@ export default function AProposPage() {
             <h2 className="text-2xl font-serif font-bold text-white">Notre mission</h2>
           </div>
           <p className="text-[#94a3b8] leading-relaxed">
-            Tout le monde veut être libre financièrement. On en parle partout — dans les médias, sur les réseaux sociaux, même autour de la table familiale. Mais j'ai observé une erreur que beaucoup commettent : se lancer directement dans l'investissement ou l'épargne sans jamais s'éduquer financièrement d'abord.
+            La gestion de l'argent n'est presque jamais enseignée. Et les ressources qui existent ne sont pas faites pour nous. Elles ne parlent pas d'envoyer de l'argent au pays, d'épargner ici tout en soutenant la famille là-bas, ni d'obtenir un crédit avec un parcours atypique.
           </p>
           <p className="text-[#94a3b8] leading-relaxed mt-4">
-            J'ai créé CultureFinance pour changer ça. L'idée : un outil clé en main qui permet à toute personne — et particulièrement à la diaspora africaine — de s'éduquer financièrement, de comprendre les bases, et d'être motivée à construire son avenir financier étape par étape.
-          </p>
-          <p className="text-[#4ade80] font-semibold mt-4">
-            Parce que l'éducation doit venir avant l'action.
+            CultureFinance est né de ce constat. Notre mission : fournir des ressources éducatives concrètes, adaptées à la réalité de la diaspora, 100% indépendantes. Nous ne sommes pas des conseillers financiers. Nous sommes un outil d'éducation.
           </p>
         </section>
 
@@ -72,7 +69,7 @@ export default function AProposPage() {
               {
                 title: 'Le constat',
                 subtitle: 'Tout le monde veut investir, personne ne s\'éduque d\'abord',
-                text: 'En observant la diaspora africaine en France, un constat s\'impose : beaucoup se lancent dans l\'épargne et l\'investissement sans bases solides. Les ressources existantes ne sont pas adaptées à leur réalité — envoyer au pays, épargner ici, crédit avec parcours atypique.',
+                text: 'En observant la diaspora africaine en France, un constat s\'impose : beaucoup se lancent dans l\'épargne et l\'investissement sans bases solides. Les ressources existantes ne sont pas adaptées à leur réalité : envoyer au pays, épargner ici, construire là-bas.',
               },
               {
                 title: 'La construction',
@@ -80,7 +77,7 @@ export default function AProposPage() {
                 text: 'Création du quiz éducatif 19 questions, des 6 simulateurs (crédit, épargne, budget, transfert, locatif, remboursement), du système de gamification et des défis d\'épargne. Plus de 1 200 bilans éducatifs réalisés.',
               },
               {
-                title: 'Aujourd\'hui',
+                title: 'Aujourd\'hui, CultureFinance en 2026',
                 subtitle: 'CultureFinance en 2026',
                 text: 'Assistant IA connecté à internet, carte interactive des transferts diaspora, défis d\'épargne gamifiés, système de progression. Un écosystème complet d\'éducation financière pour la diaspora africaine.',
               },
@@ -104,22 +101,22 @@ export default function AProposPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               {
-                icon: GraduationCap,
+                emoji: '🎓',
                 title: 'Éducation avant tout',
-                text: "L'éducation financière doit venir avant l'investissement. Comprendre avant d'agir — c'est notre philosophie.",
+                text: "L'éducation financière doit venir avant l'investissement. Comprendre avant d'agir, c'est notre philosophie.",
               },
               {
-                icon: Globe,
+                emoji: '🌍',
                 title: 'Ancré dans la réalité diaspora',
-                text: 'Épargner ici, envoyer au pays, construire là-bas — on parle de ta vraie vie, pas d\'un cas théorique.',
+                text: 'Épargner ici, envoyer au pays, construire là-bas. On parle de ta vraie vie, pas d\'un cas théorique.',
               },
               {
-                icon: Shield,
+                emoji: '🔒',
                 title: 'Confiance et transparence',
                 text: 'Pas d\'affiliation bancaire, pas de commission, pas de conflit d\'intérêt. Jamais.',
               },
               {
-                icon: Heart,
+                emoji: '🤝',
                 title: 'Motivation et progression',
                 text: 'La gamification, les défis d\'épargne et le système de niveaux sont là pour te garder motivé sur le long terme.',
               },
@@ -127,7 +124,7 @@ export default function AProposPage() {
               <div key={i} className="p-6 rounded-2xl border border-white/10" style={{ backgroundColor: '#1e293b' }}>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#0d0f1a' }}>
-                    <v.icon className="w-5 h-5 text-[#4ade80]" />
+                    <span className="text-2xl">{v.emoji}</span>
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-2">{v.title}</h3>
