@@ -11,6 +11,7 @@ const POINTS: Record<string, number> = {
   blog_read: 10,
   site_share: 30,
   return_visit: 15,
+  assistant_use: 5,
 };
 
 const ALL_SIMS = ['transfert', 'epargne', 'budget', 'credit', 'investissement-locatif', 'remboursement'];
