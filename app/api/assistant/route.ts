@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
   }
 
-  const limited = await rateLimit(request, 'assistant', 10)
+  const limited = await rateLimit(request, 'assistant', 30)
   if (limited) return limited
 
   try {

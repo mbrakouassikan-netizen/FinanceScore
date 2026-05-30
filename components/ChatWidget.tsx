@@ -85,9 +85,11 @@ export default function ChatWidget() {
       });
 
       const data = await response.json();
+      console.log('Widget response:', data);
+      
       const assistantMessage: Message = {
         role: 'assistant',
-        content: data.response || 'Désolé, une erreur est survenue.',
+        content: data.content || 'Désolé, une erreur est survenue.',
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
