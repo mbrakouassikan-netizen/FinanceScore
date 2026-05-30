@@ -1,6 +1,7 @@
 import { Redis } from '@upstash/redis';
 import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit } from '@/lib/rateLimit';
+import { sendBrevoEmail } from '@/lib/brevo';
 
 const redis = Redis.fromEnv();
 
@@ -92,6 +93,31 @@ export async function POST(req: NextRequest) {
 
     const niveau = getNiveau(pts);
     await redis.set(`${p}:niveau`, niveau.level);
+
+    // Vérifier si proche du niveau suivant pour envoyer email de progression (template #4)
+    const niveauSuivant = NIVEAUX.find(n => n.min > pts);
+    if (niveauSuivant) {
+      const ptsRestants = niveauSuivant.min - pts;
+      if (ptsRestants <= 50) {
+        try {
+          await sendBrevoEmail({
+            templateId: 4,
+            to: { email },
+            params: {
+              NIVEAU_ACTUEL: niveau.label,
+              NIVEAU_SUIVANT: niveauSuivant.label,
+              POINTS: pts,
+              PTS_RESTANTS: ptsRestants,
+              POINTS_NIVEAU_SUIVANT: niveauSuivant.min,
+              PROGRESSION_PCT: Math.round((pts / niveauSuivant.min) * 100),
+            }
+          });
+          console.log('✅ Email de progression envoyé à', email);
+        } catch (err) {
+          console.error('❌ Erreur envoi email progression:', err);
+        }
+      }
+    }
 
     const isQuizDone = quizDoneRaw === '1' || action === 'quiz_complete';
     const checks = [

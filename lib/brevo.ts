@@ -8,8 +8,14 @@ const PDF_LINKS: Record<string, string> = {
 };
 
 const TEMPLATE_IDS = {
-  score:   1,
+  score: 1,
   premium: 2,
+  welcome: 3,
+  progression: 4,
+  challenge: 5,
+  inactive: 6,
+  rateAlert: 7,
+  newArticle: 8,
 };
 
 export function getNiveau(score: number) {
@@ -50,6 +56,38 @@ async function callBrevoAPI(body: object): Promise<boolean> {
   } catch (error) {
     console.error("Erreur réseau Brevo:", error); return false;
   }
+}
+
+export async function sendBrevoEmail({
+  templateId,
+  to,
+  params,
+}: {
+  templateId: number
+  to: { email: string; name?: string }
+  params: Record<string, string | number>
+}) {
+  const response = await fetch(
+    'https://api.brevo.com/v3/smtp/email',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY!,
+      },
+      body: JSON.stringify({
+        templateId,
+        to: [to],
+        params,
+      }),
+    }
+  )
+  if (!response.ok) {
+    const error = await response.text()
+    console.error('Brevo error:', error)
+    throw new Error('Brevo email failed')
+  }
+  return response.json()
 }
 
 export async function sendScoreEmail(params: {

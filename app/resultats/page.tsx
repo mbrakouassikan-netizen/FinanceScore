@@ -13,6 +13,7 @@ import { calculateScore } from '@/lib/scoring';
 import { ScoreResult, QuizAnswer, PillarScore, ScoreLevel } from '@/lib/types';
 import { Share2, Copy, RotateCcw, MessageCircle, CheckCircle, Info, ExternalLink } from 'lucide-react';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { sendBrevoEmail } from '@/lib/brevo';
 
 function ResultsContent() {
   const searchParams = useSearchParams();
@@ -57,6 +58,20 @@ function ResultsContent() {
         }).then(saveResponse => {
           if (saveResponse.ok) {
             console.log('✅ Score sauvegardé dans Upstash Redis au chargement');
+            
+            // Envoyer email de bienvenue (template #3)
+            sendBrevoEmail({
+              templateId: 3,
+              to: { email: userEmail, name: name },
+              params: {
+                SCORE: scoreFromUrl,
+                NIVEAU: scoreFromUrl >= 80 ? 'Expert' : scoreFromUrl >= 60 ? 'Avancé' : scoreFromUrl >= 40 ? 'Intermédiaire' : 'Débutant',
+              }
+            }).then(() => {
+              console.log('✅ Email de bienvenue envoyé');
+            }).catch(err => {
+              console.error('❌ Erreur envoi email bienvenue:', err);
+            });
           } else {
             console.error('❌ Erreur sauvegarde score Upstash Redis:', saveResponse.status);
           }
