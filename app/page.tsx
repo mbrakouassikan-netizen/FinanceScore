@@ -134,39 +134,31 @@ export default async function HomePage() {
         </div>
 
         {/* Card 2 - 6 simulateurs */}
-        <div className="rounded-2xl hover:translate-y-[-4px] hover:border-[#4ade80]/50 flex flex-col justify-between" style={{ background: '#0d1f17', border: '1px solid rgba(74,222,128,0.15)', borderRadius: '16px', padding: '28px', transition: 'all 0.2s ease' }}>
-          <div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(74,222,128,0.1)' }}>
-              <Calculator className="w-5 h-5" style={{ color: '#4ade80' }} />
-            </div>
-            <h3 className="font-bold text-white mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px', fontWeight: 700, marginTop: '16px', marginBottom: '8px' }}>6 simulateurs</h3>
-            <p className="text-sm mb-5" style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>
-              Crédit, épargne, transfert, budget, locatif, remboursement.
-            </p>
+        <div className="rounded-2xl hover:translate-y-[-4px] hover:border-[#4ade80]/50 flex flex-col justify-start" style={{ background: '#0d1f17', border: '1px solid rgba(74,222,128,0.15)', borderRadius: '16px', padding: '28px', transition: 'all 0.2s ease' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(74,222,128,0.1)' }}>
+            <Calculator className="w-5 h-5" style={{ color: '#4ade80' }} />
           </div>
-          <div className="mt-auto pt-4">
-            <Link href="/simulateurs" className="flex items-center gap-1" style={{ color: '#4ade80', fontSize: '13px' }}>
-              Découvrir <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          <h3 className="font-bold text-white mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px', fontWeight: 700, marginTop: '16px', marginBottom: '8px' }}>6 simulateurs</h3>
+          <p className="text-sm mb-4" style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>
+            Crédit, épargne, transfert, budget, locatif, remboursement.
+          </p>
+          <Link href="/simulateurs" className="flex items-center gap-1 mt-4" style={{ color: '#4ade80', fontSize: '13px' }}>
+            Découvrir <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
         {/* Card 3 - Carte diaspora */}
-        <div className="rounded-2xl hover:translate-y-[-4px] hover:border-[#4ade80]/50 flex flex-col justify-between" style={{ background: '#0d1f17', border: '1px solid rgba(74,222,128,0.15)', borderRadius: '16px', padding: '28px', transition: 'all 0.2s ease' }}>
-          <div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(74,222,128,0.1)' }}>
-              <Map className="w-5 h-5" style={{ color: '#4ade80' }} />
-            </div>
-            <h3 className="font-bold text-white mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px', fontWeight: 700, marginTop: '16px', marginBottom: '8px' }}>Carte diaspora</h3>
-            <p className="text-sm mb-5" style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>
-              26 Mds€ envoyés chaque année — compare les meilleurs services de transfert.
-            </p>
+        <div className="rounded-2xl hover:translate-y-[-4px] hover:border-[#4ade80]/50 flex flex-col justify-start" style={{ background: '#0d1f17', border: '1px solid rgba(74,222,128,0.15)', borderRadius: '16px', padding: '28px', transition: 'all 0.2s ease' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(74,222,128,0.1)' }}>
+            <Map className="w-5 h-5" style={{ color: '#4ade80' }} />
           </div>
-          <div className="mt-auto pt-4">
-            <Link href="/carte-diaspora" className="flex items-center gap-1" style={{ color: '#4ade80', fontSize: '13px' }}>
-              Découvrir <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          <h3 className="font-bold text-white mb-2" style={{ fontFamily: 'var(--font-syne)', fontSize: '18px', fontWeight: 700, marginTop: '16px', marginBottom: '8px' }}>Carte diaspora</h3>
+          <p className="text-sm mb-4" style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>
+            26 Mds€ envoyés chaque année — compare les meilleurs services de transfert.
+          </p>
+          <Link href="/carte-diaspora" className="flex items-center gap-1 mt-4" style={{ color: '#4ade80', fontSize: '13px' }}>
+            Découvrir <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

@@ -21,7 +21,7 @@ export default function AProposPage() {
             L'éducation financière, enfin à <span className="text-[#4ade80]">notre portée</span>
           </h1>
           <p className="text-lg md:text-xl text-[#94a3b8] max-w-2xl mx-auto">
-            CultureFinance est une plateforme d'éducation financière indépendante, conçue pour la réalité de la diaspora africaine en France — épargne, transferts, crédit, budget.
+            Épargne, transferts, crédit, budget — conçu pour la diaspora africaine en France.
           </p>
         </section>
 
