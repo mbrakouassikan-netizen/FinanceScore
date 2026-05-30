@@ -86,6 +86,21 @@ export async function POST(req: NextRequest) {
     if (action === 'quiz_complete') {
       await redis.set(`${p}:quizDone`, '1');
       if (details?.nom) await redis.set(`${p}:nom`, details.nom);
+      
+      // Générer et stocker le code de parrainage
+      const existingCode = await redis.get<string>(`${p}:referral_code`);
+      if (!existingCode) {
+        const code = email.split('@')[0].toUpperCase()
+          .replace(/[^A-Z0-9]/g, '')
+          .substring(0, 6) + Math.random()
+          .toString(36).substring(2, 5).toUpperCase();
+        
+        await Promise.all([
+          redis.set(`${p}:referral_code`, code),
+          redis.set(`referral:${code}`, email),
+        ]);
+        console.log('✅ Code de parrainage généré pour', email, ':', code);
+      }
     }
 
     pts += pointsGagnes;
@@ -120,6 +135,8 @@ export async function POST(req: NextRequest) {
     }
 
     const isQuizDone = quizDoneRaw === '1' || action === 'quiz_complete';
+    const filleulsRaw = await redis.get<string[]>(`${p}:filleuls`);
+    const filleuls = filleulsRaw ?? [];
     const checks = [
       { id: 'premier_pas', label: 'Premier pas', ok: isQuizDone },
       { id: 'transfert_malin', label: 'Transfert malin', ok: sims.includes('transfert') },
@@ -130,6 +147,8 @@ export async function POST(req: NextRequest) {
       { id: 'maitre_remboursement', label: 'Maître du remboursement', ok: sims.includes('remboursement') },
       { id: 'explorateur_complet', label: 'Explorateur complet', ok: ALL_SIMS.every(s => sims.includes(s)) },
       { id: 'fidele', label: 'Fidèle', ok: vc >= 4 },
+      { id: 'ambassadeur', label: 'Ambassadeur', ok: filleuls.length >= 1 },
+      { id: 'super_ambassadeur', label: 'Super Ambassadeur', ok: filleuls.length >= 5 },
     ];
 
     let nouveauBadge: string | null = null;

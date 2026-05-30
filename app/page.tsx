@@ -4,6 +4,7 @@ import { urlFor } from '@/lib/sanity.image'
 import { BarChart3, Calculator, Map, Play, ArrowRight, CheckCircle, MessageSquare } from 'lucide-react'
 import ProfilWidget from '@/components/ProfilWidget'
 import AnimatedStats from '@/components/AnimatedStats'
+import ReferralDetector from '@/components/ReferralDetector'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <ReferralDetector />
       {/* HERO SECTION */}
       <section className="relative py-24 md:py-32 px-4 overflow-hidden">
         {/* Halo animé */}

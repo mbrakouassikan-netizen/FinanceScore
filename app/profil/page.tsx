@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Compass, Lightbulb, BookOpen, Rocket, Crown, Star, ArrowLeftRight, Wallet, Calculator, Home, Building2, CreditCard, Map, Heart, Lock, ArrowRight, Share2, CheckCircle, Clock, Trophy } from 'lucide-react';
+import { Compass, Lightbulb, BookOpen, Rocket, Crown, Star, ArrowLeftRight, Wallet, Calculator, Home, Building2, CreditCard, Map, Heart, Lock, ArrowRight, Share2, CheckCircle, Clock, Trophy, Users, Copy } from 'lucide-react';
 
 const NIVEAUX_META = [
   { level: 1, label: 'Explorateur', min: 0, icon: Compass },
@@ -22,6 +22,8 @@ const BADGES_META = [
   { id: 'maitre_remboursement', label: 'Maître du remboursement', desc: 'Simulateur remboursement utilisé', pts: 20, icon: CreditCard },
   { id: 'explorateur_complet', label: 'Explorateur complet', desc: 'Tous les simulateurs utilisés', pts: 30, icon: Map },
   { id: 'fidele', label: 'Fidèle', desc: '4 visites sur le site', pts: 15, icon: Heart },
+  { id: 'ambassadeur', label: 'Ambassadeur', desc: 'Premier ami parrainé', pts: 20, icon: Users },
+  { id: 'super_ambassadeur', label: 'Super Ambassadeur', desc: '5 amis parrainés', pts: 50, icon: Star },
 ];
 
 const SIMS_META = [
@@ -90,6 +92,8 @@ export default function ProfilPage() {
   const [profil, setProfil] = useState<ProfilData | null>(null);
   const [loading, setLoading] = useState(true);
   const [shared, setShared] = useState(false);
+  const [referralData, setReferralData] = useState<{ code: string; url: string; filleuls: number; pointsGagnes: number } | null>(null);
+  const [copied, setCopied] = useState(false);
   const visitCalled = useRef(false);
 
   useEffect(() => {
@@ -99,6 +103,12 @@ export default function ProfilPage() {
       fetch(`/api/gamification/profil?email=${encodeURIComponent(saved)}`)
         .then(r => r.json()).then(d => { if (d.success) setProfil(d); setLoading(false); })
         .catch(() => setLoading(false));
+      
+      // Fetch referral data
+      fetch(`/api/referral?email=${encodeURIComponent(saved)}`)
+        .then(r => r.json()).then(d => { if (d.code) setReferralData(d); })
+        .catch(() => {});
+      
       if (!visitCalled.current) {
         visitCalled.current = true;
         fetch('/api/gamification/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: saved, action: 'return_visit', details: {} }) }).catch(() => {});
@@ -111,6 +121,19 @@ export default function ProfilPage() {
     await fetch('/api/gamification/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, action: 'site_share', details: {} }) }).catch(() => {});
     navigator.clipboard.writeText('Découvre CultureFinance et teste ta santé financière ! https://culturefinance.fr').catch(() => {});
     setShared(true); setTimeout(() => setShared(false), 3000);
+  };
+
+  const handleCopyReferral = () => {
+    if (!referralData?.url) return;
+    navigator.clipboard.writeText(referralData.url).catch(() => {});
+    setCopied(true); setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShareWhatsApp = () => {
+    if (!referralData?.url || !profil) return;
+    const message = `J'ai fait mon bilan financier sur CultureFinance et j'ai obtenu ${profil.points}/100 ! Fais le tien gratuitement ici : ${referralData.url}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   if (!loading && !email) return (
@@ -235,6 +258,47 @@ export default function ProfilPage() {
             })}
           </div>
         </div>
+
+        {/* S4b — Parrainage */}
+        {referralData && (
+          <div className="p-5 rounded-2xl border" style={{ backgroundColor: '#0f172a', borderColor: 'rgba(74,222,128,0.2)' }}>
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="w-5 h-5 text-[#4ade80]" />
+              <h2 className="text-lg font-semibold text-white">Invite tes amis</h2>
+            </div>
+            <p className="text-[#94a3b8] text-sm mb-4">Pour chaque ami qui fait le bilan éducatif via ton lien, tu gagnes +30 pts</p>
+            
+            {/* Referral link input */}
+            <div className="flex items-center gap-2 mb-4">
+              <input
+                type="text"
+                readOnly
+                value={referralData.url}
+                className="flex-1 bg-[#1e293b] border border-[#334155] rounded-lg px-3 py-2 text-sm text-[#94a3b8] outline-none"
+              />
+              <button
+                onClick={handleCopyReferral}
+                className="px-3 py-2 bg-[#4ade80] text-[#052e16] rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+              >
+                {copied ? 'Copié !' : <Copy className="w-4 h-4" />}
+              </button>
+            </div>
+
+            {/* WhatsApp share button */}
+            <button
+              onClick={handleShareWhatsApp}
+              className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-[#25D366] text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity mb-4"
+            >
+              Partager sur WhatsApp
+            </button>
+
+            {/* Stats */}
+            <div className="flex items-center gap-4 text-sm">
+              <span className="text-[#94a3b8]">{referralData.filleuls} ami(s) parrainé(s)</span>
+              <span className="text-[#4ade80] font-semibold">+{referralData.pointsGagnes} pts gagnés grâce au parrainage</span>
+            </div>
+          </div>
+        )}
 
         {/* S5 — Outils */}
         <div>

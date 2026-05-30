@@ -147,6 +147,29 @@ function ResultsContent() {
             if (response.ok) {
               console.log('✅ Email de score envoyé à:', userEmail, 'avec score:', scoreFromUrl);
               setEmailSent(true);
+              
+              // Valider le code de parrainage si présent
+              const refCode = localStorage.getItem('cf_ref');
+              if (refCode) {
+                fetch('/api/referral/validate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: userEmail,
+                    refCode: refCode
+                  })
+                }).then(refResponse => {
+                  if (refResponse.ok) {
+                    console.log('✅ Parrainage validé pour', userEmail);
+                  } else {
+                    console.log('⚠️ Erreur validation parrainage:', refResponse.status);
+                  }
+                }).catch(err => {
+                  console.error('❌ Erreur validation parrainage:', err);
+                }).finally(() => {
+                  localStorage.removeItem('cf_ref');
+                });
+              }
             } else {
               console.error('❌ Erreur envoi email:', response.status);
             }
