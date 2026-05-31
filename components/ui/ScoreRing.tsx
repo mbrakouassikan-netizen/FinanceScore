@@ -16,7 +16,7 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
   score,
   size = 200,
   strokeWidth = 12,
-  color = '#C8F04A',
+  color = '#4ade80',
   showPercentage = true,
   animated = true,
   className = '',

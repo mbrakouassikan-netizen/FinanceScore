@@ -52,7 +52,7 @@ function getScoreLevel(score: number): ScoreLevel {
   if (score >= 80) {
     return {
       name: "Finances solides",
-      color: "#C8F04A",
+      color: "#4ade80",
       emoji: "🟢",
       description: "Excellent ! Tes finances sont bien gérées et tu es sur la bonne voie pour atteindre tes objectifs."
     };

@@ -36,18 +36,18 @@
 
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(135deg, #C8F04A 0%, #185FA5 100%);
+    background: linear-gradient(135deg, #4ade80 0%, #185FA5 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .bg-gradient {
-    background: linear-gradient(135deg, #C8F04A 0%, #185FA5 100%);
+    background: linear-gradient(135deg, #4ade80 0%, #185FA5 100%);
   }
 
   .shadow-glow {
-    box-shadow: 0 0 20px rgba(200, 240, 74, 0.3);
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
   }
 
   .shadow-glow-blue {

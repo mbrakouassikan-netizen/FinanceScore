@@ -11,14 +11,14 @@ const config: Config = {
       colors: {
         'bg-primary': '#0D0F14',
         'bg-card': '#161820',
-        'accent-primary': '#C8F04A',
+        'accent-primary': '#4ade80',
         'accent-secondary': '#185FA5',
         'text-primary': '#F0EDE6',
         'text-secondary': '#7A7D8A',
         'score-red': '#FF5C5C',
         'score-orange': '#FF8C42',
         'score-yellow': '#FFD166',
-        'score-green': '#C8F04A',
+        'score-green': '#4ade80',
       },
       fontFamily: {
         'serif': ['Fraunces', 'serif'],

@@ -237,14 +237,14 @@ export const totalMaxScore = Object.values(pillarMaxScores).reduce((sum, score) 
 // Fonctions pour obtenir les couleurs et icônes des piliers
 export const getPillarColor = (pillarName: string): string => {
   const colors: Record<string, string> = {
-    "Revenus & Dépenses": "#C8F04A", // accent-primary
+    "Revenus & Dépenses": "#4ade80", // accent-primary
     "Épargne": "#3B82F6", // blue
     "Dettes": "#EF4444", // red
     "Diaspora & Famille": "#F59E0B", // amber
     "Investissement": "#10B981", // green
     "Vision & Objectifs": "#8B5CF6", // purple
   };
-  return colors[pillarName] || "#C8F04A";
+  return colors[pillarName] || "#4ade80";
 };
 
 export const getPillarIcon = (pillarName: string) => {
