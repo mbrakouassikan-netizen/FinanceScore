@@ -19,11 +19,6 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Don't show on assistant page
-  if (pathname === '/assistant') {
-    return null;
-  }
-
   // Show badge after 2 seconds, hide after 5 seconds
   useEffect(() => {
     const badgeTimer = setTimeout(() => setShowBadge(true), 2000);
@@ -57,6 +52,11 @@ export default function ChatWidget() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Don't show on assistant page - must be AFTER all hooks
+  if (pathname === '/assistant') {
+    return null;
+  }
 
   const suggestions = [
     "C'est quoi le LEP ?",
